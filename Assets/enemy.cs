@@ -7,7 +7,7 @@ public class enemy : MonoBehaviour
 {
     [SerializeField] int MAX_HEALTH;
     [SerializeField] int health;
-
+    
     int splineId = -1;
 
     SplineAnimate animate;
