@@ -14,8 +14,8 @@ GameObject:
   - component: {fileID: -116596852155342826}
   - component: {fileID: 90505327876594293}
   - component: {fileID: 1507181705836648634}
-  - component: {fileID: 3215278605798476650}
-  m_Layer: 0
+  - component: {fileID: 2215158486137645512}
+  m_Layer: 8
   m_Name: Enemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -65,7 +65,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 77a0cbf601073f44088c7ff13898c68f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -109,10 +109,10 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 0
-  m_IsKinematic: 0
+  m_UseGravity: 1
+  m_IsKinematic: 1
   m_Interpolate: 0
-  m_Constraints: 126
+  m_Constraints: 0
   m_CollisionDetection: 0
 --- !u!65 &90505327876594293
 BoxCollider:
@@ -158,7 +158,7 @@ MonoBehaviour:
   m_ObjectForwardAxis: 2
   m_ObjectUpAxis: 1
   m_StartOffset: 0
---- !u!114 &3215278605798476650
+--- !u!114 &2215158486137645512
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -171,4 +171,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MAX_HEALTH: 10
-  health: 0
+  health: 10
+  type: 0
+  DEATH_TIME: 4
+  ATTACK_DELAY: 0.5
+  DAMAGE: 10
+  deadMaterial: {fileID: 2100000, guid: 42e78bee0c746ea4f882a21aaa772f90, type: 2}
