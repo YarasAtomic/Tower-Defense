@@ -47,6 +47,8 @@ public class Enemy : MonoBehaviour
         rb = gameObject.GetComponent<Rigidbody>();
         splineToGroundRay = new Vector3(Random.Range(-MAX_GROUND_RAY_VARIATION,MAX_GROUND_RAY_VARIATION),-1,Random.Range(-MAX_GROUND_RAY_VARIATION,MAX_GROUND_RAY_VARIATION));
         animator = gameObject.GetComponentInChildren<Animator>();
+
+        animator.SetFloat("idleBlend",Random.value);
     }
 
 
@@ -92,6 +94,7 @@ public class Enemy : MonoBehaviour
             }else{
                 animator.SetBool("moving",false);
             }
+            
         }else{
             if(deathTimer == 0){
                 // Dies
