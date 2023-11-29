@@ -34,6 +34,6 @@ public class EnemySpawner : MonoBehaviour
     void Spawn(int pathId){
         GameObject newEnemy = Instantiate(enemy, new Vector3(0,0,0), Quaternion.identity);
         SplineContainer splineContainer = splines[pathId].GetComponent<SplineContainer>();
-        newEnemy.GetComponent<Enemy>().Initialise(splineContainer,pathId);
+        newEnemy.GetComponentInChildren<Enemy>().Initialise(splineContainer,pathId,newEnemy);
     }
 }

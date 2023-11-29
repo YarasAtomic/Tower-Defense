@@ -4,7 +4,7 @@ using UnityEngine.Splines;
 
 public class Enemy : MonoBehaviour
 {
-    static int lastId = -1;
+    static int enemyCount = 0;
     [SerializeField] int MAX_HEALTH;
     [SerializeField] int health;
     
@@ -12,38 +12,51 @@ public class Enemy : MonoBehaviour
     int id;
 
     int otherEnemyId = -1;
-    SplineAnimate animate;
+    SplineAnimate splineAnimate;
+    Animator animator;
+    Rigidbody rb;
 
-    [SerializeField] int type;
+    GameObject parent;
+
+    Vector3 groundOffset = new Vector3(0,0.5f,0);
+
+    // Values
+
+    [SerializeField] int TYPE;
+    [SerializeField] float DEATH_TIME;
+    [SerializeField] float ATTACK_DELAY;
+    [SerializeField] int DAMAGE;
+
 
     // States
     bool dying = false;
     float deathTimer = 0;
-    [SerializeField] float DEATH_TIME;
 
     bool attacking = false;
 
     float attackTimer = 0;
 
-    [SerializeField] float ATTACK_DELAY;
+    Vector3 splineToGroundRay = Vector3.down;
 
-    [SerializeField] int DAMAGE;
-
-    Rigidbody rb;
     // Start is called before the first frame update
+    float MAX_GROUND_RAY_VARIATION = 0.05f;
     void Start(){
-        id = lastId++;
+        id = (enemyCount++)-1;
         health = MAX_HEALTH;
-        animate = gameObject.GetComponent<SplineAnimate>();
+        splineAnimate = GetSplineAnimate();
         rb = gameObject.GetComponent<Rigidbody>();
+        splineToGroundRay = new Vector3(Random.Range(-MAX_GROUND_RAY_VARIATION,MAX_GROUND_RAY_VARIATION),-1,Random.Range(-MAX_GROUND_RAY_VARIATION,MAX_GROUND_RAY_VARIATION));
+        animator = gameObject.GetComponentInChildren<Animator>();
     }
 
 
     // Update is called once per frame
     void Update(){
         if(health > 0){
+            UpdatePos();
+
             RaycastHit hit;
-            Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward), Color.yellow);
+            Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward), Color.red);
             
             if(Physics.Raycast(transform.position,transform.TransformDirection(Vector3.forward),out hit,1)){
                 Enemy otherEnemyObject = hit.collider.gameObject.GetComponent<Enemy>();
@@ -51,10 +64,12 @@ public class Enemy : MonoBehaviour
                 if(otherEnemyObject!=null){
                     attacking = false;
                     if(otherEnemyObject.GetOtherEnemyId()!=id){
-                        animate.Pause();
+                        splineAnimate.Pause();
+                        animator.SetBool("moving",false);
                         otherEnemyId = otherEnemyObject.GetId();
                     }else{
-                        animate.Play();
+                        splineAnimate.Play();
+                        animator.SetBool("moving",true);
                     }
                     // ! esto permite evitar bloqueos binarios (A para por B y B para por A)
                     // ! pero bloqueos ternarios y superiores no (A para por B, B por C y C por A)
@@ -70,14 +85,20 @@ public class Enemy : MonoBehaviour
                     }
                 }
 
-            }else{
+            }else if(splineAnimate.elapsedTime<splineAnimate.duration){
                 attacking = false;
-                animate.Play();
+                splineAnimate.Play();
+                animator.SetBool("moving",true);
+            }else{
+                animator.SetBool("moving",false);
             }
         }else{
             if(deathTimer == 0){
+                // Dies
+
+                animator.SetBool("alive",false);
                 dying = true;
-                animate.Pause();
+                splineAnimate.Pause();
                 rb.isKinematic = false;
 
                 // Apply force
@@ -102,14 +123,15 @@ public class Enemy : MonoBehaviour
     }
 
     public bool IsMoving(){
-        return animate.IsPlaying;
+        return splineAnimate.IsPlaying;
     }
 
-    public void Initialise(SplineContainer spline, int pathId){
-        animate = gameObject.GetComponent<SplineAnimate>(); //esto se coloca aqui porque Start() no ocurre tras la Instanciacion
-        animate.Container = spline;
+    public void Initialise(SplineContainer spline, int pathId,GameObject guide){
+        parent = guide;
+        splineAnimate = GetSplineAnimate(); //esto se coloca aqui porque Start() no ocurre tras la Instanciacion
+        splineAnimate.Container = spline;
         splineId = pathId;
-        animate.enabled = true;
+        splineAnimate.enabled = true;
     }
 
     public int GetSplineId(){
@@ -125,10 +147,38 @@ public class Enemy : MonoBehaviour
     }
 
     public int GetEnemyType(){
-        return type;
+        return TYPE;
     }
 
     public void Damage(int dmg){
         health-=dmg;
+    }
+
+    // ! Esto seguramente se quite, es temporal
+    public SplineAnimate GetSplineAnimate(){
+        SplineAnimate anim = parent.GetComponent<SplineAnimate>();
+        return anim;
+    }
+
+    float rayLength = 15;
+    void UpdatePos(){
+        RaycastHit hit ;
+        if(Utils.Raycast(parent.transform.position,splineToGroundRay,rayLength,LayerMask.GetMask("Terrain"),out hit)){
+            gameObject.transform.position = hit.point + groundOffset;
+            Utils.DrawLocator(hit.point);
+        }
+
+        
+        // if(Physics.Raycast(parent.transform.position,parent.transform.TransformDirection(Vector3.down),out hit,rayLength,LayerMask.GetMask("Terrain"))){
+        //     Debug.DrawRay(parent.transform.position, parent.transform.TransformDirection(Vector3.down*rayLength), Color.yellow);
+
+        // }else{
+        //     Debug.DrawRay(parent.transform.position, parent.transform.TransformDirection(Vector3.down*rayLength), Color.blue);
+        // }
+        //
+    }
+
+    static int GetCount(){
+        return enemyCount;
     }
 }
