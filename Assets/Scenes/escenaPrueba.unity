@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657832, g: 0.49641222, b: 0.57481664, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -3268,7 +3268,7 @@ MonoBehaviour:
   - {fileID: 93811143}
   - {fileID: 1457937829}
   delay: 1
-  maxEnemies: 60
+  maxEnemies: 1
   spawnedEnemies: 0
 --- !u!4 &789102464 stripped
 Transform:
@@ -3301,6 +3301,39 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &854483667
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 854483663}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 581ce157757b01246b5330cc5bc31279, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!65 &854483668
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 854483663}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 5, y: 4, z: 5}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &871043423
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3598,7 +3631,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 4fa9df83a68e6124eba730b53e2925df, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -32.66
+      value: -31.77
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 4fa9df83a68e6124eba730b53e2925df, type: 3}
       propertyPath: m_LocalPosition.y
@@ -3651,6 +3684,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 4fa9df83a68e6124eba730b53e2925df, type: 3}
       insertIndex: -1
       addedObject: {fileID: 854483665}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 4fa9df83a68e6124eba730b53e2925df, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 854483668}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 4fa9df83a68e6124eba730b53e2925df, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 854483667}
   m_SourcePrefab: {fileID: 100100000, guid: 4fa9df83a68e6124eba730b53e2925df, type: 3}
 --- !u!4 &1083718047 stripped
 Transform:

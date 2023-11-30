@@ -1,4 +1,4 @@
-Shader "Custom/TerrainShader" {
+Shader "Custom/TerrainShaderOld" {
     Properties {
         _Control ("Control (RGBA)", 2D) = "black" {}
         _Splat3 ("Layer 3 (A)", 2D) = "white" {}

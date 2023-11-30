@@ -1,4 +1,4 @@
-Shader "Custom/NewSurfaceShader"
+Shader "Custom/TerrainShader"
 {
     Properties
     {
@@ -33,6 +33,7 @@ Shader "Custom/NewSurfaceShader"
             float2 uv_Splat1 : TEXCOORD2;
             float2 uv_Splat2 : TEXCOORD3;
             float2 uv_Splat3 : TEXCOORD4;
+            float4 vertex : POSITION;
         };
 
         half _Glossiness;
@@ -62,7 +63,8 @@ Shader "Custom/NewSurfaceShader"
             // Metallic and smoothness come from slider variables
             o.Metallic = _Metallic;
             o.Smoothness = _Glossiness;
-            o.Alpha = 0.0;
+            o.Alpha = 0.0;  
+            o.Normal = normalize(cross(ddy(IN.vertex),ddx(IN.vertex)));          
         }
         ENDCG
     }

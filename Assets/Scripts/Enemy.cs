@@ -55,6 +55,7 @@ public class Enemy : MonoBehaviour
     // Update is called once per frame
     void Update(){
         if(health > 0){
+            animator.SetBool("attacking",attacking);
             UpdatePos();
 
             RaycastHit hit;
@@ -76,6 +77,8 @@ public class Enemy : MonoBehaviour
                     // ! esto permite evitar bloqueos binarios (A para por B y B para por A)
                     // ! pero bloqueos ternarios y superiores no (A para por B, B por C y C por A)
                 }else if(otherBuildingObject!=null){
+                    splineAnimate.Pause();
+                    animator.SetBool("moving",false);
                     if(attacking==false){
                         attacking=true;
                         attackTimer = 0;
@@ -87,7 +90,7 @@ public class Enemy : MonoBehaviour
                     }
                 }
 
-            }else if(splineAnimate.elapsedTime<splineAnimate.duration){
+            }else if(splineAnimate.ElapsedTime<splineAnimate.Duration){
                 attacking = false;
                 splineAnimate.Play();
                 animator.SetBool("moving",true);
