@@ -70,12 +70,13 @@
     <Compile Include="Assets/Scripts/Utils.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets/Shaders/TerrainShaderOld.shader" />
-    <None Include="Assets/Shaders/TerrainShaderPBR.shader" />
-    <None Include="Assets/Shaders/TerrainShaderSmoothTextures.shader" />
-    <None Include="Assets/Shaders/TerrainShaderFlat.shader" />
-    <None Include="Assets/Shaders/TerrainNormalFlat.shader" />
-    <None Include="Assets/Shaders/TerrainShader.shader" />
+    <None Include="Assets/Shaders/Unused/TerrainShaderOld.shader" />
+    <None Include="Assets/Shaders/Unused/TerrainShaderPBR.shader" />
+    <None Include="Assets/Shaders/Unused/TerrainShaderSmoothTextures.shader" />
+    <None Include="Assets/Shaders/Unused/TerrainShaderFlat.shader" />
+    <None Include="Assets/Shaders/TerrainFlat.shader" />
+    <None Include="Assets/Shaders/WaterFlat.shader" />
+    <None Include="Assets/Shaders/Unused/TerrainShader.shader" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
