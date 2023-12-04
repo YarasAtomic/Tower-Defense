@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Splines;
 
@@ -45,10 +44,10 @@ public class Enemy : MonoBehaviour
         health = MAX_HEALTH;
         splineAnimate = GetSplineAnimate();
         rb = gameObject.GetComponent<Rigidbody>();
-        splineToGroundRay = new Vector3(Random.Range(-MAX_GROUND_RAY_VARIATION,MAX_GROUND_RAY_VARIATION),-1,Random.Range(-MAX_GROUND_RAY_VARIATION,MAX_GROUND_RAY_VARIATION));
+        splineToGroundRay = new Vector3(UnityEngine.Random.Range(-MAX_GROUND_RAY_VARIATION,MAX_GROUND_RAY_VARIATION),-1,UnityEngine.Random.Range(-MAX_GROUND_RAY_VARIATION,MAX_GROUND_RAY_VARIATION));
         animator = gameObject.GetComponentInChildren<Animator>();
 
-        animator.SetFloat("idleBlend",Random.value);
+        animator.SetFloat("idleBlend",UnityEngine.Random.value);
     }
 
 
@@ -59,9 +58,8 @@ public class Enemy : MonoBehaviour
             UpdatePos();
 
             RaycastHit hit;
-            Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward), Color.red);
             
-            if(Physics.Raycast(transform.position,transform.TransformDirection(Vector3.forward),out hit,1)){
+            if(UpdateRaycast(out hit)){
                 Enemy otherEnemyObject = hit.collider.gameObject.GetComponent<Enemy>();
                 Building otherBuildingObject = hit.collider.gameObject.GetComponent<Building>();
                 if(otherEnemyObject!=null){
@@ -100,17 +98,19 @@ public class Enemy : MonoBehaviour
             
         }else{
             if(deathTimer == 0){
+                // Executes one time when health reaches 0
                 // Dies
 
+                // Remove animation and activate physics
                 animator.SetBool("alive",false);
                 dying = true;
                 splineAnimate.Pause();
                 rb.isKinematic = false;
 
                 // Apply force
-                rb.AddForce(new Vector3(Random.Range(-1,1),Random.Range(400,600),Random.Range(-1,1)));
+                rb.AddForce(new Vector3(UnityEngine.Random.Range(-1,1),UnityEngine.Random.Range(400,600),UnityEngine.Random.Range(-1,1)));
                 float maxTorque = 10000;
-                rb.AddTorque(new Vector3(Random.Range(-maxTorque,maxTorque),Random.Range(-maxTorque,maxTorque),Random.Range(-maxTorque,maxTorque)));
+                rb.AddTorque(new Vector3(UnityEngine.Random.Range(-maxTorque,maxTorque),UnityEngine.Random.Range(-maxTorque,maxTorque),UnityEngine.Random.Range(-maxTorque,maxTorque)));
 
                 // Deactivate collisions
                 rb.excludeLayers = LayerMask.GetMask("Enemy");
@@ -125,7 +125,7 @@ public class Enemy : MonoBehaviour
     }
 
     private void Die(){
-        // ? no se si hace falta
+        enemyCount --;
     }
 
     public bool IsMoving(){
@@ -167,24 +167,36 @@ public class Enemy : MonoBehaviour
     }
 
     float rayLength = 15;
+    float speed = 1;
     void UpdatePos(){
         RaycastHit hit ;
         if(Utils.Raycast(parent.transform.position,splineToGroundRay,rayLength,LayerMask.GetMask("Terrain"),out hit)){
             gameObject.transform.position = hit.point + groundOffset;
+            // Hit normal
+            Debug.DrawRay(gameObject.transform.position,hit.normal);
             Utils.DrawLocator(hit.point);
+
+            // Update rotation
+            var targetRotation = Quaternion.FromToRotation(transform.up, hit.normal) * transform.rotation;
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * speed);
         }
-
-        
-        // if(Physics.Raycast(parent.transform.position,parent.transform.TransformDirection(Vector3.down),out hit,rayLength,LayerMask.GetMask("Terrain"))){
-        //     Debug.DrawRay(parent.transform.position, parent.transform.TransformDirection(Vector3.down*rayLength), Color.yellow);
-
-        // }else{
-        //     Debug.DrawRay(parent.transform.position, parent.transform.TransformDirection(Vector3.down*rayLength), Color.blue);
-        // }
-        //
     }
 
     static int GetCount(){
         return enemyCount;
+    }
+
+    const float frontRayLength = 1f;
+    private bool UpdateRaycast(out RaycastHit raycastHit){
+        if(Utils.Raycast(transform.position,transform.TransformDirection(Vector3.forward),frontRayLength,LayerMask.GetMask("Enemy","Building"),out raycastHit)){
+            return true;
+        }
+        if(Utils.Raycast(transform.position,transform.TransformDirection(new Vector3(1,0,1).normalized),frontRayLength,LayerMask.GetMask("Enemy","Building"),out raycastHit)){
+            return true;
+        }
+        if(Utils.Raycast(transform.position,transform.TransformDirection(new Vector3(-1,0,1).normalized),frontRayLength,LayerMask.GetMask("Enemy","Building"),out raycastHit)){
+            return true;
+        }
+        return false;
     }
 }

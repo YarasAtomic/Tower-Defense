@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class Utils{
@@ -19,4 +20,6 @@ public class Utils{
         Debug.DrawRay(pos,Vector3.up);
         Debug.DrawRay(pos,Vector3.down);
     }
+
+    static public double Rad2Degree = (180.0 / Math.PI);
 }
