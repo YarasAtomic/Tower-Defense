@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Building : MonoBehaviour
+public abstract class Building : MonoBehaviour
 {
     protected int BASE_HP;
 	protected int PURCHASE_PRICE;
@@ -13,15 +13,15 @@ public class Building : MonoBehaviour
 		
 	}
 
-	public void Sell() {
+	public abstract void Sell() {
 		
 	}
 
 	public void Damage(int dmg) {
-
+		hp -= dmg;
     }
 
-    public void DestroyBuilding() {
+    public abstract void DestroyBuilding() {
         
     }
 }
