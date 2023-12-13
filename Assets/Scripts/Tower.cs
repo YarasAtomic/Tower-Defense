@@ -21,7 +21,10 @@ public class Tower : Building
 	private float shootingRadius;
 	private Enemy selectedEnemy;
 
-	public Tower(Building b) {
-		this.building = b;
+	public Tower() {
+		maxHp = base.BASE_HP;
+		base.BASE_HP = 1;
+
+		this.BASE_HP = 1;
 	}
 }
