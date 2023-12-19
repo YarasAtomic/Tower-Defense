@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using UnityEngine;
 
 public class LevelLogic : MonoBehaviour
@@ -23,7 +25,7 @@ public class LevelLogic : MonoBehaviour
     public int currentWave;
 
     // Número de torres destruidas hasta al momento
-    public int destroyedTower;
+    public int destroyedTowers;
     
     // Número actual de recursos disponibles
     public int currentResources;
@@ -41,12 +43,35 @@ public class LevelLogic : MonoBehaviour
 
     int ACC_WAVE_MAX_TIME;
 
-    int acc_wave_timer;
+    float accWaveTimer;
+
+    int INITIAL_RESOURCES;
 
     
     // Enemy[] enemies;
 
     int enemiesLeft;
+
+    [SerializeField]
+    GameObject towerPrefab;
+
+    [SerializeField]
+    GameObject generatorPrefab;
+
+    [SerializeField]
+    GameObject enemyPrefab1;
+
+    [SerializeField]
+    GameObject enemyPrefab2;
+
+    [SerializeField]
+    GameObject enemyPrefab3;
+    
+    [SerializeField]
+    GameObject enemyPrefab4;
+
+    [SerializeField]
+    GameObject enemyPrefabs;
     
     void Start()
     {
@@ -57,52 +82,111 @@ public class LevelLogic : MonoBehaviour
 
         // PATHS = new Path[MAX_PATHS];
 
-        // destroyedTowers = 0;
+        // Tower.destroyedTowers = 0; // lo hacen en la clase Tower, ¿no?
 
-        // resources = INITIAL_RESOURCES;
+        currentResources = INITIAL_RESOURCES;
 
         // Se iniciliza acc_wave_timer
-        // accWaveTimer = ACC_WAVE_MAX_TIME;
+        accWaveTimer = ACC_WAVE_MAX_TIME;
 
-        // enemiesLeft = 0;
+        enemiesLeft = 0;
+
+        currentWave = 0;
+
+        obtainedExp = 0;
         
     }
 
     
     void Update()
     {   
-        HandleTowers();
         HandleWaves();
-        
     }
 
     void HandleWaves(){
         /* PSEUDOCÓDIGO LANZADOR DE OLEADAS Y TIMER */
 
-        // Si Enemy.GetCount() == 0
-            // accWaveTimer--;
-            // Si accWaveTimer == 0 || pulsamos el botón de accelerate wave
-                // Se lanza la oleada. (NUM_ENEMIES) 
-                // currentWave++;
-                // accWaveResources = accWaveTimer * ACC_WAVE_MAX_RESOURCES / ACC_WAVE_MAX_TIME; 
-                // currentResources += accWaveResources;
-                // accWaveTimer = ACC_WAVE_MAX_TIME;
-        // En caso de que SI haya oleada...
-            // Actualización de recursos segun número de generadores.
+        // Si no hay enemigos
+        if (Enemy.GetCount() != 0) return; //TODO hay que ver quien gestiona los recursos de los generadores
+
+        // Si estamos en la ultima oleada y no hay enemigos
+        if  (currentWave == waves.GetLength(0) - 1 && Enemy.GetCount() == 0) {
+            // TODO
+            obtainedExp = ObtainedExp();
+            return;
+        }
+        
+        // Actualizamos el contador
+        accWaveTimer += Time.deltaTime;
+
+        if (accWaveTimer == 0 || /*pulsamos el boton de accelerate wave*/) {
+            // TODO: Se lanza la oleada. (NUM_ENEMIES)
+            SpawnWave();
+            currentWave++;
+            accWaveResources = ACC_WAVE_MAX_RESOURCES * (int)accWaveTimer / ACC_WAVE_MAX_TIME; 
+            currentResources += accWaveResources;
+            accWaveTimer = ACC_WAVE_MAX_TIME;
+        }
     }
 
-    void HandleTowers() 
-    {
-        /* PSEUDCODIGO FUNCION HANDLER-TOWER */
+    private int ObtainedExp(){
+        float factorExp = 1;
 
-        // for-each (t in towers)
-            // Si enemigo destruye Tower t
-                // t.destroy();
-                // towers.remove(t);
-            // Else Si pulsamos el botón de verder Tower t
-                // currentResources += t.sell();
-            // Else Si pulsamos el botón reparar sobre Tower t
-                // currentResourse -= t.repair();
+        if (destroyedTowers == 0) {
+            factorExp++;
+        }else if (destroyedTowers == 1) {
+            factorExp+=0.5f;
+        }
+
+        if (!Base.HasBeenDamaged()) {
+            factorExp++;
+        }
+
+        return  (int)(factorExp * STAR_XP);
+    }
+
+    void SpawnWave() {
+        Tuple<GameObject, int>[] enemyprefabArr = {
+            new Tuple<GameObject, int>(enemyPrefab1, waves[currentWave,0]),
+            new Tuple<GameObject, int>(enemyPrefab2, waves[currentWave,1]),
+            new Tuple<GameObject, int>(enemyPrefab3, waves[currentWave,2]),
+            new Tuple<GameObject, int>(enemyPrefab4, waves[currentWave,3])
+        };
+        
+        EnemySpawner enemySpawn = new EnemySpawner(enemyprefabArr);
+    }
+
+    void Sell(/*Building b*/) {
+        // currentResources += b.GetSellingPrice();
+        // b.Sell();
+    }
+
+    void Repair(/*Building b*/) {
+        // int price = b.GetRepairPrice();
+        // if (price > currentResources) return;
+        //
+        // currentResources -= price;
+        // b.Repair();
+    }
+
+    void Build(BuildingTile tile, TypeBuilding type){
+        
+        if (!tile.IsEmpty()) return;
+
+        int price;
+        GameObject buildingPrefab;
+        
+        if (type == TypeBuilding.Tower) {
+            price = Tower.GetPurchasePrice();
+            buildingPrefab = towerPrefab;
+        }else {
+            price = Generator.GetPurchasePrice();
+            buildingPrefab = generatorPrefab;
+        }
+
+        if (price > currentResources) return;
+        currentResources -= price;
+        tile.Build(buildingPrefab);
     }
 
     void HandleEnemy() 
