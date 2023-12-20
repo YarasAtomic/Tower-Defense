@@ -53,6 +53,9 @@ public class LevelLogic : MonoBehaviour
     int enemiesLeft;
 
     [SerializeField]
+    List<GameObject> splines;
+
+    [SerializeField]
     GameObject towerPrefab;
 
     [SerializeField]
@@ -72,6 +75,9 @@ public class LevelLogic : MonoBehaviour
 
     [SerializeField]
     GameObject enemyPrefabs;
+    
+
+    EnemySpawner enemySpawn;
     
     void Start()
     {
@@ -153,7 +159,7 @@ public class LevelLogic : MonoBehaviour
             new Tuple<GameObject, int>(enemyPrefab4, waves[currentWave,3])
         };
         
-        EnemySpawner enemySpawn = new EnemySpawner(enemyprefabArr);
+        enemySpawn = new EnemySpawner(enemyprefabArr, splines);
     }
 
     void Sell(/*Building b*/) {

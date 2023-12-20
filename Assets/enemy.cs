@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Splines;
 
-public class enemy : MonoBehaviour
+public class Enemy : MonoBehaviour
 {
     [SerializeField] int MAX_HEALTH;
     [SerializeField] int health;
@@ -26,11 +26,11 @@ public class enemy : MonoBehaviour
         Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward), Color.yellow);
         
         if(Physics.Raycast(transform.position,transform.TransformDirection(Vector3.forward),out hit,1)){
-            if(hit.collider.gameObject.GetComponent<enemy>().getSplineId()==gameObject.GetComponent<enemy>().getSplineId()){
+            if(hit.collider.gameObject.GetComponent<Enemy>().getSplineId()==gameObject.GetComponent<Enemy>().getSplineId()){
                 animate.Pause();
                 Debug.Log("mismo spline");
             }
-            else if(hit.collider.gameObject.GetComponent<enemy>().isMoving()){
+            else if(hit.collider.gameObject.GetComponent<Enemy>().isMoving()){
                 animate.Pause();
                 Debug.Log("otro spline y el otro se mueve");
             }else{
