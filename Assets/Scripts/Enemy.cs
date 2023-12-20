@@ -66,7 +66,7 @@ public class Enemy : MonoBehaviour
                     attackTimer+=Time.deltaTime;
                     if(attackTimer>ATTACK_DELAY){
                         attackTimer = 0;
-                        otherBuildingObject.Damage(DAMAGE);
+                        otherBuildingObject.DamageBuilding(DAMAGE);
                     }
                 }
 

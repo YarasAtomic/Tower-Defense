@@ -9,19 +9,26 @@ public abstract class Building : MonoBehaviour
     protected int hp;
 	protected int sellingPrice;
 
-	public void Build() {
-		
+	protected Animator animator;
+
+	// GET methods
+
+	public int GetPurchasePrice() {
+		return PURCHASE_PRICE;
 	}
 
-	public abstract void Sell() {
-		
+	public abstract int GetSellingPrice();
+
+	// ACTION methods
+
+	public void SellBuilding() {
+		animator.SetBool("sellBuilding", true);
 	}
 
-	public void Damage(int dmg) {
+	public void DamageBuilding(int dmg) {
 		hp -= dmg;
+		if (hp <= 0) DestroyBuilding();
     }
 
-    public abstract void DestroyBuilding() {
-        
-    }
+	public abstract void DestroyBuilding();
 }
