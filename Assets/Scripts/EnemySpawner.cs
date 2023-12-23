@@ -5,7 +5,6 @@ using UnityEngine.Splines;
 
 public class EnemySpawner
 {    
-    [SerializeField] GameObject enemy;
     List<GameObject> splines;
     [SerializeField] float delay;
 
@@ -13,28 +12,34 @@ public class EnemySpawner
 
     [SerializeField] int spawnedEnemies;
 
-    Tuple<GameObject, int>[] enemyWaves;
+    List<Tuple<GameObject, int>> enemyWaves;
 
     // Update is called once per frame
     float timer = 0;
     
     int pathIterator = 0;
 
-    public EnemySpawner(Tuple<GameObject, int>[] enemyWaves, 
+    public EnemySpawner(List<Tuple<GameObject, int>> enemyWaves, 
                         List<GameObject> splines) {
         this.enemyWaves = enemyWaves;
         this.splines = splines;
     }
 
+    // Si se ha realizado el update (mientras sigamos spawneando), devolvemos true
+    public bool Update(){
+        if (spawnedEnemies >= maxEnemies) {
+            return false; 
+        }
 
-    void Update(){
         timer+=Time.deltaTime;
-        if(timer>delay && spawnedEnemies < maxEnemies){
+        if(timer>delay){
             timer = 0.0f;
             Spawn(pathIterator);
             pathIterator = (pathIterator + 1) % splines.Count;
             spawnedEnemies++;
         }
+        return true;
+            
     }
 
     void Spawn(int pathId){

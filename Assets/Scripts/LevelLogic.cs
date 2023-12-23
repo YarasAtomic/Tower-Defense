@@ -73,8 +73,9 @@ public class LevelLogic : MonoBehaviour
     [SerializeField]
     GameObject enemyPrefab4;
 
-    [SerializeField]
-    GameObject enemyPrefabs;
+    // TODO
+    // [SerializeField]
+    // GameObject[] enemyPrefabs;
     
 
     EnemySpawner enemySpawn;
@@ -100,6 +101,8 @@ public class LevelLogic : MonoBehaviour
         currentWave = 0;
 
         obtainedExp = 0;
+
+        enemySpawn=null;
         
     }
 
@@ -112,22 +115,26 @@ public class LevelLogic : MonoBehaviour
     void HandleWaves(){
         /* PSEUDOCÓDIGO LANZADOR DE OLEADAS Y TIMER */
 
-        // Si no hay enemigos
+        if (enemySpawn != null) {
+            if(!enemySpawn.Update()) {
+                enemySpawn = null;
+            }
+        }
+
+        // Si hay enemigos
         if (Enemy.GetCount() != 0) return; //TODO hay que ver quien gestiona los recursos de los generadores
 
         // Si estamos en la ultima oleada y no hay enemigos
         if  (currentWave == waves.GetLength(0) - 1 && Enemy.GetCount() == 0) {
-            // TODO
             obtainedExp = ObtainedExp();
             return;
         }
         
         // Actualizamos el contador
-        accWaveTimer += Time.deltaTime;
+        accWaveTimer -= Time.deltaTime;
 
-        if (accWaveTimer == 0 || /*pulsamos el boton de accelerate wave*/) {
-            // TODO: Se lanza la oleada. (NUM_ENEMIES)
-            SpawnWave();
+        if (accWaveTimer <= 0 /*|| pulsamos el boton de accelerate wave*/) {
+            InitialiseSpawner();
             currentWave++;
             accWaveResources = ACC_WAVE_MAX_RESOURCES * (int)accWaveTimer / ACC_WAVE_MAX_TIME; 
             currentResources += accWaveResources;
@@ -144,15 +151,15 @@ public class LevelLogic : MonoBehaviour
             factorExp+=0.5f;
         }
 
-        if (!Base.HasBeenDamaged()) {
+        if (/*!Base.HasBeenDamaged()*/true) {
             factorExp++;
         }
 
         return  (int)(factorExp * STAR_XP);
     }
 
-    void SpawnWave() {
-        Tuple<GameObject, int>[] enemyprefabArr = {
+    void InitialiseSpawner() {
+        List<Tuple<GameObject, int>> enemyprefabArr = {
             new Tuple<GameObject, int>(enemyPrefab1, waves[currentWave,0]),
             new Tuple<GameObject, int>(enemyPrefab2, waves[currentWave,1]),
             new Tuple<GameObject, int>(enemyPrefab3, waves[currentWave,2]),
@@ -162,19 +169,21 @@ public class LevelLogic : MonoBehaviour
         enemySpawn = new EnemySpawner(enemyprefabArr, splines);
     }
 
-    void Sell(/*Building b*/) {
+
+
+    void Sell(Building b) {
         // currentResources += b.GetSellingPrice();
         // b.Sell();
     }
 
-    void Repair(/*Building b*/) {
+    void Repair(Building b) {
         // int price = b.GetRepairPrice();
         // if (price > currentResources) return;
         //
         // currentResources -= price;
         // b.Repair();
     }
-
+    /*
     void Build(BuildingTile tile, TypeBuilding type){
         
         if (!tile.IsEmpty()) return;
@@ -194,7 +203,7 @@ public class LevelLogic : MonoBehaviour
         currentResources -= price;
         tile.Build(buildingPrefab);
     }
-
+    */
     void HandleEnemy() 
     {
         // for-earch (e in enemy)

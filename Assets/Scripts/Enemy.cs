@@ -182,7 +182,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    static int GetCount(){
+    public static int GetCount(){
         return enemyCount;
     }
 
