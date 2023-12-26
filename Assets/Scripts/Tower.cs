@@ -6,7 +6,7 @@ public class Tower : Building
 {
 	private static int TOWERS_DESTROYED = 0;
 
-	private static List<float> FACTOR_UPGRADE = new List<float> {1.0f, 1.2f, 1.4f};
+	private List<float> FACTOR_UPGRADE = new List<float> {1.0f, 1.2f, 1.4f};
 	private int UPGRADE_PRICE = 50;
 	private int BASE_HP_COST = 5;
 	private int BASE_REPAIR_RATE = 5;			// miliseconds
@@ -20,7 +20,11 @@ public class Tower : Building
 	private int repairCost;
 	private int repairRate;
 	private int damage;
-	private float shootingRadius;
+	[SerializeField] private float shootingRadius;
+	
+	private SphereCollider collider;
+	private List<Enemy> enemiesInRange;
+	private TypeEnemy favouriteEnemyType;
 	private Enemy selectedEnemy;
 
 	void Start() {
@@ -38,9 +42,18 @@ public class Tower : Building
 		// Ataques
 		damage = (int) (BASE_DAMAGE * FACTOR_UPGRADE[currentUpgrade]);
 		shootingRadius = BASE_SHOOTING_RADIUS; // * shooting_radius_factor[shooting_radius_upgrade]
-		selectedEnemy = null;
 
+		collider = gameObject.GetComponent<SphereCollider>();
+		collider.radius = shootingRadius;
+		enemiesInRange = new List<Enemy>();
+		favouriteEnemyType = TypeEnemy.Enemy1;
+		selectedEnemy = null;
+		
 		animator = gameObject.GetComponent<Animator>();
+	}
+
+	void Update() {
+		if (selectedEnemy == null && enemiesInRange.Count != 0) CheckEnemiesInRange();
 	}
 
 	public static int GetTowersDestroyed() => TOWERS_DESTROYED;
@@ -56,6 +69,24 @@ public class Tower : Building
 
 	// ACTION methods
 
+	public void CheckEnemiesInRange() {
+		float minDist = float.MaxValue;
+		
+		foreach (Enemy enemy in enemiesInRange) {
+			if (enemy.GetTypeEnemy() == favouriteEnemyType) {
+				selectedEnemy = enemy;
+				break;
+			}
+			else {
+				float dist = Vector3.Distance(this.transform.position, enemy.transform.position);
+				if (dist < minDist) {
+					minDist = dist;
+					selectedEnemy = enemy;
+				}
+			}
+		}
+	}
+
 	public void UpgradeTower() {
 		currentUpgrade += 1; // La comprobación se hace fuera
 
@@ -70,5 +101,15 @@ public class Tower : Building
 		animator.SetBool("destroyTower", true);
 
 		TowerDestroyed();
+	}
+
+	// COLLISIONS methods
+
+	void OnCollisionEnter(Collision collision) {
+		enemiesInRange.Add(collision.gameObject.GetComponent<Enemy>());
+	}
+
+	void OnCollisionExit(Collision collision) {
+		enemiesInRange.Remove(collision.gameObject.GetComponent<Enemy>());
 	}
 }

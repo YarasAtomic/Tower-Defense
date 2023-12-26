@@ -14,7 +14,7 @@ public class Enemy : MonoBehaviour
     int otherEnemyId = -1;
     SplineAnimate animate;
 
-    [SerializeField] int type;
+    [SerializeField] TypeEnemy TYPE;
 
     // States
     bool dying = false;
@@ -124,8 +124,8 @@ public class Enemy : MonoBehaviour
         return otherEnemyId;
     }
 
-    public int GetEnemyType(){
-        return type;
+    public TypeEnemy GetTypeEnemy(){
+        return TYPE;
     }
 
     public void Damage(int dmg){

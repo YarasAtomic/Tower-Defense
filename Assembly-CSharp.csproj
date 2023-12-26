@@ -66,9 +66,11 @@
   <ItemGroup>
     <Compile Include="Assets/Scripts/Tower.cs" />
     <Compile Include="Assets/Scripts/Enemy.cs" />
+    <Compile Include="Assets/Scripts/TypeBuilding.cs" />
     <Compile Include="Assets/Scripts/EnemySpawner.cs" />
     <Compile Include="Assets/Scripts/Building.cs" />
     <Compile Include="Assets/Scripts/Generator.cs" />
+    <Compile Include="Assets/Scripts/TypeEnemy.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets/Shaders/TerrainShaderOld.shader" />
