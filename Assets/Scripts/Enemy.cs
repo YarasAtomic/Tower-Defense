@@ -21,12 +21,10 @@ public class Enemy : MonoBehaviour
 
     // Values
 
-    [SerializeField] int TYPE;
+    [SerializeField] TypeEnemy TYPE;
     [SerializeField] float DEATH_TIME;
     [SerializeField] float ATTACK_DELAY;
     [SerializeField] int DAMAGE;
-
-    [SerializeField] TypeEnemy TYPE;
 
     // States
     bool dying = false;
@@ -183,7 +181,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    static int GetCount(){
+    public static int GetCount(){
         return enemyCount;
     }
 

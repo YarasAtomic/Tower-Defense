@@ -5,7 +5,6 @@ public abstract class Building : MonoBehaviour
 	private TypeBuilding type;
 
     protected int BASE_HP;
-	protected int PURCHASE_PRICE;
 	protected int MAX_SELLING_PRICE;
 
     protected int hp;
@@ -13,14 +12,18 @@ public abstract class Building : MonoBehaviour
 
 	protected Animator animator;
 
+	protected BuildingTile tile;
+
+	// INIT method
+
+	public void Initialise(BuildingTile buildingTile) {
+		tile = buildingTile;
+	}
+
 	// GET methods
 
 	public TypeBuilding GetTypeBuilding() {
 		return type;
-	}
-
-	public int GetPurchasePrice() {
-		return PURCHASE_PRICE;
 	}
 
 	public abstract int GetSellingPrice();

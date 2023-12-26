@@ -125,7 +125,7 @@ public class LevelLogic : MonoBehaviour
         // Actualizamos el contador
         accWaveTimer += Time.deltaTime;
 
-        if (accWaveTimer == 0 || /*pulsamos el boton de accelerate wave*/) {
+        if (accWaveTimer == 0 /*|| pulsamos el boton de accelerate wave*/) {
             // TODO: Se lanza la oleada. (NUM_ENEMIES)
             SpawnWave();
             currentWave++;
@@ -144,9 +144,9 @@ public class LevelLogic : MonoBehaviour
             factorExp+=0.5f;
         }
 
-        if (!Base.HasBeenDamaged()) {
-            factorExp++;
-        }
+        // if (!Base.HasBeenDamaged()) {
+        //     factorExp++;
+        // }
 
         return  (int)(factorExp * STAR_XP);
     }
@@ -182,7 +182,7 @@ public class LevelLogic : MonoBehaviour
         int price;
         GameObject buildingPrefab;
         
-        if (type == TypeBuilding.Tower) {
+        if (type == TypeBuilding.Tower1) {
             price = Tower.GetPurchasePrice();
             buildingPrefab = towerPrefab;
         }else {
