@@ -92,7 +92,7 @@ public class Enemy : MonoBehaviour
     }
 
     private void HandleDeath() {
-        if(deathTimer == 0){
+        if(deathTimer == 0 && !dying){
             Die();
         }
 
@@ -212,17 +212,24 @@ public class Enemy : MonoBehaviour
         return enemyCount;
     }
 
-    const float frontRayLength = 1f;
+    const float FRONT_RAY_LENGTH = 1f;
+    const float RAY_DELTA = 0.5f;
     private bool UpdateRaycast(out RaycastHit raycastHit){
-        if(Utils.Raycast(transform.position,transform.TransformDirection(Vector3.forward),frontRayLength,LayerMask.GetMask("Enemy","Building"),out raycastHit)){
-            return true;
-        }
-        if(Utils.Raycast(transform.position,transform.TransformDirection(new Vector3(1,0,1).normalized),frontRayLength,LayerMask.GetMask("Enemy","Building"),out raycastHit)){
-            return true;
-        }
-        if(Utils.Raycast(transform.position,transform.TransformDirection(new Vector3(-1,0,1).normalized),frontRayLength,LayerMask.GetMask("Enemy","Building"),out raycastHit)){
-            return true;
-        }
+        
+        float i=-1;
+
+        do {
+            if(Utils.Raycast(
+                    transform.position,
+                    transform.TransformDirection(new Vector3(i,0,1).normalized),
+                    FRONT_RAY_LENGTH,
+                    LayerMask.GetMask("Enemy","Building"),
+                    out raycastHit)){
+                return true;
+            }
+            i+=RAY_DELTA;
+        } while(i <=1);
+
         return false;
     }
 }

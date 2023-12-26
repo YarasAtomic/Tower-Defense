@@ -27,6 +27,8 @@ public class LevelLogic : MonoBehaviour
     // bool levelFinished;
     
     EnemySpawner enemySpawn;
+
+    SpecialAttack specialAttack;
     
     // Experiencia máxima obtenida por estrella
     [SerializeField] int STAR_XP;
@@ -42,6 +44,8 @@ public class LevelLogic : MonoBehaviour
     [SerializeField] GameObject enemyPrefab2;
     [SerializeField] GameObject enemyPrefab3;
     [SerializeField] GameObject enemyPrefab4;
+    [SerializeField] GameObject splashAttackPrefab;
+    [SerializeField] GameObject uniformAttackPrefab;
     
     
     //!---------------------------------------------------------------!//
@@ -157,7 +161,6 @@ public class LevelLogic : MonoBehaviour
 
     public void ShowBuildingTiles(){
         foreach (BuildingTile bt in ALL_POSITIONS) {
-            Debug.Log("Show->"+bt.IsEmpty());
             if (bt.IsEmpty()) {
                 bt.Show();
             }
@@ -168,7 +171,6 @@ public class LevelLogic : MonoBehaviour
 
     public void HideBuildingTiles(){
         foreach (BuildingTile bt in ALL_POSITIONS) {
-            Debug.Log("Hide->"+bt.IsEmpty());
             bt.Hide();
         }
     }
@@ -282,8 +284,43 @@ public class LevelLogic : MonoBehaviour
     //-----------------------------------------------------------------//
 
     public bool LevelFinished() {
-        // return levelFinished;
         return currentWave == GetTotalWaves() && !InWave();
+    }
+
+    //*---------------------------------------------------------------*//
+    //*----------------------- SPECIAL ATTACKS -----------------------*//
+    //*---------------------------------------------------------------*//
+    
+    public void InitialiseSpecialAttack(TypeAttack typeAttack,Camera mainCamera) {
+        switch(typeAttack){
+            case TypeAttack.UniformAttack:
+                specialAttack = Instantiate(uniformAttackPrefab,Vector3.zero,Quaternion.identity).GetComponent<SpecialAttack>();
+                // specialAttack.Initialise(mainCamera);
+                break;
+            case TypeAttack.SplashAttack:
+                specialAttack = Instantiate(splashAttackPrefab, Vector3.zero, Quaternion.identity).GetComponent<SpecialAttack>();
+                break;
+            default:
+                return;
+        }
+
+        specialAttack.Initialise(mainCamera);
+    }
+    
+    //-----------------------------------------------------------------//
+
+    public void DestroySpecialAttack() {
+        if(specialAttack!=null) { //! puede que pete
+            Destroy(specialAttack.gameObject);
+            specialAttack = null;
+        }
+    }
+
+    //-----------------------------------------------------------------//
+
+    public void DeploySpecialAttack() {
+        specialAttack.Deploy();
+        specialAttack = null;
     }
 
     //!---------------------------------------------------------------!//

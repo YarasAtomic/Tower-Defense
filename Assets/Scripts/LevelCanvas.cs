@@ -48,12 +48,14 @@ public class LevelCanvas : MonoBehaviour
                repairButton, 
                upgradeButton;
 
+    GameObject splashAttackButton;
+
     [SerializeField] GameObject levelLogicGameObject;
 
     LevelLogic levelLogic;
 
     enum InteractionMode{
-        Build, None
+        Build, SpecialAttack, None
     };
 
     InteractionMode interactionMode;
@@ -107,6 +109,8 @@ public class LevelCanvas : MonoBehaviour
         sellButton      = transform.Find("buildingSubmenu/sellButton").gameObject;
         repairButton    = transform.Find("buildingSubmenu/repairButton").gameObject;
         upgradeButton   = transform.Find("buildingSubmenu/upgradeButton").gameObject;
+
+        splashAttackButton = transform.Find("splashAttackButton").gameObject;
 
         levelLogic = levelLogicGameObject.GetComponent<LevelLogic>();
 
@@ -186,7 +190,6 @@ public class LevelCanvas : MonoBehaviour
     void HandleMouseInputs() {
         if (Input.GetMouseButtonDown(0)) {
             LeftClick();
-
         }
     }
 
@@ -201,8 +204,10 @@ public class LevelCanvas : MonoBehaviour
         skipButton.GetComponent<Button>().interactable = !GameTime.IsPaused();
         accelerateButton.GetComponent<Button>().interactable = !GameTime.IsPaused();
         tower1Button.GetComponent<Button>().interactable = !GameTime.IsPaused();
+        splashAttackButton.GetComponent<Button>().interactable = !GameTime.IsPaused();
         if (GameTime.IsPaused()) {
             levelLogic.HideBuildingTiles();
+            levelLogic.DestroySpecialAttack();
             interactionMode = InteractionMode.None;
         }
     }
@@ -213,27 +218,64 @@ public class LevelCanvas : MonoBehaviour
         interactionMode = interactionMode != InteractionMode.Build ? InteractionMode.Build : InteractionMode.None;
         typeBuilding = type;
 
-        Debug.Log("Interaction mode: "+interactionMode);
-        Debug.Log("Type building: "+typeBuilding);
+        Debug.Log("Interaction mode: " + interactionMode);
+        Debug.Log("Type building: "    + type);
 
         if (interactionMode == InteractionMode.Build) {
             levelLogic.ShowBuildingTiles();
+            levelLogic.DestroySpecialAttack();
         } else {
             levelLogic.HideBuildingTiles();
         }
     }
 
+    //-----------------------------------------------------------------//
+
+    public void ToggleSplashAttack() {
+        ToggleSpecialAttackMode(TypeAttack.SplashAttack);
+    }
+
+    //-----------------------------------------------------------------//
+
+    public void ToggleUniformAttack() {
+        ToggleSpecialAttackMode(TypeAttack.UniformAttack);
+    }
+
+    //-----------------------------------------------------------------//
+
+    public void ToggleSpecialAttackMode(TypeAttack type) {
+        interactionMode = interactionMode != InteractionMode.SpecialAttack ? InteractionMode.SpecialAttack : InteractionMode.None;
+
+        Debug.Log("Interaction mode: "+interactionMode);
+        Debug.Log("Type attack: "+type);
+
+        if (interactionMode == InteractionMode.SpecialAttack) {
+            levelLogic.InitialiseSpecialAttack(type,mainCamera.GetComponent<Camera>());
+            levelLogic.HideBuildingTiles();
+        } else {
+            levelLogic.DestroySpecialAttack();
+        }
+    }
+
+    //-----------------------------------------------------------------//
+
     public void ToggleBuildingModeTower1() {
         ToggleBuildingMode(TypeBuilding.Tower1);
     }
+
+    //-----------------------------------------------------------------//
 
     public void ToggleBuildingModeTower2() {
         ToggleBuildingMode(TypeBuilding.Tower2);
     }
 
+    //-----------------------------------------------------------------//
+
     public void ToggleBuildingModeTower3() {
         ToggleBuildingMode(TypeBuilding.Tower3);
     }
+
+    //-----------------------------------------------------------------//
 
     public void ToggleBuildingModeGenerator() {
         ToggleBuildingMode(TypeBuilding.Generator);
@@ -255,7 +297,7 @@ public class LevelCanvas : MonoBehaviour
 
     public void LeftClick() {
         Ray ray = mainCamera.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
-        Debug.DrawRay(mainCamera.GetComponent<Camera>().transform.position, ray.direction*100);
+        //Debug.DrawRay(mainCamera.GetComponent<Camera>().transform.position, ray.direction*100);
         RaycastHit hit;
         if(!Physics.Raycast(ray,out hit)) return;
         
@@ -280,6 +322,11 @@ public class LevelCanvas : MonoBehaviour
                 HideBuildingSubmenu();
                 selectedBuilding = null;
             }
+        }
+
+        if (interactionMode == InteractionMode.SpecialAttack) {
+            levelLogic.DeploySpecialAttack();
+            interactionMode = InteractionMode.None;
         }
     }
 
