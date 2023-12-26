@@ -6,206 +6,289 @@ using UnityEngine;
 
 public class LevelLogic : MonoBehaviour
 {
-
-    public int[,] waves = {{1,1,1},{1,1,1},{1,1,1},{1,1,1}};
+    //!---------------------------------------------------------------!//
+    //!---------------------------------------------------------------!//
+    //!---------------------- CLASS ATTRIBUTES -----------------------!//
+    //!---------------------------------------------------------------!//
+    //!---------------------------------------------------------------!//
+    public int[,] waves = {{1,0,0,0},{1,0,0,0},{1,0,0,0},{1,0,0,0}};
 
     // Posición de la base en el nivel
-    [SerializeField]
-    Vector3 BASE_POSITION;
+    [SerializeField] BuildingTile BASE_POSITION;
 
     // Todas las posiciones donde se pueden colocar una torre o generador en el nivel
-    public Vector3[] ALL_POSITIONS;
-
-    // Posiciones ocupadas dentro del nivel. Se almacena un puntero a la instancia de la construcción que ocupa la posición.
-    // Building[] occupiedPositions;
-    
-    // Caminos que los enemigos pueden seguir 
-    // const Path[] PATHS;
+    public BuildingTile[] ALL_POSITIONS;
 
     public int currentWave;
-
-    // Número de torres destruidas hasta al momento
     public int destroyedTowers;
-    
-    // Número actual de recursos disponibles
     public int currentResources;
-    
-    // Experiencia máxima obtenida por estrella
-    int STAR_XP;
-
-    // Experiencia total obtenida tras finalizar el nivel
-    public int obtainedExp;
-
-
-    int ACC_WAVE_MAX_RESOURCES;
-    
     int accWaveResources;
-
-    int ACC_WAVE_MAX_TIME;
-
     float accWaveTimer;
-
-    int INITIAL_RESOURCES;
-
+    // bool levelFinished;
     
-    // Enemy[] enemies;
-
-    int enemiesLeft;
-
-    [SerializeField]
-    List<GameObject> splines;
-
-    [SerializeField]
-    GameObject towerPrefab;
-
-    [SerializeField]
-    GameObject generatorPrefab;
-
-    [SerializeField]
-    GameObject enemyPrefab1;
-
-    [SerializeField]
-    GameObject enemyPrefab2;
-
-    [SerializeField]
-    GameObject enemyPrefab3;
-    
-    [SerializeField]
-    GameObject enemyPrefab4;
-
-    // TODO
-    // [SerializeField]
-    // GameObject[] enemyPrefabs;
-    
-
     EnemySpawner enemySpawn;
     
+    // Experiencia máxima obtenida por estrella
+    [SerializeField] int STAR_XP;
+    [SerializeField] int ACC_WAVE_MAX_RESOURCES;
+    [SerializeField] int ACC_WAVE_MAX_TIME;
+    [SerializeField] int INITIAL_RESOURCES;
+
+    [SerializeField] List<GameObject> splines;
+
+    [SerializeField] GameObject towerPrefab;
+    [SerializeField] GameObject generatorPrefab;
+    [SerializeField] GameObject enemyPrefab1;
+    [SerializeField] GameObject enemyPrefab2;
+    [SerializeField] GameObject enemyPrefab3;
+    [SerializeField] GameObject enemyPrefab4;
+    
+    
+    //!---------------------------------------------------------------!//
+    //!---------------------------------------------------------------!//
+    //!------------------------ CLASS METHODS ------------------------!//
+    //!---------------------------------------------------------------!//
+    //!---------------------------------------------------------------!//
+
+    //*---------------------------------------------------------------*//
+    //*---------------------------- START ----------------------------*//
+    //*---------------------------------------------------------------*//
     void Start()
     {
-        // Necesitamos un array de Towers?: Tower[] towers;
-        // towers = new Tower[MAX_TOWERS];
-
-        // WAVES = new Wave[MAX_WAVES];
-
-        // PATHS = new Path[MAX_PATHS];
-
-        // Tower.destroyedTowers = 0; // lo hacen en la clase Tower, ¿no?
-
+        destroyedTowers  = 0;
+        currentWave      = 0;
         currentResources = INITIAL_RESOURCES;
-
-        // Se iniciliza acc_wave_timer
-        accWaveTimer = ACC_WAVE_MAX_TIME;
-
-        enemiesLeft = 0;
-
-        currentWave = 0;
-
-        obtainedExp = 0;
-
-        enemySpawn=null;
-        
+        accWaveTimer     = ACC_WAVE_MAX_TIME;
+        enemySpawn       = null;
+        ALL_POSITIONS    = FindObjectsOfType<BuildingTile>(true);
+        Debug.Log(ALL_POSITIONS.Length);
     }
 
-    
+    //*---------------------------------------------------------------*//
+    //*---------------------------- UPDATE ---------------------------*//
+    //*---------------------------------------------------------------*//
+
     void Update()
     {   
         HandleWaves();
     }
 
+    //*---------------------------------------------------------------*//
+    //*------------------------- WAVE HANDLER ------------------------*//
+    //*---------------------------------------------------------------*//
+
     void HandleWaves(){
-        /* PSEUDOCÓDIGO LANZADOR DE OLEADAS Y TIMER */
 
         if (enemySpawn != null) {
-            if(!enemySpawn.Update()) {
+           if(!enemySpawn.Update()) {
                 enemySpawn = null;
             }
         }
 
         // Si hay enemigos
-        if (Enemy.GetCount() != 0) return; //TODO hay que ver quien gestiona los recursos de los generadores
+        if (Enemy.GetCount() != 0) return; // TODO hay que ver quien gestiona los recursos de los generadores
 
         // Si estamos en la ultima oleada y no hay enemigos
-        if  (currentWave == waves.GetLength(0) - 1 && Enemy.GetCount() == 0) {
-            obtainedExp = ObtainedExp();
+        if  (currentWave == waves.GetLength(0) && !InWave()) {
+            // levelFinished = true;
             return;
         }
         
         // Actualizamos el contador
-        accWaveTimer -= Time.deltaTime;
+        accWaveTimer -= GameTime.DeltaTime;
 
-        if (accWaveTimer <= 0 /*|| pulsamos el boton de accelerate wave*/) {
-            InitialiseSpawner();
-            currentWave++;
-            accWaveResources = ACC_WAVE_MAX_RESOURCES * (int)accWaveTimer / ACC_WAVE_MAX_TIME; 
-            currentResources += accWaveResources;
-            accWaveTimer = ACC_WAVE_MAX_TIME;
+        if (accWaveTimer <= 0) {
+            StartWave();
         }
     }
 
-    private int ObtainedExp(){
-        float factorExp = 1;
+    //-----------------------------------------------------------------//
 
-        if (destroyedTowers == 0) {
-            factorExp++;
-        }else if (destroyedTowers == 1) {
-            factorExp+=0.5f;
-        }
+    public void StartWave() {
+        if (GameTime.IsPaused()) return;
 
-        if (/*!Base.HasBeenDamaged()*/true) {
-            factorExp++;
-        }
-
-        return  (int)(factorExp * STAR_XP);
+        InitialiseSpawner();
+        currentWave++;
+        accWaveResources = ACC_WAVE_MAX_RESOURCES * (int)accWaveTimer / ACC_WAVE_MAX_TIME; 
+        currentResources += accWaveResources;
+        accWaveTimer = ACC_WAVE_MAX_TIME;
     }
+
+    //-----------------------------------------------------------------//
 
     void InitialiseSpawner() {
-        List<Tuple<GameObject, int>> enemyprefabArr = {
-            new Tuple<GameObject, int>(enemyPrefab1, waves[currentWave,0]),
-            new Tuple<GameObject, int>(enemyPrefab2, waves[currentWave,1]),
-            new Tuple<GameObject, int>(enemyPrefab3, waves[currentWave,2]),
-            new Tuple<GameObject, int>(enemyPrefab4, waves[currentWave,3])
+        List<ValueTuple<GameObject,int>> enemyprefabs = new List<ValueTuple<GameObject,int>> {
+            new ValueTuple<GameObject,int> (enemyPrefab1, waves[currentWave,0]),
+            new ValueTuple<GameObject,int> (enemyPrefab2, waves[currentWave,1]),
+            new ValueTuple<GameObject,int> (enemyPrefab3, waves[currentWave,2]),
+            new ValueTuple<GameObject,int> (enemyPrefab4, waves[currentWave,3])
         };
-        
-        enemySpawn = new EnemySpawner(enemyprefabArr, splines);
+        enemySpawn = new EnemySpawner(enemyprefabs, splines, this);
     }
 
+    //*---------------------------------------------------------------*//
+    //*------------------------- XP AND STARS ------------------------*//
+    //*---------------------------------------------------------------*//
 
+    public int ObtainedStars(){
+        int numberOfStars = 1;
 
-    void Sell(Building b) {
+        if (destroyedTowers == 0) {
+            numberOfStars++;
+        }
+        if (/*!Base.HasBeenDamaged()*/true) {
+            numberOfStars++;
+        }
+
+        return numberOfStars;
+    }
+
+    //-----------------------------------------------------------------//
+
+    public int ObtainedExp(){
+        float factorExp = destroyedTowers == 1 ? 0.5f : 0f;
+
+        return (int)((ObtainedStars() + factorExp) * STAR_XP);
+    }
+
+    //*---------------------------------------------------------------*//
+    //*----------------------- BUILDING METHODS ----------------------*//
+    //*---------------------------------------------------------------*//
+
+    public void ShowBuildingTiles(){
+        foreach (BuildingTile bt in ALL_POSITIONS) {
+            Debug.Log("Show->"+bt.IsEmpty());
+            if (bt.IsEmpty()) {
+                bt.Show();
+            }
+        }
+    }
+
+    //-----------------------------------------------------------------//
+
+    public void HideBuildingTiles(){
+        foreach (BuildingTile bt in ALL_POSITIONS) {
+            Debug.Log("Hide->"+bt.IsEmpty());
+            bt.Hide();
+        }
+    }
+
+    public void Sell(Building b) {
         // currentResources += b.GetSellingPrice();
         // b.Sell();
     }
 
-    void Repair(Building b) {
+    //-----------------------------------------------------------------//
+
+    public void Repair(Building b) {
         // int price = b.GetRepairPrice();
         // if (price > currentResources) return;
         //
         // currentResources -= price;
         // b.Repair();
     }
-    /*
-    void Build(BuildingTile tile, TypeBuilding type){
+
+    //-----------------------------------------------------------------//
+
+    public void Upgrade(Building b) {
+        // int price = b.GetRepairPrice();
+        // if (price > currentResources) return;
+        //
+        // currentResources -= price;
+        // b.Repair();
+    }
+
+    //-----------------------------------------------------------------//
+
+    public void Build(BuildingTile tile, TypeBuilding type){
         
         if (!tile.IsEmpty()) return;
 
         int price;
         GameObject buildingPrefab;
         
-        if (type == TypeBuilding.Tower) {
-            price = Tower.GetPurchasePrice();
+        if (type == TypeBuilding.Tower1) {
+            // price = Tower.GetPurchasePrice();
             buildingPrefab = towerPrefab;
-        }else {
-            price = Generator.GetPurchasePrice();
+        } else {
+            // price = Generator.GetPurchasePrice();
             buildingPrefab = generatorPrefab;
         }
 
-        if (price > currentResources) return;
-        currentResources -= price;
+        // if (price > currentResources) return;
+        // currentResources -= price;
         tile.Build(buildingPrefab);
     }
-    */
-    void HandleEnemy() 
-    {
-        // for-earch (e in enemy)
+
+    //*---------------------------------------------------------------*//
+    //*---------------------- GETTERS & SETTERS ----------------------*//
+    //*---------------------------------------------------------------*//
+
+    public int GetCurrentWave() {
+        return currentWave;
     }
+
+    //-----------------------------------------------------------------//
+
+    public int GetTotalWaves() {
+        return waves.GetLength(0);
+    }
+
+    //-----------------------------------------------------------------//
+
+    public int GetCurrentResources() {
+        return currentResources;
+    }
+
+    //-----------------------------------------------------------------//
+
+    public void AddResources(int resources) {
+        currentResources += resources;
+    }
+
+    //-----------------------------------------------------------------//
+
+    public float GetWaveTimer() {
+        return accWaveTimer / ACC_WAVE_MAX_TIME;
+    }  
+
+    //*---------------------------------------------------------------*//
+    //*------------------------ BUTTON METHODS -----------------------*//
+    //*---------------------------------------------------------------*//
+
+    public void PauseGame() {
+        if (GameTime.IsPaused()) {
+            GameTime.Resume();
+        } else {
+            GameTime.Pause();
+        }
+    }
+
+    //-----------------------------------------------------------------//
+
+    public void AccelerateGame() {
+        GameTime.GameSpeed = 
+            (GameTime.GameSpeed == 4) ? (1) : (GameTime.GameSpeed * 2);
+    }
+
+    //*---------------------------------------------------------------*//
+    //*---------------------------- FLAGS ----------------------------*//
+    //*---------------------------------------------------------------*//
+    
+    public bool InWave() {
+        return enemySpawn != null || Enemy.GetCount() != 0;
+    }
+
+    //-----------------------------------------------------------------//
+
+    public bool LevelFinished() {
+        // return levelFinished;
+        return currentWave == GetTotalWaves() && !InWave();
+    }
+
+    //!---------------------------------------------------------------!//
+    //!---------------------------------------------------------------!//
+    //!---------------------- END OF LevelLogic ----------------------!//
+    //!---------------------------------------------------------------!//
+    //!---------------------------------------------------------------!//
 }
