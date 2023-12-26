@@ -26,6 +26,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] float ATTACK_DELAY;
     [SerializeField] int DAMAGE;
 
+    [SerializeField] TypeEnemy TYPE;
 
     // States
     bool dying = false;
@@ -84,7 +85,7 @@ public class Enemy : MonoBehaviour
                     attackTimer+=Time.deltaTime;
                     if(attackTimer>ATTACK_DELAY){
                         attackTimer = 0;
-                        otherBuildingObject.Damage(DAMAGE);
+                        otherBuildingObject.DamageBuilding(DAMAGE);
                     }
                 }
 
@@ -152,7 +153,7 @@ public class Enemy : MonoBehaviour
         return otherEnemyId;
     }
 
-    public int GetEnemyType(){
+    public TypeEnemy GetTypeEnemy(){
         return TYPE;
     }
 
