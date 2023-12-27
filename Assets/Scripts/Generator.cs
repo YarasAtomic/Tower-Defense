@@ -9,6 +9,13 @@ public class Generator : Building
     /*[SerializeField]*/ private int RESOURCE_AMOUNT = 10; // Debería de ser const
     /*[SerializeField]*/ private  float timer;
 
+	public override void Initialise(BuildingTile buildingTile) {
+		base.tile = buildingTile;
+	}
+
+	// Start is called before the first frame update
+	
+
     // Start is called before the first frame update
     void Start()
     {

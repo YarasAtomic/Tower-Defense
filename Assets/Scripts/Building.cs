@@ -16,9 +16,7 @@ public abstract class Building : MonoBehaviour
 
 	// INIT method
 
-	public void Initialise(BuildingTile buildingTile) {
-		tile = buildingTile;
-	}
+	public abstract void Initialise(BuildingTile buildingTile);
 
 	// GET methods
 

@@ -21,12 +21,19 @@ public class Tower : Building
 	private int repairCost;
 	private int repairRate;
 	private int damage;
-	private float shootingRadius;
+	[SerializeField] private float shootingRadius;
+	private float attackTimer;
 	
-	// private SphereCollider collider;
 	private List<Enemy> enemiesInRange;
 	private TypeEnemy favouriteEnemyType;
 	private Enemy selectedEnemy;
+
+	public override void Initialise(BuildingTile buildingTile) {
+		base.tile = buildingTile;
+
+		SphereCollider collider = gameObject.GetComponent<SphereCollider>();
+		collider.radius = shootingRadius;
+	}
 
 	void Start() {
 		// General
@@ -42,9 +49,8 @@ public class Tower : Building
 		// Ataques
 		damage = (int) (BASE_DAMAGE * FACTOR_UPGRADE[currentUpgrade]);
 		shootingRadius = BASE_SHOOTING_RADIUS; // * shooting_radius_factor[shooting_radius_upgrade]
+		attackTimer = 0.0f;
 
-		// collider = gameObject.GetComponent<SphereCollider>();
-		// collider.radius = shootingRadius;
 		enemiesInRange = new List<Enemy>();
 		favouriteEnemyType = TypeEnemy.Enemy1;
 		selectedEnemy = null;
@@ -54,7 +60,12 @@ public class Tower : Building
 	}
 
 	void Update() {
-		if (selectedEnemy == null && enemiesInRange.Count != 0) CheckEnemiesInRange();
+		if (selectedEnemy == null && enemiesInRange.Count != 0) {
+			CheckEnemiesInRange();
+		}
+		else if (selectedEnemy != null) {
+			AttackEnemy();
+		}
 	}
 
 	public static int GetTowersDestroyed() => TOWERS_DESTROYED;
@@ -90,6 +101,12 @@ public class Tower : Building
 				}
 			}
 		}
+
+		Debug.Log(selectedEnemy);
+	}
+
+	public void AttackEnemy() {
+		
 	}
 
 	public void UpgradeTower() {
@@ -98,7 +115,7 @@ public class Tower : Building
 		animator.SetInteger("towerLevel", currentUpgrade);
 	}
 
-	public void RepareTower(bool repairing) {
+	public void RepairTower(bool repairing) {
 		animator.SetBool("repairTower", repairing);
 	}
 
