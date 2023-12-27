@@ -6,6 +6,8 @@ public class MatrixEditor : Editor
 {
     public override void OnInspectorGUI()
     {
+        serializedObject.Update();
+
         LevelLogic levelLogic = (LevelLogic)target;
 
  
@@ -56,12 +58,18 @@ public class MatrixEditor : Editor
             {
                 // You can add additional logic here if needed
                 Debug.Log("Matrix values applied!");
+                // Apply any changes to the serialized object
+                serializedObject.ApplyModifiedProperties();
+            }
+
+            if (GUI.changed) {
+                Debug.Log("En GUI.changed");
+                serializedObject.ApplyModifiedProperties();
             }
         }
 
     
 
-        // Apply any changes to the serialized object
-        serializedObject.ApplyModifiedProperties();
+        
     }
 }

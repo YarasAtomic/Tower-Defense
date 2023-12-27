@@ -6,12 +6,17 @@ public class Enemy : MonoBehaviour
     static int enemyCount = 0;
     [SerializeField] int MAX_HEALTH;
     [SerializeField] int health;
+    [SerializeField] float speed;
+    [SerializeField] int RESOURCE_DROP;
     
     int splineId = -1;
     int id;
 
     int otherEnemyId = -1;
-    SplineAnimate splineAnimate;
+
+    LevelLogic levelLogic;
+
+    SplineAnimationController splineAnimationController;
     Animator animator;
     Rigidbody rb;
 
@@ -36,6 +41,8 @@ public class Enemy : MonoBehaviour
 
     float attackTimer = 0;
 
+    bool isMoving = true;
+
     Vector3 splineToGroundRay = Vector3.down;
 
     // Start is called before the first frame update
@@ -43,102 +50,123 @@ public class Enemy : MonoBehaviour
     void Start(){
         id = (enemyCount++)-1;
         health = MAX_HEALTH;
-        splineAnimate = GetSplineAnimate();
+        splineAnimationController = GetSplineAnimationController();
         rb = gameObject.GetComponent<Rigidbody>();
         splineToGroundRay = new Vector3(UnityEngine.Random.Range(-MAX_GROUND_RAY_VARIATION,MAX_GROUND_RAY_VARIATION),-1,UnityEngine.Random.Range(-MAX_GROUND_RAY_VARIATION,MAX_GROUND_RAY_VARIATION));
         animator = gameObject.GetComponentInChildren<Animator>();
-
+        Debug.Log(animator);
         animator.SetFloat("idleBlend",UnityEngine.Random.value);
     }
 
 
     // Update is called once per frame
     void Update(){
-        if(health > 0){
-            animator.SetBool("attacking",attacking);
-            UpdatePos();
 
-            RaycastHit hit;
-            
-            if(UpdateRaycast(out hit)){
-                Enemy otherEnemyObject = hit.collider.gameObject.GetComponent<Enemy>();
-                Building otherBuildingObject = hit.collider.gameObject.GetComponent<Building>();
-                if(otherEnemyObject!=null){
-                    attacking = false;
-                    if(otherEnemyObject.GetOtherEnemyId()!=id){
-                        splineAnimate.Pause();
-                        animator.SetBool("moving",false);
-                        otherEnemyId = otherEnemyObject.GetId();
-                    }else{
-                        splineAnimate.Play();
-                        animator.SetBool("moving",true);
-                    }
-                    // ! esto permite evitar bloqueos binarios (A para por B y B para por A)
-                    // ! pero bloqueos ternarios y superiores no (A para por B, B por C y C por A)
-                }else if(otherBuildingObject!=null){
-                    splineAnimate.Pause();
-                    animator.SetBool("moving",false);
-                    if(attacking==false){
-                        attacking=true;
-                        attackTimer = 0;
-                    }
-                    attackTimer+=Time.deltaTime;
-                    if(attackTimer>ATTACK_DELAY){
-                        attackTimer = 0;
-                        otherBuildingObject.DamageBuilding(DAMAGE);
-                    }
-                }
+        splineAnimationController.speed = isMoving ? speed : 0;
+        animator.speed = GameTime.GameSpeed;
 
-            }else if(splineAnimate.ElapsedTime<splineAnimate.Duration){
-                attacking = false;
-                splineAnimate.Play();
-                animator.SetBool("moving",true);
-            }else{
-                animator.SetBool("moving",false);
+        if (health <= 0) {
+            HandleDeath();
+            return;
+        }
+
+        animator.SetBool("attacking",attacking);
+        UpdatePos();
+
+        RaycastHit hit;
+        
+        if(UpdateRaycast(out hit)){
+            Enemy otherEnemy = hit.collider.gameObject.GetComponent<Enemy>();
+            Building otherBuilding = hit.collider.gameObject.GetComponent<Building>();
+            if(otherEnemy!=null){
+                HandleCollisionWithEnemy(otherEnemy);
+            }else if(otherBuilding!=null){
+                HandleCollisionWithBuilding(otherBuilding);
+
             }
-            
+        }else if(splineAnimationController.distancePercentage < 1){
+            attacking = false;
+            isMoving = true;
+            animator.SetBool("moving",true);
         }else{
-            if(deathTimer == 0){
-                // Executes one time when health reaches 0
-                // Dies
+            animator.SetBool("moving",false);
+        }
+        
+    }
 
-                // Remove animation and activate physics
-                animator.SetBool("alive",false);
-                dying = true;
-                splineAnimate.Pause();
-                rb.isKinematic = false;
+    private void HandleDeath() {
+        if(deathTimer == 0 && !dying){
+            Die();
+        }
 
-                // Apply force
-                rb.AddForce(new Vector3(UnityEngine.Random.Range(-1,1),UnityEngine.Random.Range(400,600),UnityEngine.Random.Range(-1,1)));
-                float maxTorque = 10000;
-                rb.AddTorque(new Vector3(UnityEngine.Random.Range(-maxTorque,maxTorque),UnityEngine.Random.Range(-maxTorque,maxTorque),UnityEngine.Random.Range(-maxTorque,maxTorque)));
+        deathTimer += GameTime.DeltaTime;
+    }
 
-                // Deactivate collisions
-                rb.excludeLayers = LayerMask.GetMask("Enemy");
-                gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
-            }
+    // Executes one time when health reaches 0
+    private void Die() {
+        enemyCount--;
+        // Dies
+        levelLogic.AddResources(10);
+        // Remove animation and activate physics
+        animator.SetBool("alive",false);
+        dying = true;
+        // splineAnimationController.Pause();
+        isMoving = false;
+        rb.isKinematic = false;
 
-            deathTimer += Time.deltaTime;
-            if(deathTimer>DEATH_TIME){
-                Die();
-            }
+        // Apply force
+        rb.AddForce(new Vector3(UnityEngine.Random.Range(-1,1),UnityEngine.Random.Range(400,600),UnityEngine.Random.Range(-1,1)));
+        float maxTorque = 10000;
+        rb.AddTorque(new Vector3(UnityEngine.Random.Range(-maxTorque,maxTorque),UnityEngine.Random.Range(-maxTorque,maxTorque),UnityEngine.Random.Range(-maxTorque,maxTorque)));
+
+        // Deactivate collisions
+        rb.excludeLayers = LayerMask.GetMask("Enemy");
+        gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+    }
+
+    private void HandleCollisionWithEnemy(Enemy otherEnemy) {
+        attacking = false;
+        if(otherEnemy.GetOtherEnemyId()!=id){
+            // splineAnimationController.Pause();
+            isMoving = false;
+            animator.SetBool("moving",false);
+            otherEnemyId = otherEnemy.GetId();
+        }else{
+            //splineAnimationController.Play();
+            isMoving = true;
+            animator.SetBool("moving",true);
+        }
+        // ! esto permite evitar bloqueos binarios (A para por B y B para por A)
+        // ! pero bloqueos ternarios y superiores no (A para por B, B por C y C por A)
+    }
+
+    private void HandleCollisionWithBuilding(Building otherBuilding) {
+        // splineAnimationController.Pause();
+        isMoving = false;
+        animator.SetBool("moving",false);
+        if(attacking==false){
+            attacking=true;
+            attackTimer = 0;
+        }
+        attackTimer+=GameTime.DeltaTime;
+        if(attackTimer>ATTACK_DELAY){
+            attackTimer = 0;
+            otherBuilding.DamageBuilding(DAMAGE);
         }
     }
 
-    private void Die(){
-        enemyCount --;
-    }
 
     public bool IsMoving(){
-        return splineAnimate.IsPlaying;
+        return isMoving;
     }
 
-    public void Initialise(SplineContainer spline, int pathId,GameObject guide){
+    public void Initialise(SplineContainer spline, int pathId,GameObject guide, LevelLogic levelLogic){
         parent = guide;
-        splineAnimate = GetSplineAnimate(); //esto se coloca aqui porque Start() no ocurre tras la Instanciacion
-        splineAnimate.Container = spline;
+        splineAnimationController = GetSplineAnimationController(); //esto se coloca aqui porque Start() no ocurre tras la Instanciacion
+        splineAnimationController.spline = spline;
         splineId = pathId;
-        splineAnimate.enabled = true;
+        splineAnimationController.enabled = true;
+        this.levelLogic = levelLogic;
     }
 
     public int GetSplineId(){
@@ -162,13 +190,13 @@ public class Enemy : MonoBehaviour
     }
 
     // ! Esto seguramente se quite, es temporal
-    public SplineAnimate GetSplineAnimate(){
-        SplineAnimate anim = parent.GetComponent<SplineAnimate>();
+    public SplineAnimationController GetSplineAnimationController(){
+        SplineAnimationController anim = parent.GetComponent<SplineAnimationController>();
         return anim;
     }
 
     float rayLength = 15;
-    float speed = 1;
+    float speedRotation = 1;
     void UpdatePos(){
         RaycastHit hit ;
         if(Utils.Raycast(parent.transform.position,splineToGroundRay,rayLength,LayerMask.GetMask("Terrain"),out hit)){
@@ -179,25 +207,32 @@ public class Enemy : MonoBehaviour
 
             // Update rotation
             var targetRotation = Quaternion.FromToRotation(transform.up, hit.normal) * transform.rotation;
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * speed);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, GameTime.DeltaTime * speedRotation);
         }
     }
 
-    static int GetCount(){
+    public static int GetCount(){
         return enemyCount;
     }
 
-    const float frontRayLength = 1f;
+    const float FRONT_RAY_LENGTH = 1f;
+    const float RAY_DELTA = 0.5f;
     private bool UpdateRaycast(out RaycastHit raycastHit){
-        if(Utils.Raycast(transform.position,transform.TransformDirection(Vector3.forward),frontRayLength,LayerMask.GetMask("Enemy","Building"),out raycastHit)){
-            return true;
-        }
-        if(Utils.Raycast(transform.position,transform.TransformDirection(new Vector3(1,0,1).normalized),frontRayLength,LayerMask.GetMask("Enemy","Building"),out raycastHit)){
-            return true;
-        }
-        if(Utils.Raycast(transform.position,transform.TransformDirection(new Vector3(-1,0,1).normalized),frontRayLength,LayerMask.GetMask("Enemy","Building"),out raycastHit)){
-            return true;
-        }
+        
+        float i=-1;
+
+        do {
+            if(Utils.Raycast(
+                    transform.position,
+                    transform.TransformDirection(new Vector3(i,0,1).normalized),
+                    FRONT_RAY_LENGTH,
+                    LayerMask.GetMask("Enemy","Building"),
+                    out raycastHit)){
+                return true;
+            }
+            i+=RAY_DELTA;
+        } while(i <=1);
+
         return false;
     }
 }

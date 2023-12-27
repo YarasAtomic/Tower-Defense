@@ -5,7 +5,6 @@ using UnityEngine.Splines;
 
 public class EnemySpawner
 {    
-    [SerializeField] GameObject enemy;
     List<GameObject> splines;
     [SerializeField] float delay;
 
@@ -13,33 +12,70 @@ public class EnemySpawner
 
     [SerializeField] int spawnedEnemies;
 
-    Tuple<GameObject, int>[] enemyWaves;
+    List<GameObject> enemyWave;
+
+    LevelLogic levelLogic;
 
     // Update is called once per frame
     float timer = 0;
     
     int pathIterator = 0;
 
-    public EnemySpawner(Tuple<GameObject, int>[] enemyWaves, 
-                        List<GameObject> splines) {
-        this.enemyWaves = enemyWaves;
+    IEnumerator<GameObject> enemyEnumerator;
+
+    public EnemySpawner(List<ValueTuple<GameObject, int>> enemyWave, 
+                        List<GameObject> splines, LevelLogic levelLogic) {
+        this.enemyWave = EnemySplitter(enemyWave);
         this.splines = splines;
+        enemyEnumerator = this.enemyWave.GetEnumerator();
+        delay = 0.75f;
+        timer = delay;
+        this.levelLogic = levelLogic;
     }
 
+    private List<GameObject> EnemySplitter(List<ValueTuple<GameObject, int>> enemyWave) {
+        List<GameObject> splitted = new List<GameObject>();
+        List<int> enemiesLeft = new List<int>();
 
-    void Update(){
-        timer+=Time.deltaTime;
-        if(timer>delay && spawnedEnemies < maxEnemies){
-            timer = 0.0f;
-            Spawn(pathIterator);
-            pathIterator = (pathIterator + 1) % splines.Count;
-            spawnedEnemies++;
+        int length = 0;
+        foreach (ValueTuple<GameObject, int> enemy in enemyWave) {
+            length += enemy.Item2;
+            enemiesLeft.Add(enemy.Item2);
         }
+
+        while (splitted.Count < length) {
+            // foreach ((GameObject, int) enemy in enemyWave) {
+            //     if (enemy.Item2 <= 0) continue;
+            //     splitted.Add(enemy.Item1);
+            //     enemy.Item2--;
+            // }
+
+            for (int i=0; i<enemyWave.Count; ++i) {
+                if (enemiesLeft[i] <= 0) continue;
+                splitted.Add(enemyWave[i].Item1);
+                enemiesLeft[i]--;
+            }
+        }
+
+        return splitted;
     }
 
-    void Spawn(int pathId){
+    // Si se ha realizado el update (mientras sigamos spawneando), devolvemos true
+    public bool Update(){
+        timer+=GameTime.DeltaTime;
+        if(timer>delay){
+            if (!enemyEnumerator.MoveNext()) return false;
+            timer = 0.0f;
+            Spawn(pathIterator, enemyEnumerator.Current);
+            pathIterator = (pathIterator + 1) % splines.Count;
+        }
+        return true;
+            
+    }
+
+    void Spawn(int pathId, GameObject enemy){
         GameObject newEnemy = MonoBehaviour.Instantiate(enemy, new Vector3(0,0,0), Quaternion.identity);
         SplineContainer splineContainer = splines[pathId].GetComponent<SplineContainer>();
-        newEnemy.GetComponentInChildren<Enemy>().Initialise(splineContainer,pathId,newEnemy);
+        newEnemy.GetComponentInChildren<Enemy>().Initialise(splineContainer, pathId, newEnemy, levelLogic);
     }
 }

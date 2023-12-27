@@ -2,6 +2,13 @@ using UnityEngine;
 
 public abstract class Building : MonoBehaviour
 {
+
+    BuildingTile buildingTile;
+
+    public void Initialise(BuildingTile buildingTile) {
+        this.buildingTile = buildingTile;
+    }
+
 	private TypeBuilding type;
 
     protected int BASE_HP;
@@ -37,4 +44,5 @@ public abstract class Building : MonoBehaviour
     }
 
 	public abstract void DestroyBuilding();
+
 }
