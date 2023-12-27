@@ -62,9 +62,13 @@ public class Tower : Building
 	void Update() {
 		if (selectedEnemy == null && enemiesInRange.Count != 0) {
 			CheckEnemiesInRange();
+			animator.SetBool("attackingEnemy", true);
 		}
 		else if (selectedEnemy != null) {
 			AttackEnemy();
+		}
+		else {
+			animator.SetBool("attackingEnemy", true);
 		}
 	}
 
@@ -106,7 +110,10 @@ public class Tower : Building
 	}
 
 	public void AttackEnemy() {
-		
+		if (attackTimer >= FIRE_RATE) {
+			selectedEnemy.Damage(damage);
+			attackTimer = 0;
+		}
 	}
 
 	public void UpgradeTower() {
