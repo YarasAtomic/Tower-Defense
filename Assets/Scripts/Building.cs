@@ -4,7 +4,7 @@ public abstract class Building : MonoBehaviour
 {
 	private TypeBuilding type;
 
-    protected int BASE_HP;
+    [SerializeField] protected int BASE_HP = 100;
 	protected int MAX_SELLING_PRICE;
 
     protected int hp;

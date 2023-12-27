@@ -27,6 +27,7 @@ public class Enemy : MonoBehaviour
     // Values
 
     [SerializeField] TypeEnemy TYPE;
+
     [SerializeField] float DEATH_TIME;
     [SerializeField] float ATTACK_DELAY;
     [SerializeField] int DAMAGE;
@@ -78,7 +79,7 @@ public class Enemy : MonoBehaviour
             Building otherBuilding = hit.collider.gameObject.GetComponent<Building>();
             if(otherEnemy!=null){
                 HandleCollisionWithEnemy(otherEnemy);
-            }else if(otherBuilding!=null){
+            }else if(otherBuilding!=null && hit.collider is BoxCollider){
                 HandleCollisionWithBuilding(otherBuilding);
 
             }

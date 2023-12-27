@@ -21,9 +21,9 @@ public class Tower : Building
 	private int repairCost;
 	private int repairRate;
 	private int damage;
-	[SerializeField] private float shootingRadius;
+	private float shootingRadius;
 	
-	private SphereCollider collider;
+	// private SphereCollider collider;
 	private List<Enemy> enemiesInRange;
 	private TypeEnemy favouriteEnemyType;
 	private Enemy selectedEnemy;
@@ -43,8 +43,8 @@ public class Tower : Building
 		damage = (int) (BASE_DAMAGE * FACTOR_UPGRADE[currentUpgrade]);
 		shootingRadius = BASE_SHOOTING_RADIUS; // * shooting_radius_factor[shooting_radius_upgrade]
 
-		collider = gameObject.GetComponent<SphereCollider>();
-		collider.radius = shootingRadius;
+		// collider = gameObject.GetComponent<SphereCollider>();
+		// collider.radius = shootingRadius;
 		enemiesInRange = new List<Enemy>();
 		favouriteEnemyType = TypeEnemy.Enemy1;
 		selectedEnemy = null;
@@ -110,11 +110,13 @@ public class Tower : Building
 
 	// COLLISIONS methods
 
-	void OnCollisionEnter(Collision collision) {
+	void OnTriggerEnter(Collider collision) {
+		Debug.Log("Nuevo Enemy");
 		enemiesInRange.Add(collision.gameObject.GetComponent<Enemy>());
 	}
 
-	void OnCollisionExit(Collision collision) {
+	void OnTriggerExit(Collider collision) {
+		Debug.Log("Se va Enemy");
 		enemiesInRange.Remove(collision.gameObject.GetComponent<Enemy>());
 	}
 }
