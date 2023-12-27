@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Generator : Building
 {
+	private static int PURCHASE_PRICE = 100;
     /*[SerializeField]*/ private float RESOURCE_RATE = 0.5f; // Debería de ser const
     /*[SerializeField]*/ private int RESOURCE_AMOUNT = 10; // Debería de ser const
     /*[SerializeField]*/ private  float timer;
@@ -12,13 +13,13 @@ public class Generator : Building
     void Start()
     {
         base.BASE_HP = 100;
-        base.PURCHASE_PRICE = 100;
         base.MAX_SELLING_PRICE = 90;
         base.hp = base.BASE_HP;
         base.sellingPrice = base.MAX_SELLING_PRICE;
         timer = 0;
 
 		animator = gameObject.GetComponent<Animator>();
+		base.tile = null;
     }
 
     // Update is called once per frame
@@ -34,6 +35,10 @@ public class Generator : Building
         //     DestroyBuilding(); ----> Lo he comentado porque la gestión del daño se hace en el método Damage
         // } ----> Lo he comentado porque la gestión del daño se hace en el método Damage
     }
+
+	public static int GetPurchasePrice() {
+		return PURCHASE_PRICE;
+	}
 
 	public override int GetSellingPrice() {
 		return base.sellingPrice;
