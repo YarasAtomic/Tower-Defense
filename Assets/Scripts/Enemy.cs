@@ -31,6 +31,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] float ATTACK_DELAY;
     [SerializeField] int DAMAGE;
 
+    [SerializeField] TypeEnemy TYPE;
 
     // States
     bool dying = false;
@@ -60,6 +61,7 @@ public class Enemy : MonoBehaviour
 
     // Update is called once per frame
     void Update(){
+
         splineAnimationController.speed = isMoving ? speed : 0;
         animator.speed = GameTime.GameSpeed;
 
@@ -80,6 +82,7 @@ public class Enemy : MonoBehaviour
                 HandleCollisionWithEnemy(otherEnemy);
             }else if(otherBuilding!=null){
                 HandleCollisionWithBuilding(otherBuilding);
+
             }
         }else if(splineAnimationController.distancePercentage < 1){
             attacking = false;
@@ -148,7 +151,7 @@ public class Enemy : MonoBehaviour
         attackTimer+=GameTime.DeltaTime;
         if(attackTimer>ATTACK_DELAY){
             attackTimer = 0;
-            otherBuilding.Damage(DAMAGE);
+            otherBuilding.DamageBuilding(DAMAGE);
         }
     }
 
@@ -178,7 +181,7 @@ public class Enemy : MonoBehaviour
         return otherEnemyId;
     }
 
-    public int GetEnemyType(){
+    public TypeEnemy GetTypeEnemy(){
         return TYPE;
     }
 
