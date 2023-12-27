@@ -26,7 +26,6 @@ public class Enemy : MonoBehaviour
 
     // Values
 
-    [SerializeField] int TYPE;
     [SerializeField] float DEATH_TIME;
     [SerializeField] float ATTACK_DELAY;
     [SerializeField] int DAMAGE;
