@@ -176,6 +176,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   BASE_HP: 100
+  BASE_SHOOTING_RADIUS: 5
 --- !u!65 &-4578544996540584081
 BoxCollider:
   m_ObjectHideFlags: 0

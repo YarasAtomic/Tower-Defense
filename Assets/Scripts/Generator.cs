@@ -12,7 +12,6 @@ public class Generator : Building
 
 	public override void Initialise(BuildingTile buildingTile) {
 		base.tile = buildingTile;
-        
 	}
 
     public void SetLevelLogic (LevelLogic level){
@@ -22,8 +21,7 @@ public class Generator : Building
 	
 
     // Start is called before the first frame update
-    void Start()
-    {
+    void Start() {
         base.BASE_HP = 100;
         base.MAX_SELLING_PRICE = 90;
         base.hp = base.BASE_HP;
@@ -35,8 +33,7 @@ public class Generator : Building
     }
 
     // Update is called once per frame
-    void Update()
-    {
+    void Update() {
         // if(hp > 0){ // Si está vivo intenta generar más recursos ----> Lo he comentado porque la gestión del daño se hace en el método Damage
             timer += Time.deltaTime;
             if(timer > RESOURCE_RATE){
@@ -65,7 +62,7 @@ public class Generator : Building
 		animator.SetBool("destroyGenerator", true);
 	}
 
-   // TO DO
+   // TODO
    // Hacer que te devuelva el precio de venta ----> HECHO
    
    // En cuanto a esto, vamos a usar la clase Animator que me ha comentado Guille que es lo que se usa para gestionar las animaciones

@@ -22,7 +22,7 @@ public class BuildingTile : MonoBehaviour
         building.Initialise(this);
 
         if(building is Generator){
-            building.SetLevelLogic(levelLogic);
+            ((Generator) building).SetLevelLogic(levelLogic);
         }
         Hide();
     }
