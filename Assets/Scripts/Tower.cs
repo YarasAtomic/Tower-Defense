@@ -27,7 +27,6 @@ public class Tower : Building
 	private float shootingRadius;
 	
 	// ENEMY DETECTION attributes
-	private SphereCollider collider;
 	private List<Enemy> enemiesInRange;
 	private TypeEnemy favouriteEnemyType;
 	private Enemy selectedEnemy;
@@ -57,8 +56,9 @@ public class Tower : Building
 		damage = (int) (BASE_DAMAGE * FACTOR_UPGRADE[currentUpgrade]);
 		shootingRadius = BASE_SHOOTING_RADIUS; // * shooting_radius_factor[shooting_radius_upgrade]
 
-		collider = gameObject.GetComponent<SphereCollider>();
-		collider.radius = BASE_SHOOTING_RADIUS;
+		SphereCollider collider = gameObject.GetComponent<SphereCollider>();
+		collider.radius = shootingRadius;
+
 		enemiesInRange = new List<Enemy>();
 		favouriteEnemyType = TypeEnemy.Enemy1;
 		selectedEnemy = null;
@@ -128,10 +128,9 @@ public class Tower : Building
 	}
 
 	public void AttackEnemy() {
-		// Quaternion enemyPosition = Quaternion.LookRotation(transform.position - selectedEnemy.transform.position);
-		// transform.rotation = Quaternion.Slerp(transform.rotation, enemyPosition, 1*Time.deltaTime);
-		Debug.Log(selectedEnemy.transform.position);
-		transform.LookAt(selectedEnemy.transform.position);
+		animator.enabled = false;
+		Transform childTransform = transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetChild(0);
+		childTransform.LookAt(selectedEnemy.transform.position);
 		firing = true;
 		
 		if (firing) {
@@ -162,7 +161,7 @@ public class Tower : Building
 
 	// COLLISIONS methods
 
-	void OnColliEnter(Collider collision) {
+	void OnTriggerEnter(Collider collision) {
 		Debug.Log("Nuevo Enemy");
 		enemiesInRange.Add(collision.gameObject.GetComponent<Enemy>());
 	}
