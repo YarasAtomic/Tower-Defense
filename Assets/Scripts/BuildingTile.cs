@@ -17,9 +17,13 @@ public class BuildingTile : MonoBehaviour
         
     }
 
-    public void Build(GameObject buildingPrefab){
+    public void Build(GameObject buildingPrefab, LevelLogic levelLogic){
         building = Instantiate(buildingPrefab, transform.position, Quaternion.identity).GetComponent<Building>();
         building.Initialise(this);
+
+        if(building is Generator){
+            building.SetLevelLogic(levelLogic);
+        }
         Hide();
     }
 

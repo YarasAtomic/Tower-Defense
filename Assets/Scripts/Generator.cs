@@ -8,11 +8,16 @@ public class Generator : Building
     /*[SerializeField]*/ private float RESOURCE_RATE = 0.5f; // Debería de ser const
     /*[SerializeField]*/ private int RESOURCE_AMOUNT = 10; // Debería de ser const
     /*[SerializeField]*/ private  float timer;
+    private LevelLogic levelLogic;
 
 	public override void Initialise(BuildingTile buildingTile) {
 		base.tile = buildingTile;
+        
 	}
 
+    public void SetLevelLogic (LevelLogic level){
+        levelLogic = level;
+    }
 	// Start is called before the first frame update
 	
 
@@ -35,8 +40,8 @@ public class Generator : Building
         // if(hp > 0){ // Si está vivo intenta generar más recursos ----> Lo he comentado porque la gestión del daño se hace en el método Damage
             timer += Time.deltaTime;
             if(timer > RESOURCE_RATE){
-                // TO DO :
-                // Añadir al level RESOURCE_AMOUNT
+                levelLogic.AddResources(RESOURCE_AMOUNT);
+                timer = 0;
             }
         // }else{ // Está muerto, tendría que desaparecer del mapa ----> Lo he comentado porque la gestión del daño se hace en el método Damage
         //     DestroyBuilding(); ----> Lo he comentado porque la gestión del daño se hace en el método Damage
@@ -47,7 +52,12 @@ public class Generator : Building
 		return PURCHASE_PRICE;
 	}
 
+    private void CalculateSellingPrice(){
+        base.sellingPrice = base.hp / base.BASE_HP * base.MAX_SELLING_PRICE;
+    }
+
 	public override int GetSellingPrice() {
+        CalculateSellingPrice();
 		return base.sellingPrice;
 	}
 

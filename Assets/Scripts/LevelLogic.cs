@@ -219,7 +219,7 @@ public class LevelLogic : MonoBehaviour
 
         // if (price > currentResources) return;
         // currentResources -= price;
-        tile.Build(buildingPrefab);
+        tile.Build(buildingPrefab, this);
     }
 
     //*---------------------------------------------------------------*//
