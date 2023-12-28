@@ -131,6 +131,7 @@ public class Tower : Building
 		animator.enabled = false;
 		Transform childTransform = transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetChild(0);
 		childTransform.LookAt(selectedEnemy.transform.position);
+		animator.enabled = false;
 		firing = true;
 		
 		if (firing) {
