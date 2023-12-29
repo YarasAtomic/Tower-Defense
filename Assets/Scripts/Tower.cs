@@ -12,17 +12,17 @@ public class Tower : Building
 	private static int PURCHASE_PRICE = 100;
 	private int UPGRADE_PRICE = 50;
 	private int BASE_HP_COST = 5;
-	private int BASE_REPAIR_RATE = 5;			// miliseconds
+	private float BASE_REPAIR_RATE = 5.0f;		// miliseconds
 	private int BASE_DAMAGE = 5;
 	private int FAVOURITE_ENEMY = -1;
-	private int FIRE_RATE = 10;					// miliseconds
+	private float FIRE_RATE = 2.0f;				// miliseconds
 	[SerializeField] private float BASE_SHOOTING_RADIUS = 7.0f;
 
 	// COSTS attributes
 	private int currentUpgrade;
 	private int maxHp;
 	private int repairCost;
-	private int repairRate;
+	private float repairRate;
 	private int damage;
 	private float shootingRadius;
 	
@@ -64,7 +64,7 @@ public class Tower : Building
 		selectedEnemy = null;
 		
 		// Estados
-		fireTimer = 0.0f;
+		fireTimer = FIRE_RATE / 2.0f;
 		patrolling = true;
 		attacking = false;
 		firing = false;
@@ -142,8 +142,24 @@ public class Tower : Building
 
 			if (fireTimer >= FIRE_RATE) {
 				selectedEnemy.Damage(damage);
+				if (selectedEnemy.GetHealthPercentage() <= 0) {
+					EnemyOutOfRange(selectedEnemy);
+				}
+				
 				fireTimer = 0.0f;
 			}
+		}
+	}
+
+	void EnemyOutOfRange(Enemy enemy) {
+		enemiesInRange.Remove(enemy);
+
+		if (enemy == selectedEnemy) {
+			selectedEnemy = null;
+
+			patrolling = true;
+			attacking = false;
+			firing = false;
 		}
 	}
 
@@ -167,11 +183,12 @@ public class Tower : Building
 
 	void OnTriggerEnter(Collider collision) {
 		Debug.Log("Nuevo Enemy");
-		enemiesInRange.Add(collision.gameObject.GetComponent<Enemy>());
+		Enemy enemy = collision.gameObject.GetComponent<Enemy>();
+		if (enemy.GetHealthPercentage() > 0) enemiesInRange.Add(enemy);
 	}
 
 	void OnTriggerExit(Collider collision) {
 		Debug.Log("Se va Enemy");
-		enemiesInRange.Remove(collision.gameObject.GetComponent<Enemy>());
+		EnemyOutOfRange(collision.gameObject.GetComponent<Enemy>());
 	}
 }
