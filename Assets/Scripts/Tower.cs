@@ -16,7 +16,7 @@ public class Tower : Building
 	private int BASE_DAMAGE = 5;
 	private int FAVOURITE_ENEMY = -1;
 	private int FIRE_RATE = 10;					// miliseconds
-	[SerializeField] private float BASE_SHOOTING_RADIUS = 5.0f;
+	[SerializeField] private float BASE_SHOOTING_RADIUS = 7.0f;
 
 	// COSTS attributes
 	private int currentUpgrade;
@@ -102,7 +102,6 @@ public class Tower : Building
 	// ACTION methods
 
 	public void CheckEnemiesInRange() {
-		// Debug.Log(enemiesInRange.Count);
 		if (selectedEnemy == null && enemiesInRange.Count != 0) {
 			float minDist = float.MaxValue;
 			
@@ -129,8 +128,12 @@ public class Tower : Building
 
 	public void AttackEnemy() {
 		animator.enabled = false;
+		
 		Transform childTransform = transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetChild(0);
-		childTransform.LookAt(selectedEnemy.transform.position);
+		Quaternion newRotation = Quaternion.LookRotation((childTransform.position - selectedEnemy.transform.position).normalized);
+		newRotation *= Quaternion.Euler(0, 180, 0);
+		childTransform.rotation = Quaternion.Slerp(childTransform.rotation, newRotation, 0.05f);
+		
 		animator.enabled = false;
 		firing = true;
 		
