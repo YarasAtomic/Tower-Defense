@@ -4,7 +4,7 @@ public abstract class Building : MonoBehaviour
 {
 	private TypeBuilding type;
 
-    protected int BASE_HP;
+    [SerializeField] protected int BASE_HP = 100;
 	protected int MAX_SELLING_PRICE;
 
     protected int hp;
@@ -16,9 +16,7 @@ public abstract class Building : MonoBehaviour
 
 	// INIT method
 
-	public void Initialise(BuildingTile buildingTile) {
-		tile = buildingTile;
-	}
+	public abstract void Initialise(BuildingTile buildingTile);
 
 	// GET methods
 

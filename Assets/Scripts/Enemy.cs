@@ -79,7 +79,7 @@ public class Enemy : MonoBehaviour
             Building otherBuilding = hit.collider.gameObject.GetComponent<Building>();
             if(otherEnemy!=null){
                 HandleCollisionWithEnemy(otherEnemy);
-            }else if(otherBuilding!=null){
+            }else if(otherBuilding!=null && hit.collider is BoxCollider){
                 HandleCollisionWithBuilding(otherBuilding);
 
             }
