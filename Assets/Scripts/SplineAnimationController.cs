@@ -21,7 +21,7 @@ public class SplineAnimationController : MonoBehaviour
     const float SPLINE_EVALUATION_DELTA = 0.0005f;
     void Update()
     {
-        if (GameTime.IsPaused()) return;
+        if (GameTime.IsPaused()||distancePercentage>=1) return;
 
         distancePercentage += speed * GameTime.DeltaTime / splineLength;
 

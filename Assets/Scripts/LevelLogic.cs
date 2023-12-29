@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class LevelLogic : MonoBehaviour
@@ -11,23 +12,24 @@ public class LevelLogic : MonoBehaviour
     //!---------------------- CLASS ATTRIBUTES -----------------------!//
     //!---------------------------------------------------------------!//
     //!---------------------------------------------------------------!//
-    public int[,] waves = {{1,0,0,0},{1,0,0,0},{1,0,0,0},{1,0,0,0}};
+    // public int[,] waves = {{1,0,0,0},{1,0,0,0},{1,0,0,0},{1,0,0,0}};
+    [HideInInspector] public List<int> waveList;
+    // int waveCount = 4;
 
     // Posición de la base en el nivel
-    [SerializeField] BuildingTile BASE_POSITION;
+    // [SerializeField] BuildingTile BASE_POSITION;
 
     // Todas las posiciones donde se pueden colocar una torre o generador en el nivel
-    public BuildingTile[] ALL_POSITIONS;
+    BuildingTile[] ALL_POSITIONS;
 
     public int currentWave;
     public int destroyedTowers;
     public int currentResources;
     int accWaveResources;
     float accWaveTimer;
-    // bool levelFinished;
-    
+    float splashAttackTimer;
+    float uniformAttackTimer;
     EnemySpawner enemySpawn;
-
     SpecialAttack specialAttack;
     
     // Experiencia máxima obtenida por estrella
@@ -40,10 +42,12 @@ public class LevelLogic : MonoBehaviour
 
     [SerializeField] GameObject towerPrefab;
     [SerializeField] GameObject generatorPrefab;
-    [SerializeField] GameObject enemyPrefab1;
-    [SerializeField] GameObject enemyPrefab2;
-    [SerializeField] GameObject enemyPrefab3;
-    [SerializeField] GameObject enemyPrefab4;
+
+    [SerializeField] List<GameObject> enemyPrefabList;
+    // [SerializeField] GameObject enemyPrefab1;
+    // [SerializeField] GameObject enemyPrefab2;
+    // [SerializeField] GameObject enemyPrefab3;
+    // [SerializeField] GameObject enemyPrefab4;
     [SerializeField] GameObject splashAttackPrefab;
     [SerializeField] GameObject uniformAttackPrefab;
     
@@ -59,12 +63,14 @@ public class LevelLogic : MonoBehaviour
     //*---------------------------------------------------------------*//
     void Start()
     {
-        destroyedTowers  = 0;
-        currentWave      = 0;
-        currentResources = INITIAL_RESOURCES;
-        accWaveTimer     = ACC_WAVE_MAX_TIME;
-        enemySpawn       = null;
-        ALL_POSITIONS    = FindObjectsOfType<BuildingTile>(true);
+        destroyedTowers     = 0;
+        currentWave         = 0;
+        currentResources    = INITIAL_RESOURCES;
+        accWaveTimer        = ACC_WAVE_MAX_TIME;
+        uniformAttackTimer  = 0;
+        splashAttackTimer   = 0;
+        enemySpawn          = null;
+        ALL_POSITIONS       = FindObjectsOfType<BuildingTile>(true);
         Debug.Log(ALL_POSITIONS.Length);
     }
 
@@ -75,6 +81,7 @@ public class LevelLogic : MonoBehaviour
     void Update()
     {   
         HandleWaves();
+        HandleSpecialAttacks();
     }
 
     //*---------------------------------------------------------------*//
@@ -93,7 +100,7 @@ public class LevelLogic : MonoBehaviour
         if (Enemy.GetCount() != 0) return; // TODO hay que ver quien gestiona los recursos de los generadores
 
         // Si estamos en la ultima oleada y no hay enemigos
-        if  (currentWave == waves.GetLength(0) && !InWave()) {
+        if  (currentWave == GetTotalWaves() && !InWave()) {
             // levelFinished = true;
             return;
         }
@@ -121,14 +128,19 @@ public class LevelLogic : MonoBehaviour
     //-----------------------------------------------------------------//
 
     void InitialiseSpawner() {
-        List<ValueTuple<GameObject,int>> enemyprefabs = new List<ValueTuple<GameObject,int>> {
-            new ValueTuple<GameObject,int> (enemyPrefab1, waves[currentWave,0]),
-            new ValueTuple<GameObject,int> (enemyPrefab2, waves[currentWave,1]),
-            new ValueTuple<GameObject,int> (enemyPrefab3, waves[currentWave,2]),
-            new ValueTuple<GameObject,int> (enemyPrefab4, waves[currentWave,3])
-        };
-        enemySpawn = new EnemySpawner(enemyprefabs, splines, this);
+        // List<ValueTuple<GameObject,int>> enemyprefabs = new List<ValueTuple<GameObject,int>> {
+        //     new ValueTuple<GameObject,int> (enemyPrefab1, GetEnemyAtWaveOfType(currentWave,0)),
+        //     new ValueTuple<GameObject,int> (enemyPrefab2, GetEnemyAtWaveOfType(currentWave,1)),
+        //     new ValueTuple<GameObject,int> (enemyPrefab3, GetEnemyAtWaveOfType(currentWave,2)),
+        //     new ValueTuple<GameObject,int> (enemyPrefab4, GetEnemyAtWaveOfType(currentWave,3))
+        // };
+        List<ValueTuple<GameObject,int>> enemyPrefabTuples = new List<ValueTuple<GameObject,int>>();
+        for(int i = 0; i < GetEnemyTypeCount();i++){
+            enemyPrefabTuples.Add(new ValueTuple<GameObject,int> (enemyPrefabList[i], GetEnemyAtWaveOfType(currentWave,i)));
+        }
+        enemySpawn = new EnemySpawner(enemyPrefabTuples, splines, this);
     }
+
 
     //*---------------------------------------------------------------*//
     //*------------------------- XP AND STARS ------------------------*//
@@ -206,7 +218,7 @@ public class LevelLogic : MonoBehaviour
         
         if (!tile.IsEmpty()) return;
 
-        int price;
+        int price; //TODO
         GameObject buildingPrefab;
         
         if (type == TypeBuilding.Tower1) {
@@ -233,7 +245,8 @@ public class LevelLogic : MonoBehaviour
     //-----------------------------------------------------------------//
 
     public int GetTotalWaves() {
-        return waves.GetLength(0);
+        if(enemyPrefabList.Count <= 0) return 0;
+        return waveList.Count / enemyPrefabList.Count;
     }
 
     //-----------------------------------------------------------------//
@@ -253,6 +266,19 @@ public class LevelLogic : MonoBehaviour
     public float GetWaveTimer() {
         return accWaveTimer / ACC_WAVE_MAX_TIME;
     }  
+
+    //-----------------------------------------------------------------//
+
+    public int GetEnemyTypeCount(){
+        return enemyPrefabList.Count;
+    }
+
+    //-----------------------------------------------------------------//
+
+    int GetEnemyAtWaveOfType(int wave,int enemyType){
+        Debug.Log("waveList " + wave + " total " + GetTotalWaves() + " type " + enemyType);
+        return waveList[wave * GetEnemyTypeCount() + enemyType];
+    }
 
     //*---------------------------------------------------------------*//
     //*------------------------ BUTTON METHODS -----------------------*//
@@ -291,11 +317,21 @@ public class LevelLogic : MonoBehaviour
     //*----------------------- SPECIAL ATTACKS -----------------------*//
     //*---------------------------------------------------------------*//
     
+
+    void HandleSpecialAttacks(){
+        if(uniformAttackTimer>0){
+            uniformAttackTimer-=GameTime.DeltaTime;
+        }
+        if(splashAttackTimer>0){
+            splashAttackTimer-=GameTime.DeltaTime;
+        }
+    }
+
+    //-----------------------------------------------------------------//
     public void InitialiseSpecialAttack(TypeAttack typeAttack,Camera mainCamera) {
         switch(typeAttack){
             case TypeAttack.UniformAttack:
                 specialAttack = Instantiate(uniformAttackPrefab,Vector3.zero,Quaternion.identity).GetComponent<SpecialAttack>();
-                // specialAttack.Initialise(mainCamera);
                 break;
             case TypeAttack.SplashAttack:
                 specialAttack = Instantiate(splashAttackPrefab, Vector3.zero, Quaternion.identity).GetComponent<SpecialAttack>();
@@ -306,7 +342,31 @@ public class LevelLogic : MonoBehaviour
 
         specialAttack.Initialise(mainCamera);
     }
+
+    //-----------------------------------------------------------------//
     
+    public bool IsSpecialAttackAvailable(TypeAttack typeAttack){
+        switch(typeAttack){
+            case TypeAttack.UniformAttack:
+                return uniformAttackTimer<=0;
+            case TypeAttack.SplashAttack:
+                return splashAttackTimer<=0;
+        }
+        return false;
+    }
+
+    //-----------------------------------------------------------------//
+    
+    public float GetSpecialAttackTimer(TypeAttack typeAttack){
+        switch(typeAttack){
+            case TypeAttack.UniformAttack:
+                return uniformAttackTimer/UniformAttack.GetCooldown();
+            case TypeAttack.SplashAttack:
+                return splashAttackTimer/SplashAttack.GetCooldown();
+        }
+        return 1;
+    }
+
     //-----------------------------------------------------------------//
 
     public void DestroySpecialAttack() {
@@ -320,6 +380,11 @@ public class LevelLogic : MonoBehaviour
 
     public void DeploySpecialAttack() {
         specialAttack.Deploy();
+        if(specialAttack.GetType()==typeof(SplashAttack)){
+            splashAttackTimer = SplashAttack.GetCooldown();
+        }else if(specialAttack.GetType()==typeof(UniformAttack)){
+            uniformAttackTimer = UniformAttack.GetCooldown();
+        }
         specialAttack = null;
     }
 
