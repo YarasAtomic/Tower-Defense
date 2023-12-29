@@ -114,9 +114,9 @@ public class Enemy : MonoBehaviour
         rb.isKinematic = false;
 
         // Apply force
-        rb.AddForce(new Vector3(UnityEngine.Random.Range(-1,1),UnityEngine.Random.Range(400,600),UnityEngine.Random.Range(-1,1)));
+        rb.AddForce(new Vector3(Random.Range(-1,1),Random.Range(400,600),Random.Range(-1,1)));
         float maxTorque = 10000;
-        rb.AddTorque(new Vector3(UnityEngine.Random.Range(-maxTorque,maxTorque),UnityEngine.Random.Range(-maxTorque,maxTorque),UnityEngine.Random.Range(-maxTorque,maxTorque)));
+        rb.AddTorque(new Vector3(Random.Range(-maxTorque,maxTorque),Random.Range(-maxTorque,maxTorque),Random.Range(-maxTorque,maxTorque)));
 
         // Deactivate collisions
         rb.excludeLayers = LayerMask.GetMask("Enemy");
@@ -186,6 +186,10 @@ public class Enemy : MonoBehaviour
 
     public void Damage(int dmg){
         health-=dmg;
+    }
+
+    public float GetHealthPercentage(){
+        return (float)health/MAX_HEALTH;
     }
 
     // ! Esto seguramente se quite, es temporal

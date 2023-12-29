@@ -4,28 +4,23 @@ using UnityEngine;
 
 public abstract class SpecialAttack : MonoBehaviour
 {   
-    protected float RADIUS;
-    protected int DAMAGE;
-    protected float COOLDOWN;
     protected Camera mainCamera;
-    protected float TIME_TO_EXPLODE;
-    protected float TIME_TO_VANISH;
+    [SerializeField] static protected float TIME_TO_EXPLODE = 1;
+    [SerializeField] static protected float TIME_TO_VANISH = 5f;
     protected float deployTimer;
 
     protected bool deployed;
     protected bool exploding;
+    protected bool exploded;
 
     // Start is called before the first frame update
     public void Start()
     {
         deployed = false;
         exploding = false;
-        TIME_TO_EXPLODE = 1f;
-        TIME_TO_VANISH = 1.25f;
+        exploded = false;
+
         deployTimer = 0f;
-        RADIUS = 5;
-        DAMAGE = 10; // jaja. my sanity is slipping from my soul.
-        transform.localScale = new Vector3(RADIUS*2,1,RADIUS*2);
     }
 
     // Update is called once per frame
@@ -48,8 +43,9 @@ public abstract class SpecialAttack : MonoBehaviour
             return;
         }
 
-        if (deployTimer >= TIME_TO_EXPLODE) {
+        if (deployTimer >= TIME_TO_EXPLODE && !exploded) {
             ExecuteAttack();
+            exploded = true;
         }
     }
 
