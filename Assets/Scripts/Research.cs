@@ -35,16 +35,31 @@ public class Research : MonoBehaviour
        refund_upgrade = 0;
        cooldown_upgrade = 0;
        support_power_upgrade = 0;
-       experience = 20;
+       experience = 50;
         
     }
 
     public int getShootingRadius(){
         return shooting_radius_upgrade;
     }
+
+    public int getExp(){
+        return experience;
+    }
+
+    public void spendExp(int exp){
+        experience -= exp;
+    }
+    public int getPurchaseExp(int level){
+        return UPGRADE_PRICES[level];
+    }
+
     public void shootingRadiusUpgrade(){
-        if(shooting_radius_upgrade == 0){
+        if(shooting_radius_upgrade < 3){
+            experience -= UPGRADE_PRICES[shooting_radius_upgrade];
             shooting_radius_upgrade++;
+            Debug.Log(shooting_radius_upgrade);
+        
         }
 
     }
