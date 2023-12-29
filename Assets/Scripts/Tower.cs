@@ -16,7 +16,7 @@ public class Tower : Building
 	private int BASE_DAMAGE = 5;
 	private int FAVOURITE_ENEMY = -1;
 	private float FIRE_RATE = 2.0f;				// miliseconds
-	[SerializeField] private float BASE_SHOOTING_RADIUS = 7.0f;
+	[SerializeField] private float BASE_SHOOTING_RADIUS = 10.0f;
 
 	// COSTS attributes
 	private int currentUpgrade;
@@ -151,18 +151,6 @@ public class Tower : Building
 		}
 	}
 
-	void EnemyOutOfRange(Enemy enemy) {
-		enemiesInRange.Remove(enemy);
-
-		if (enemy == selectedEnemy) {
-			selectedEnemy = null;
-
-			patrolling = true;
-			attacking = false;
-			firing = false;
-		}
-	}
-
 	public void UpgradeTower() {
 		currentUpgrade += 1; // La comprobación se hace fuera
 
@@ -184,11 +172,40 @@ public class Tower : Building
 	void OnTriggerEnter(Collider collision) {
 		Debug.Log("Nuevo Enemy");
 		Enemy enemy = collision.gameObject.GetComponent<Enemy>();
-		if (enemy.GetHealthPercentage() > 0) enemiesInRange.Add(enemy);
+		if (CheckForObstacles(enemy.transform.position) && enemy.GetHealthPercentage() > 0) enemiesInRange.Add(enemy);
 	}
 
 	void OnTriggerExit(Collider collision) {
 		Debug.Log("Se va Enemy");
 		EnemyOutOfRange(collision.gameObject.GetComponent<Enemy>());
+	}
+
+	// PRIVATE auxiliar methods
+
+	private bool CheckForObstacles(Vector3 enemyPosition) {
+		RaycastHit raycastHit;
+		Vector3 dir = (transform.position - enemyPosition).normalized;
+
+		bool hit = Physics.Raycast(
+			transform.position,
+			dir,
+			out raycastHit,
+			shootingRadius,
+			LayerMask.GetMask("Terrain")
+		);
+
+		return hit;
+	}
+
+	private void EnemyOutOfRange(Enemy enemy) {
+		enemiesInRange.Remove(enemy);
+
+		if (enemy == selectedEnemy) {
+			selectedEnemy = null;
+
+			patrolling = true;
+			attacking = false;
+			firing = false;
+		}
 	}
 }
