@@ -17,6 +17,7 @@ public class Tower : Building
 	private int FAVOURITE_ENEMY = -1;
 	private float FIRE_RATE = 2.0f;				// miliseconds
 	[SerializeField] private float BASE_SHOOTING_RADIUS = 10.0f;
+	private float BASE_ROTATION_SPEED = 2.0f;
 
 	// COSTS attributes
 	private int currentUpgrade;
@@ -64,7 +65,7 @@ public class Tower : Building
 		selectedEnemy = null;
 		
 		// Estados
-		fireTimer = FIRE_RATE / 2.0f;
+		fireTimer = 0.0f;
 		patrolling = true;
 		attacking = false;
 		firing = false;
@@ -132,10 +133,20 @@ public class Tower : Building
 		Transform childTransform = transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetChild(0);
 		Quaternion newRotation = Quaternion.LookRotation((childTransform.position - selectedEnemy.transform.position).normalized);
 		newRotation *= Quaternion.Euler(0, 180, 0);
-		childTransform.rotation = Quaternion.Slerp(childTransform.rotation, newRotation, 0.05f);
+
+		float rotationSpeed = BASE_ROTATION_SPEED + Time.deltaTime;
+
+		if (!firing) {
+			float angle = Quaternion.Angle(childTransform.rotation, newRotation);
+			// float rotatingTime = angle / rotationSpeed;
+			// fireTimer = (fireTimer >= rotatingTime) ? fireTimer : rotatingTime;
+			fireTimer = FIRE_RATE - ((angle*Mathf.Deg2Rad) / BASE_ROTATION_SPEED) - 0.5f;
+
+			firing = true;
+		}
+		childTransform.rotation = Quaternion.RotateTowards(childTransform.rotation, newRotation, rotationSpeed);
 		
 		animator.enabled = false;
-		firing = true;
 		
 		if (firing) {
 			fireTimer += Time.deltaTime;
@@ -162,6 +173,7 @@ public class Tower : Building
 	}
 
 	public override void DestroyBuilding() {
+		Debug.Log("Tower destroyed");
 		animator.SetBool("destroyTower", true);
 
 		TowerDestroyed();
@@ -170,13 +182,13 @@ public class Tower : Building
 	// COLLISIONS methods
 
 	void OnTriggerEnter(Collider collision) {
-		Debug.Log("Nuevo Enemy");
+		// Debug.Log("Nuevo Enemy");
 		Enemy enemy = collision.gameObject.GetComponent<Enemy>();
 		if (CheckForObstacles(enemy.transform.position) && enemy.GetHealthPercentage() > 0) enemiesInRange.Add(enemy);
 	}
 
 	void OnTriggerExit(Collider collision) {
-		Debug.Log("Se va Enemy");
+		// Debug.Log("Se va Enemy");
 		EnemyOutOfRange(collision.gameObject.GetComponent<Enemy>());
 	}
 
