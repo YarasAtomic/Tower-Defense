@@ -53,7 +53,7 @@ public class Enemy : MonoBehaviour
         rb = gameObject.GetComponent<Rigidbody>();
         splineToGroundRay = new Vector3(UnityEngine.Random.Range(-MAX_GROUND_RAY_VARIATION,MAX_GROUND_RAY_VARIATION),-1,UnityEngine.Random.Range(-MAX_GROUND_RAY_VARIATION,MAX_GROUND_RAY_VARIATION));
         animator = gameObject.GetComponentInChildren<Animator>();
-        Debug.Log(animator);
+        // Debug.Log(animator);
         animator.SetFloat("idleBlend",UnityEngine.Random.value);
     }
 

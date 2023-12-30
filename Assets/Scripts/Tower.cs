@@ -67,7 +67,6 @@ public class Tower : Building
 		
 		// Estados
 		initialRotation = transform.Find("Armature/MainBody/NeckLow/NeckUp/Head").rotation;
-		Debug.Log(initialRotation.x + " " + initialRotation.y + " " + initialRotation.z + " " + initialRotation.w);
 		fireTimer = 0.0f;
 		patrolling = true;
 		attacking = false;
@@ -78,6 +77,8 @@ public class Tower : Building
 	}
 
 	void Update() {
+		animator.speed = GameTime.GameSpeed;
+
 		if (patrolling) {
 			if (!animator.enabled) ActivateAnimation();
 			CheckEnemiesInRange();
@@ -126,8 +127,6 @@ public class Tower : Building
 				}
 			}
 
-			Debug.Log(selectedEnemy);
-
 			patrolling = false;
 			attacking = true;
 
@@ -141,7 +140,7 @@ public class Tower : Building
 		Quaternion newRotation = Quaternion.LookRotation((childTransform.position - selectedEnemy.transform.position).normalized);
 		newRotation *= Quaternion.Euler(0, 180, 0);
 
-		float rotationSpeed = BASE_ROTATION_SPEED * Time.deltaTime;
+		float rotationSpeed = BASE_ROTATION_SPEED * GameTime.DeltaTime;
 
 		if (!firing) {
 			animator.enabled = false;
@@ -156,7 +155,7 @@ public class Tower : Building
 		childTransform.rotation = Quaternion.RotateTowards(childTransform.rotation, newRotation, rotationSpeed);
 		
 		if (firing) {
-			fireTimer += Time.deltaTime;
+			fireTimer += GameTime.DeltaTime;
 
 			if (fireTimer >= FIRE_RATE) {
 				selectedEnemy.Damage((int) damage);
@@ -184,6 +183,12 @@ public class Tower : Building
 		animator.SetBool("destroyTower", true);
 
 		TowerDestroyed();
+
+		// base.tile.EmptyTile();
+		// base.tile.Show();
+
+		Destroy(gameObject);
+		Destroy(this);
 	}
 
 	// COLLISIONS methods
@@ -230,10 +235,8 @@ public class Tower : Building
 
 	private void ActivateAnimation() {
 		Transform childTransform = transform.Find("Armature/MainBody/NeckLow/NeckUp/Head");
-		childTransform.rotation = Quaternion.Slerp(childTransform.rotation, initialRotation, 2.0f * Time.deltaTime);
+		childTransform.rotation = Quaternion.Slerp(childTransform.rotation, initialRotation, 2.0f * GameTime.DeltaTime);
 
-		Debug.Log(childTransform.rotation.x + " " + childTransform.rotation.y + " " + childTransform.rotation.z + " " + childTransform.rotation.w);
-		Debug.Log(initialRotation.x + " " + initialRotation.y + " " + initialRotation.z + " " + initialRotation.w);
 		if (Quaternion.Angle(childTransform.rotation, initialRotation) < 0.1f) {
 			animator.enabled = true;
 			animator.SetBool("patrolling", true);
