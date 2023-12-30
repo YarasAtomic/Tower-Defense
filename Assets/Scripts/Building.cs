@@ -4,10 +4,10 @@ public abstract class Building : MonoBehaviour
 {
 	private TypeBuilding type;
 
-    [SerializeField] protected int BASE_HP = 100;
+    [SerializeField] protected float BASE_HP = 100.0f;
 	protected int MAX_SELLING_PRICE;
 
-    protected int hp;
+    protected float hp;
 	protected int sellingPrice;
 
 	protected Animator animator;
@@ -19,6 +19,8 @@ public abstract class Building : MonoBehaviour
 	public abstract void Initialise(BuildingTile buildingTile);
 
 	// GET methods
+
+	public abstract float GetHealthPercentage();
 
 	public TypeBuilding GetTypeBuilding() {
 		return type;

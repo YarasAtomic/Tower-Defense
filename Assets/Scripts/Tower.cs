@@ -21,10 +21,10 @@ public class Tower : Building
 
 	// COSTS attributes
 	private int currentUpgrade;
-	private int maxHp;
+	private float maxHp;
 	private int repairCost;
 	private float repairRate;
-	private int damage;
+	private float damage;
 	private float shootingRadius;
 	
 	// ENEMY DETECTION attributes
@@ -33,8 +33,7 @@ public class Tower : Building
 	private Enemy selectedEnemy;
 
 	// STATE attributes
-	[SerializeField] Quaternion initialRotation;
-	[SerializeField] Quaternion currentRotation;
+	Quaternion initialRotation;
 	private float fireTimer;
 	private bool patrolling;
 	private bool attacking;
@@ -47,16 +46,16 @@ public class Tower : Building
 	void Start() {
 		// General
 		currentUpgrade = 0;
-		maxHp = (int) (base.BASE_HP * FACTOR_UPGRADE[currentUpgrade]);
+		maxHp = base.BASE_HP * FACTOR_UPGRADE[currentUpgrade];
 		base.hp = maxHp;
 		
 		// Costes
 		CalculateSellingPrice();
-		repairCost = BASE_HP_COST * (1 - base.hp/maxHp);
+		repairCost = BASE_HP_COST * (1 - (int) GetHealthPercentage());
 		repairRate = BASE_REPAIR_RATE; // * SPEED_OF_REPAIR_FACTOR[speed_of_repair_upgrade] - de research
 		
 		// Ataques
-		damage = (int) (BASE_DAMAGE * FACTOR_UPGRADE[currentUpgrade]);
+		damage = BASE_DAMAGE * FACTOR_UPGRADE[currentUpgrade];
 		shootingRadius = BASE_SHOOTING_RADIUS; // * shooting_radius_factor[shooting_radius_upgrade]
 
 		SphereCollider collider = gameObject.GetComponent<SphereCollider>();
@@ -79,9 +78,6 @@ public class Tower : Building
 	}
 
 	void Update() {
-		Transform childTransform = transform.Find("Armature/MainBody/NeckLow/NeckUp/Head");
-		currentRotation = childTransform.rotation;
-
 		if (patrolling) {
 			if (!animator.enabled) ActivateAnimation();
 			CheckEnemiesInRange();
@@ -94,6 +90,10 @@ public class Tower : Building
 	public static int GetTowersDestroyed() => TOWERS_DESTROYED;
 	private static void TowerDestroyed() => TOWERS_DESTROYED += 1;
 
+	public override float GetHealthPercentage() {
+		return base.hp / maxHp;
+	}
+
 	public static int GetPurchasePrice() {
 		return PURCHASE_PRICE;
 	}
@@ -103,7 +103,7 @@ public class Tower : Building
 		return base.sellingPrice;
 	}
 	private void CalculateSellingPrice() {
-		base.sellingPrice = (int) (base.MAX_SELLING_PRICE * (base.hp/maxHp) * FACTOR_UPGRADE[currentUpgrade]); // * REFUND_FACTOR[refund_upgrade]
+		base.sellingPrice = (int) (base.MAX_SELLING_PRICE * (GetHealthPercentage()) * FACTOR_UPGRADE[currentUpgrade]); // * REFUND_FACTOR[refund_upgrade]
 	}
 
 	// ACTION methods
@@ -159,7 +159,7 @@ public class Tower : Building
 			fireTimer += Time.deltaTime;
 
 			if (fireTimer >= FIRE_RATE) {
-				selectedEnemy.Damage(damage);
+				selectedEnemy.Damage((int) damage);
 				if (selectedEnemy.GetHealthPercentage() <= 0) {
 					EnemyOutOfRange(selectedEnemy);
 				}
@@ -225,13 +225,6 @@ public class Tower : Building
 			patrolling = true;
 			attacking = false;
 			firing = false;
-
-			// Transform childTransform = transform.Find("Armature/MainBody/NeckLow/NeckUp/Head");
-			// Quaternion newRotation = Quaternion.LookRotation((childTransform.position - initialTransform.position).normalized);
-			// newRotation *= Quaternion.Euler(0, 180, 0);
-			// childTransform.rotation = Quaternion.RotateTowards(childTransform.rotation, Quaternion.Euler(0.0f, 180.0f, 0.0f), BASE_ROTATION_SPEED * Time.deltaTime);
-			// childTransform.rotation = initialTransform.rotation;
-			
 		}
 	}
 

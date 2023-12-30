@@ -22,7 +22,6 @@ public class Generator : Building
 
     // Start is called before the first frame update
     void Start() {
-        base.BASE_HP = 100;
         base.MAX_SELLING_PRICE = 90;
         base.hp = base.BASE_HP;
         base.sellingPrice = base.MAX_SELLING_PRICE;
@@ -45,12 +44,16 @@ public class Generator : Building
         // } ----> Lo he comentado porque la gestión del daño se hace en el método Damage
     }
 
+	public override float GetHealthPercentage() {
+		return base.hp / base.BASE_HP;
+	}
+
 	public static int GetPurchasePrice() {
 		return PURCHASE_PRICE;
 	}
 
     private void CalculateSellingPrice(){
-        base.sellingPrice = base.hp / base.BASE_HP * base.MAX_SELLING_PRICE;
+        base.sellingPrice = (int) (base.MAX_SELLING_PRICE * GetHealthPercentage());
     }
 
 	public override int GetSellingPrice() {

@@ -12,7 +12,8 @@ public class HealthBar : MonoBehaviour
     GameObject health;
 
     Enemy enemyParent = null;
-    Building buildingParent = null;
+    Tower towerParent = null;
+	Generator generatorParent = null;
 
     Image healthImage;
     void Start()
@@ -24,7 +25,9 @@ public class HealthBar : MonoBehaviour
         healthImage = health.GetComponent<Image>();
 
         enemyParent = transform.parent.GetComponent<Enemy>();
-        buildingParent = transform.parent.GetComponent<Building>();
+        towerParent = transform.parent.GetComponent<Tower>();
+		generatorParent = transform.parent.GetComponent<Generator>();
+
     }
 
     // Update is called once per frame
@@ -34,7 +37,12 @@ public class HealthBar : MonoBehaviour
         if(enemyParent!=null) {
             healthImage.fillAmount = enemyParent.GetHealthPercentage();
         }
-        // if(buildingParent!=null) healthImage.fillAmount = buildingParent.GetHealthPercentage(); //TODO
+        if(towerParent!=null) {
+			healthImage.fillAmount = towerParent.GetHealthPercentage();
+		}
+        if(generatorParent!=null) {
+			healthImage.fillAmount = generatorParent.GetHealthPercentage();
+		}
 
         if(healthImage.fillAmount <= 0){
             Destroy(gameObject);
