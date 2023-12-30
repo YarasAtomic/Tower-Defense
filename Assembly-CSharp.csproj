@@ -66,6 +66,7 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\LevelLogic.cs" />
     <Compile Include="Assets\Scripts\SpecialAttack.cs" />
+    <Compile Include="Assets\Scripts\PlanetMapController.cs" />
     <Compile Include="Assets\Scripts\MatrixEditor.cs" />
     <Compile Include="Assets\Scripts\Tower.cs" />
     <Compile Include="Assets\Scripts\Enemy.cs" />
@@ -82,6 +83,7 @@
     <Compile Include="Assets\Scripts\BuildingTile.cs" />
     <Compile Include="Assets\Scripts\GameTime.cs" />
     <Compile Include="Assets\Scripts\Utils.cs" />
+    <Compile Include="Assets\Scripts\Lighting.cs" />
     <Compile Include="Assets\Scripts\CameraController.cs" />
     <Compile Include="Assets\Scripts\SplashAttack.cs" />
     <Compile Include="Assets\Scripts\LevelCanvas.cs" />
@@ -90,6 +92,7 @@
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Overlay.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap.shader" />
+    <None Include="Assets\Shaders\Planet.shader" />
     <None Include="Assets\Shaders\Unused\TerrainShaderOld.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMPro_Mobile.cginc" />
     <None Include="Assets\Shaders\Unused\TerrainShaderPBR.shader" />
