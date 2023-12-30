@@ -12,12 +12,12 @@ public class Tower : Building
 	private static int PURCHASE_PRICE = 100;
 	private int UPGRADE_PRICE = 50;
 	private int BASE_HP_COST = 5;
-	private float BASE_REPAIR_RATE = 5.0f;		// miliseconds
-	private int BASE_DAMAGE = 5;
+	private float BASE_REPAIR_RATE = 2.0f;		// miliseconds
+	private int BASE_DAMAGE = 10;
 	private int FAVOURITE_ENEMY = -1;
-	private float FIRE_RATE = 2.0f;				// miliseconds
+	private float FIRE_RATE = 1.0f;				// miliseconds
 	[SerializeField] private float BASE_SHOOTING_RADIUS = 10.0f;
-	private float BASE_ROTATION_SPEED = 2.0f;
+	private float BASE_ROTATION_SPEED = 100.0f;
 
 	// COSTS attributes
 	private int currentUpgrade;
@@ -33,6 +33,8 @@ public class Tower : Building
 	private Enemy selectedEnemy;
 
 	// STATE attributes
+	[SerializeField] Quaternion initialRotation;
+	[SerializeField] Quaternion currentRotation;
 	private float fireTimer;
 	private bool patrolling;
 	private bool attacking;
@@ -65,6 +67,8 @@ public class Tower : Building
 		selectedEnemy = null;
 		
 		// Estados
+		initialRotation = transform.Find("Armature/MainBody/NeckLow/NeckUp/Head").rotation;
+		Debug.Log(initialRotation.x + " " + initialRotation.y + " " + initialRotation.z + " " + initialRotation.w);
 		fireTimer = 0.0f;
 		patrolling = true;
 		attacking = false;
@@ -75,9 +79,11 @@ public class Tower : Building
 	}
 
 	void Update() {
-		animator.SetBool("attackingEnemy", attacking);
+		Transform childTransform = transform.Find("Armature/MainBody/NeckLow/NeckUp/Head");
+		currentRotation = childTransform.rotation;
 
 		if (patrolling) {
+			if (!animator.enabled) ActivateAnimation();
 			CheckEnemiesInRange();
 		}
 		else if (attacking) {
@@ -124,29 +130,30 @@ public class Tower : Building
 
 			patrolling = false;
 			attacking = true;
+
+			// animator.SetBool("attackingEnemy", attacking);
+			animator.SetBool("patrolling", false);
 		}
 	}
 
-	public void AttackEnemy() {
-		animator.enabled = false;
-		
-		Transform childTransform = transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetChild(0);
+	public void AttackEnemy() {		
+		Transform childTransform = transform.Find("Armature/MainBody/NeckLow/NeckUp/Head");
 		Quaternion newRotation = Quaternion.LookRotation((childTransform.position - selectedEnemy.transform.position).normalized);
 		newRotation *= Quaternion.Euler(0, 180, 0);
 
-		float rotationSpeed = BASE_ROTATION_SPEED + Time.deltaTime;
+		float rotationSpeed = BASE_ROTATION_SPEED * Time.deltaTime;
 
 		if (!firing) {
+			animator.enabled = false;
+
 			float angle = Quaternion.Angle(childTransform.rotation, newRotation);
 			// float rotatingTime = angle / rotationSpeed;
 			// fireTimer = (fireTimer >= rotatingTime) ? fireTimer : rotatingTime;
-			fireTimer = FIRE_RATE - ((angle*Mathf.Deg2Rad) / BASE_ROTATION_SPEED) - 0.5f;
+			fireTimer = FIRE_RATE - ((angle*Mathf.Deg2Rad) / rotationSpeed) - 0.25f;
 
 			firing = true;
 		}
 		childTransform.rotation = Quaternion.RotateTowards(childTransform.rotation, newRotation, rotationSpeed);
-		
-		animator.enabled = false;
 		
 		if (firing) {
 			fireTimer += Time.deltaTime;
@@ -218,6 +225,26 @@ public class Tower : Building
 			patrolling = true;
 			attacking = false;
 			firing = false;
+
+			// Transform childTransform = transform.Find("Armature/MainBody/NeckLow/NeckUp/Head");
+			// Quaternion newRotation = Quaternion.LookRotation((childTransform.position - initialTransform.position).normalized);
+			// newRotation *= Quaternion.Euler(0, 180, 0);
+			// childTransform.rotation = Quaternion.RotateTowards(childTransform.rotation, Quaternion.Euler(0.0f, 180.0f, 0.0f), BASE_ROTATION_SPEED * Time.deltaTime);
+			// childTransform.rotation = initialTransform.rotation;
+			
+		}
+	}
+
+	private void ActivateAnimation() {
+		Transform childTransform = transform.Find("Armature/MainBody/NeckLow/NeckUp/Head");
+		childTransform.rotation = Quaternion.Slerp(childTransform.rotation, initialRotation, 2.0f * Time.deltaTime);
+
+		Debug.Log(childTransform.rotation.x + " " + childTransform.rotation.y + " " + childTransform.rotation.z + " " + childTransform.rotation.w);
+		Debug.Log(initialRotation.x + " " + initialRotation.y + " " + initialRotation.z + " " + initialRotation.w);
+		if (Quaternion.Angle(childTransform.rotation, initialRotation) < 0.1f) {
+			animator.enabled = true;
+			animator.SetBool("patrolling", true);
+			animator.Play("Patrol", -1, 0.0f);
 		}
 	}
 }

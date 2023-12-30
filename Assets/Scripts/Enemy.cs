@@ -4,7 +4,7 @@ using UnityEngine.Splines;
 public class Enemy : MonoBehaviour
 {
     static int enemyCount = 0;
-    [SerializeField] int MAX_HEALTH;
+    [SerializeField] int MAX_HEALTH = 100;
     [SerializeField] int health;
     [SerializeField] float speed;
     [SerializeField] int RESOURCE_DROP;
