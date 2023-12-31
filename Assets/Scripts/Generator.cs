@@ -7,7 +7,7 @@ public class Generator : Building
 	private static int PURCHASE_PRICE = 100;
     /*[SerializeField]*/ private float RESOURCE_RATE = 0.5f; // Debería de ser const
     /*[SerializeField]*/ private int RESOURCE_AMOUNT = 10; // Debería de ser const
-    /*[SerializeField]*/ private  float timer;
+    /*[SerializeField]*/ private float timer;
     private LevelLogic levelLogic;
 
 	public override void Initialise(BuildingTile buildingTile) {
@@ -22,13 +22,17 @@ public class Generator : Building
 
     // Start is called before the first frame update
     void Start() {
-        base.MAX_SELLING_PRICE = 90;
-        base.hp = base.BASE_HP;
-        base.sellingPrice = base.MAX_SELLING_PRICE;
-        timer = 0;
+        // General
+		base.hp = base.BASE_HP;
 
+		// Costes
+        base.MAX_SELLING_PRICE = PURCHASE_PRICE * 0.75f;
+        base.sellingPrice = (int) base.MAX_SELLING_PRICE;
+        
+		// Estados
+		timer = 0;
+		
 		animator = gameObject.GetComponent<Animator>();
-		base.tile = null;
     }
 
     // Update is called once per frame

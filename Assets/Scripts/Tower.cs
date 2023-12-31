@@ -12,10 +12,10 @@ public class Tower : Building
 	private static int PURCHASE_PRICE = 100;
 	private int UPGRADE_PRICE = 50;
 	private int BASE_HP_COST = 5;
-	private float BASE_REPAIR_RATE = 2.0f;		// miliseconds
+	private float BASE_REPAIR_RATE = 0.5f;		// seconds
 	private int BASE_DAMAGE = 10;
 	private int FAVOURITE_ENEMY = -1;
-	private float FIRE_RATE = 1.0f;				// miliseconds
+	private float FIRE_RATE = 1.0f;				// seconds
 	[SerializeField] private float BASE_SHOOTING_RADIUS = 10.0f;
 	private float BASE_ROTATION_SPEED = 100.0f;
 
@@ -34,14 +34,23 @@ public class Tower : Building
 
 	// STATE attributes
 	Quaternion initialRotation;
+	private float repairTimer;
 	private float fireTimer;
 	private bool patrolling;
 	private bool attacking;
 	private bool firing;
 
+	//*---------------------------------------------------------------*//
+    //*-------------------------- INITIALISE -------------------------*//
+    //*---------------------------------------------------------------*//
+
 	public override void Initialise(BuildingTile buildingTile) {
 		base.tile = buildingTile;
 	}
+
+	//*---------------------------------------------------------------*//
+    //*---------------------------- START ----------------------------*//
+    //*---------------------------------------------------------------*//
 
 	void Start() {
 		// General
@@ -50,8 +59,7 @@ public class Tower : Building
 		base.hp = maxHp;
 		
 		// Costes
-		CalculateSellingPrice();
-		repairCost = BASE_HP_COST * (1 - (int) GetHealthPercentage());
+		base.MAX_SELLING_PRICE = PURCHASE_PRICE * 0.75f;
 		repairRate = BASE_REPAIR_RATE; // * SPEED_OF_REPAIR_FACTOR[speed_of_repair_upgrade] - de research
 		
 		// Ataques
@@ -75,6 +83,10 @@ public class Tower : Building
 		animator = gameObject.GetComponent<Animator>();
 	}
 
+	//*---------------------------------------------------------------*//
+    //*---------------------------- UPDATE ---------------------------*//
+    //*---------------------------------------------------------------*//
+
 	void Update() {
 		animator.speed = GameTime.GameSpeed;
 
@@ -87,6 +99,10 @@ public class Tower : Building
 		}
 	}
 
+	//*---------------------------------------------------------------*//
+    //*----------------------------- GET -----------------------------*//
+    //*---------------------------------------------------------------*//
+
 	public static int GetTowersDestroyed() => TOWERS_DESTROYED;
 	private static void TowerDestroyed() => TOWERS_DESTROYED += 1;
 
@@ -98,15 +114,28 @@ public class Tower : Building
 		return PURCHASE_PRICE;
 	}
 
+	public int GetRepairPrice() {
+		CalculateRepairPrice();
+		return repairCost;
+	}
+
 	public override int GetSellingPrice() {
 		CalculateSellingPrice();
+		Debug.Log(base.sellingPrice);
 		return base.sellingPrice;
 	}
+
+	private void CalculateRepairPrice() {
+		repairCost = BASE_HP_COST * (1 - (int) GetHealthPercentage());
+	}
+
 	private void CalculateSellingPrice() {
 		base.sellingPrice = (int) (base.MAX_SELLING_PRICE * (GetHealthPercentage()) * FACTOR_UPGRADE[currentUpgrade]); // * REFUND_FACTOR[refund_upgrade]
 	}
 
-	// ACTION methods
+	//*---------------------------------------------------------------*//
+    //*--------------------------- ACTIONS ---------------------------*//
+    //*---------------------------------------------------------------*//
 
 	public void CheckEnemiesInRange() {
 		if (selectedEnemy == null && enemiesInRange.Count != 0) {
@@ -191,7 +220,9 @@ public class Tower : Building
 		Destroy(this);
 	}
 
-	// COLLISIONS methods
+	//*---------------------------------------------------------------*//
+    //*------------------------- COLLISSIONS -------------------------*//
+    //*---------------------------------------------------------------*//
 
 	void OnTriggerEnter(Collider collision) {
 		// Debug.Log("Nuevo Enemy");
@@ -204,7 +235,9 @@ public class Tower : Building
 		EnemyOutOfRange(collision.gameObject.GetComponent<Enemy>());
 	}
 
-	// PRIVATE auxiliar methods
+	//*---------------------------------------------------------------*//
+    //*--------------------------- AUXILIAR --------------------------*//
+    //*---------------------------------------------------------------*//
 
 	private bool CheckForObstacles(Vector3 enemyPosition) {
 		RaycastHit raycastHit;

@@ -101,7 +101,9 @@ public class LevelCanvas : MonoBehaviour
         thirdStarIMG       = transform.Find("levelFinishedPanel/thirdStarIMG").gameObject;  
 
         tower1Button = transform.Find("tower1Button").gameObject;
-        // ...
+		tower2Button = transform.Find("tower2Button").gameObject;
+		tower3Button = transform.Find("tower3Button").gameObject;
+		generatorButton = transform.Find("generatorButton").gameObject;
 
         buildingSubmenu = transform.Find("buildingSubmenu").gameObject;
         sellButton      = transform.Find("buildingSubmenu/sellButton").gameObject;
@@ -222,6 +224,9 @@ public class LevelCanvas : MonoBehaviour
         skipButton.GetComponent<Button>().interactable = !GameTime.IsPaused();
         accelerateButton.GetComponent<Button>().interactable = !GameTime.IsPaused();
         tower1Button.GetComponent<Button>().interactable = !GameTime.IsPaused();
+        tower2Button.GetComponent<Button>().interactable = !GameTime.IsPaused();
+        tower3Button.GetComponent<Button>().interactable = !GameTime.IsPaused();
+		generatorButton.GetComponent<Button>().interactable = !GameTime.IsPaused();
         splashAttackButton.GetComponent<Button>().interactable = !GameTime.IsPaused();
         uniformAttackButton.GetComponent<Button>().interactable = !GameTime.IsPaused();
         if (GameTime.IsPaused()) {
@@ -333,7 +338,7 @@ public class LevelCanvas : MonoBehaviour
         if (levelLogic.GetInteractionMode() == LevelLogic.InteractionMode.Build) {
             BuildingTile tile = hit.collider.gameObject.GetComponent<BuildingTile>();
             if(tile!=null){
-                Debug.Log("Tile");
+                // Debug.Log("Tile");
                 levelLogic.Build(tile, typeBuilding);
             }
         }
@@ -343,7 +348,8 @@ public class LevelCanvas : MonoBehaviour
             Building currentBuilding = hit.collider.gameObject.GetComponent<Building>();
             if (currentBuilding != null && currentBuilding != selectedBuilding) {
                 selectedBuilding = currentBuilding;
-                ShowBuildingSubmenu();
+                if (selectedBuilding is Generator) ShowBuildingSubmenu(false);
+				else ShowBuildingSubmenu(true);
             } else {
                 HideBuildingSubmenu();
                 selectedBuilding = null;
@@ -360,18 +366,24 @@ public class LevelCanvas : MonoBehaviour
 
     public void SellBuilding() {
         levelLogic.Sell(selectedBuilding);
+		HideBuildingSubmenu();
+		selectedBuilding = null;
     }
 
     //-----------------------------------------------------------------//
 
     public void RepairBuilding() {
         levelLogic.Repair(selectedBuilding);
+		HideBuildingSubmenu();
+		selectedBuilding = null;
     }
 
     //-----------------------------------------------------------------//
 
     public void UpgradeBuilding() {
         levelLogic.Upgrade(selectedBuilding);
+		HideBuildingSubmenu();
+		selectedBuilding = null;
     }
 
     //-----------------------------------------------------------------//
@@ -382,10 +394,19 @@ public class LevelCanvas : MonoBehaviour
 
     //-----------------------------------------------------------------//
 
-    void ShowBuildingSubmenu() {
+    void ShowBuildingSubmenu(bool allActions) {
         Vector3 screenPos = mainCamera.GetComponent<Camera>().WorldToScreenPoint(selectedBuilding.transform.position);
         buildingSubmenu.transform.position = screenPos;
         buildingSubmenu.SetActive(true);
+
+		if (allActions) {
+			repairButton.SetActive(true);
+			upgradeButton.SetActive(true);
+		}
+		else {
+			repairButton.SetActive(false);
+			upgradeButton.SetActive(false);
+		}
     }
 
     //!---------------------------------------------------------------!//

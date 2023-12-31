@@ -212,28 +212,28 @@ public class LevelLogic : MonoBehaviour
     }
 
     public void Sell(Building b) {
-        // currentResources += b.GetSellingPrice();
-        // b.Sell();
+        currentResources += b.GetSellingPrice();
+        b.SellBuilding();
     }
 
     //-----------------------------------------------------------------//
 
     public void Repair(Building b) {
-        // int price = b.GetRepairPrice();
-        // if (price > currentResources) return;
-        //
-        // currentResources -= price;
-        // b.Repair();
+        int price = ((Tower) b).GetRepairPrice();
+        if (price > currentResources) return;
+        
+        currentResources -= price;
+        ((Tower) b).RepairTower(true);
     }
 
     //-----------------------------------------------------------------//
 
     public void Upgrade(Building b) {
-        // int price = b.GetRepairPrice();
-        // if (price > currentResources) return;
-        //
-        // currentResources -= price;
-        // b.Repair();
+        int price = ((Tower) b).GetRepairPrice();
+        if (price > currentResources) return;
+        
+        currentResources -= price;
+        ((Tower) b).UpgradeTower();
     }
 
     //-----------------------------------------------------------------//

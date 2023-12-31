@@ -5,7 +5,7 @@ public abstract class Building : MonoBehaviour
 	private TypeBuilding type;
 
     [SerializeField] protected float BASE_HP = 100.0f;
-	protected int MAX_SELLING_PRICE;
+	protected float MAX_SELLING_PRICE;
 
     protected float hp;
 	protected int sellingPrice;
@@ -31,7 +31,12 @@ public abstract class Building : MonoBehaviour
 	// ACTION methods
 
 	public void SellBuilding() {
-		animator.SetBool("sellBuilding", true);
+		// animator.SetBool("sellBuilding", true);
+
+		tile.EmptyTile();
+
+		Destroy(gameObject);
+		Destroy(this);
 	}
 
 	public void DamageBuilding(int dmg) {
