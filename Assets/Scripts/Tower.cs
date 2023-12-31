@@ -73,7 +73,6 @@ public class Tower : Building
 		firing = false;
 		
 		animator = gameObject.GetComponent<Animator>();
-		base.tile = null;
 	}
 
 	void Update() {
@@ -183,8 +182,9 @@ public class Tower : Building
 		animator.SetBool("destroyTower", true);
 
 		TowerDestroyed();
+		Debug.Log(base.tile);
 
-		// base.tile.EmptyTile();
+		base.tile.EmptyTile();
 		// base.tile.Show();
 
 		Destroy(gameObject);

@@ -12,7 +12,7 @@ public abstract class Building : MonoBehaviour
 
 	protected Animator animator;
 
-	protected BuildingTile tile;
+	[SerializeField] protected BuildingTile tile;
 
 	// INIT method
 

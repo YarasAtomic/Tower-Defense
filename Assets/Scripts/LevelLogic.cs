@@ -12,6 +12,13 @@ public class LevelLogic : MonoBehaviour
     //!---------------------- CLASS ATTRIBUTES -----------------------!//
     //!---------------------------------------------------------------!//
     //!---------------------------------------------------------------!//
+
+	public enum InteractionMode{
+        Build, SpecialAttack, None
+    };
+
+    InteractionMode interactionMode;
+
     // public int[,] waves = {{1,0,0,0},{1,0,0,0},{1,0,0,0},{1,0,0,0}};
     [HideInInspector] public List<int> waveList;
     // int waveCount = 4;
@@ -63,6 +70,8 @@ public class LevelLogic : MonoBehaviour
     //*---------------------------------------------------------------*//
     void Start()
     {
+		interactionMode     = InteractionMode.None;
+
         destroyedTowers     = 0;
         currentWave         = 0;
         currentResources    = INITIAL_RESOURCES;
@@ -71,7 +80,10 @@ public class LevelLogic : MonoBehaviour
         splashAttackTimer   = 0;
         enemySpawn          = null;
         ALL_POSITIONS       = FindObjectsOfType<BuildingTile>(true);
-        Debug.Log(ALL_POSITIONS.Length);
+		foreach(BuildingTile buildingTile in ALL_POSITIONS) {
+			buildingTile.Initialise(this);
+		}
+        // Debug.Log(ALL_POSITIONS.Length);
     }
 
     //*---------------------------------------------------------------*//
@@ -83,6 +95,18 @@ public class LevelLogic : MonoBehaviour
         HandleWaves();
         HandleSpecialAttacks();
     }
+
+	//*---------------------------------------------------------------*//
+    //*----------------------- INTERACTION MODE ----------------------*//
+    //*---------------------------------------------------------------*//
+
+	public InteractionMode GetInteractionMode() {
+		return interactionMode;
+	}
+
+	public void SetInteractionMode(InteractionMode interactionMode) {
+		this.interactionMode = interactionMode;
+	}
 
     //*---------------------------------------------------------------*//
     //*------------------------- WAVE HANDLER ------------------------*//
@@ -231,7 +255,7 @@ public class LevelLogic : MonoBehaviour
 
         // if (price > currentResources) return;
         // currentResources -= price;
-        tile.Build(buildingPrefab, this);
+        tile.Build(buildingPrefab);
     }
 
     //*---------------------------------------------------------------*//

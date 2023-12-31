@@ -4,7 +4,12 @@ using UnityEngine;
 
 public class BuildingTile : MonoBehaviour
 {
+	LevelLogic levelLogic;
     Building building;
+
+	public void Initialise(LevelLogic levelLogic) {
+		this.levelLogic = levelLogic;
+	}
 
     // Start is called before the first frame update
     void Start(){
@@ -17,7 +22,7 @@ public class BuildingTile : MonoBehaviour
         
     }
 
-    public void Build(GameObject buildingPrefab, LevelLogic levelLogic){
+    public void Build(GameObject buildingPrefab){
         building = Instantiate(buildingPrefab, transform.position, Quaternion.identity).GetComponent<Building>();
         building.Initialise(this);
 
@@ -26,6 +31,11 @@ public class BuildingTile : MonoBehaviour
         }
         Hide();
     }
+
+	public void EmptyTile() {
+		building = null;
+		if (levelLogic.GetInteractionMode() == LevelLogic.InteractionMode.Build) Show();
+	}
 
     public bool IsEmpty(){
         return building == null;

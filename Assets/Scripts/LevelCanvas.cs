@@ -57,11 +57,6 @@ public class LevelCanvas : MonoBehaviour
 
     LevelLogic levelLogic;
 
-    enum InteractionMode{
-        Build, SpecialAttack, None
-    };
-
-    InteractionMode interactionMode;
     TypeBuilding typeBuilding;
 
     Building selectedBuilding;
@@ -121,7 +116,6 @@ public class LevelCanvas : MonoBehaviour
 
         levelLogic = levelLogicGameObject.GetComponent<LevelLogic>();
 
-        interactionMode = InteractionMode.None;
         typeBuilding = TypeBuilding.Tower1;
     }  
 
@@ -233,20 +227,23 @@ public class LevelCanvas : MonoBehaviour
         if (GameTime.IsPaused()) {
             levelLogic.HideBuildingTiles();
             levelLogic.DestroySpecialAttack();
-            interactionMode = InteractionMode.None;
+            levelLogic.SetInteractionMode(LevelLogic.InteractionMode.None);
         }
     }
 
     //-----------------------------------------------------------------//
 
     public void ToggleBuildingMode(TypeBuilding type) {
-        interactionMode = interactionMode != InteractionMode.Build ? InteractionMode.Build : InteractionMode.None;
+        levelLogic.SetInteractionMode((levelLogic.GetInteractionMode() != LevelLogic.InteractionMode.Build)
+			? LevelLogic.InteractionMode.Build
+			: LevelLogic.InteractionMode.None
+		);
         typeBuilding = type;
 
-        Debug.Log("Interaction mode: " + interactionMode);
+        Debug.Log("Interaction mode: " + levelLogic.GetInteractionMode());
         Debug.Log("Type building: "    + type);
 
-        if (interactionMode == InteractionMode.Build) {
+        if (levelLogic.GetInteractionMode() == LevelLogic.InteractionMode.Build) {
             levelLogic.ShowBuildingTiles();
             levelLogic.DestroySpecialAttack();
         } else {
@@ -269,12 +266,15 @@ public class LevelCanvas : MonoBehaviour
     //-----------------------------------------------------------------//
 
     public void ToggleSpecialAttackMode(TypeAttack type) {
-        interactionMode = interactionMode != InteractionMode.SpecialAttack ? InteractionMode.SpecialAttack : InteractionMode.None;
+		levelLogic.SetInteractionMode((levelLogic.GetInteractionMode() != LevelLogic.InteractionMode.SpecialAttack)
+			? LevelLogic.InteractionMode.SpecialAttack
+			: LevelLogic.InteractionMode.None
+		);
 
-        Debug.Log("Interaction mode: "+interactionMode);
+        Debug.Log("Interaction mode: " + levelLogic.GetInteractionMode());
         Debug.Log("Type attack: "+type);
 
-        if (interactionMode == InteractionMode.SpecialAttack) {
+		if (levelLogic.GetInteractionMode() == LevelLogic.InteractionMode.SpecialAttack) {
             levelLogic.InitialiseSpecialAttack(type,mainCamera.GetComponent<Camera>());
             levelLogic.HideBuildingTiles();
         } else {
@@ -330,7 +330,7 @@ public class LevelCanvas : MonoBehaviour
             return;
         }
 
-        if (interactionMode == InteractionMode.Build) {
+        if (levelLogic.GetInteractionMode() == LevelLogic.InteractionMode.Build) {
             BuildingTile tile = hit.collider.gameObject.GetComponent<BuildingTile>();
             if(tile!=null){
                 Debug.Log("Tile");
@@ -338,7 +338,8 @@ public class LevelCanvas : MonoBehaviour
             }
         }
 
-        if (interactionMode == InteractionMode.None || interactionMode == InteractionMode.Build) {
+        if (levelLogic.GetInteractionMode() == LevelLogic.InteractionMode.None
+		||  levelLogic.GetInteractionMode() == LevelLogic.InteractionMode.Build) {
             Building currentBuilding = hit.collider.gameObject.GetComponent<Building>();
             if (currentBuilding != null && currentBuilding != selectedBuilding) {
                 selectedBuilding = currentBuilding;
@@ -349,9 +350,9 @@ public class LevelCanvas : MonoBehaviour
             }
         }
 
-        if (interactionMode == InteractionMode.SpecialAttack) {
+        if (levelLogic.GetInteractionMode() == LevelLogic.InteractionMode.SpecialAttack) {
             levelLogic.DeploySpecialAttack();
-            interactionMode = InteractionMode.None;
+            levelLogic.SetInteractionMode(LevelLogic.InteractionMode.None);
         }
     }
 
