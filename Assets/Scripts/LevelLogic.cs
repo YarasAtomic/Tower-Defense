@@ -223,7 +223,7 @@ public class LevelLogic : MonoBehaviour
         if (price > currentResources) return;
         
         currentResources -= price;
-        ((Tower) b).RepairTower(true);
+        ((Tower) b).RepairTower();
     }
 
     //-----------------------------------------------------------------//

@@ -8,6 +8,7 @@ public class Tower : Building
 	private static int TOWERS_DESTROYED = 0;
 
 	// CONST attributes
+	private int MAX_UPGRADE = 2;
 	private List<float> FACTOR_UPGRADE = new List<float> {1.0f, 1.2f, 1.4f};
 	private static int PURCHASE_PRICE = 100;
 	private int UPGRADE_PRICE = 50;
@@ -24,6 +25,8 @@ public class Tower : Building
 	private float maxHp;
 	private int repairCost;
 	private float repairRate;
+	private float repairHp;
+	private float maxRepairHp;
 	private float damage;
 	private float shootingRadius;
 	
@@ -35,6 +38,7 @@ public class Tower : Building
 	// STATE attributes
 	Quaternion initialRotation;
 	private float repairTimer;
+	private bool repairing;
 	private float fireTimer;
 	private bool patrolling;
 	private bool attacking;
@@ -61,6 +65,8 @@ public class Tower : Building
 		// Costes
 		base.MAX_SELLING_PRICE = PURCHASE_PRICE * 0.75f;
 		repairRate = BASE_REPAIR_RATE; // * SPEED_OF_REPAIR_FACTOR[speed_of_repair_upgrade] - de research
+		repairHp = 0.0f;
+		maxRepairHp = 0.0f;
 		
 		// Ataques
 		damage = BASE_DAMAGE * FACTOR_UPGRADE[currentUpgrade];
@@ -75,6 +81,8 @@ public class Tower : Building
 		
 		// Estados
 		initialRotation = transform.Find("Armature/MainBody/NeckLow/NeckUp/Head").rotation;
+		repairTimer = 0.0f;
+		repairing = false;
 		fireTimer = 0.0f;
 		patrolling = true;
 		attacking = false;
@@ -89,6 +97,8 @@ public class Tower : Building
 
 	void Update() {
 		animator.speed = GameTime.GameSpeed;
+
+		if (repairing) Repair();
 
 		if (patrolling) {
 			if (!animator.enabled) ActivateAnimation();
@@ -123,6 +133,10 @@ public class Tower : Building
 		CalculateSellingPrice();
 		Debug.Log(base.sellingPrice);
 		return base.sellingPrice;
+	}
+
+	public bool IsMaxUpgraded() {
+		return currentUpgrade >= MAX_UPGRADE;
 	}
 
 	private void CalculateRepairPrice() {
@@ -197,13 +211,36 @@ public class Tower : Building
 	}
 
 	public void UpgradeTower() {
-		currentUpgrade += 1; // La comprobación se hace fuera
+		if (IsMaxUpgraded()) {
+			currentUpgrade = MAX_UPGRADE;
+			return;
+		}
 
+		currentUpgrade += 1; // La comprobación se hace fuera
 		animator.SetInteger("towerLevel", currentUpgrade);
 	}
 
-	public void RepairTower(bool repairing) {
+	public void RepairTower() {
+		repairHp = 0.0f;
+		maxRepairHp = maxHp - base.hp;
+		
+		repairing = true;
+	}
+
+	private void Repair() {
 		animator.SetBool("repairTower", repairing);
+		repairTimer += GameTime.DeltaTime;
+
+		if (repairTimer >= repairRate) {
+			base.hp += 1;
+			repairHp += 1;
+			repairTimer = 0.0f;
+
+			if (repairHp >= maxRepairHp) {
+				if (base.hp > maxHp) base.hp = maxHp;
+				repairing = false;
+			}
+		}
 	}
 
 	public override void DestroyBuilding() {

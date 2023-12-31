@@ -202,13 +202,13 @@ public class LevelCanvas : MonoBehaviour
         if(!levelLogic.IsSpecialAttackAvailable(TypeAttack.SplashAttack)){
             splashAttackTimerIMG.GetComponent<Image>().fillAmount = 1-levelLogic.GetSpecialAttackTimer(TypeAttack.SplashAttack);
             splashAttackButton.GetComponent<Button>().interactable = false;
-        }else{
+        }else if (!GameTime.IsPaused()){
             splashAttackButton.GetComponent<Button>().interactable = true;
         }
         if(!levelLogic.IsSpecialAttackAvailable(TypeAttack.UniformAttack)){
             uniformAttackTimerIMG.GetComponent<Image>().fillAmount = 1-levelLogic.GetSpecialAttackTimer(TypeAttack.UniformAttack);
             uniformAttackButton.GetComponent<Button>().interactable = false;
-        }else{
+        }else if (!GameTime.IsPaused()){
             uniformAttackButton.GetComponent<Button>().interactable = true;
         }
     }
@@ -229,6 +229,7 @@ public class LevelCanvas : MonoBehaviour
 		generatorButton.GetComponent<Button>().interactable = !GameTime.IsPaused();
         splashAttackButton.GetComponent<Button>().interactable = !GameTime.IsPaused();
         uniformAttackButton.GetComponent<Button>().interactable = !GameTime.IsPaused();
+		
         if (GameTime.IsPaused()) {
             levelLogic.HideBuildingTiles();
             levelLogic.DestroySpecialAttack();
@@ -349,7 +350,7 @@ public class LevelCanvas : MonoBehaviour
             if (currentBuilding != null && currentBuilding != selectedBuilding) {
                 selectedBuilding = currentBuilding;
                 if (selectedBuilding is Generator) ShowBuildingSubmenu(false);
-				else ShowBuildingSubmenu(true);
+				else ShowBuildingSubmenu(true, !((Tower) selectedBuilding).IsMaxUpgraded());
             } else {
                 HideBuildingSubmenu();
                 selectedBuilding = null;
@@ -394,12 +395,14 @@ public class LevelCanvas : MonoBehaviour
 
     //-----------------------------------------------------------------//
 
-    void ShowBuildingSubmenu(bool allActions) {
+    void ShowBuildingSubmenu(bool allActions, bool canUpgrade = true) {
         Vector3 screenPos = mainCamera.GetComponent<Camera>().WorldToScreenPoint(selectedBuilding.transform.position);
         buildingSubmenu.transform.position = screenPos;
         buildingSubmenu.SetActive(true);
 
 		if (allActions) {
+			upgradeButton.GetComponent<Button>().interactable = canUpgrade;
+			
 			repairButton.SetActive(true);
 			upgradeButton.SetActive(true);
 		}
