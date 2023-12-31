@@ -218,7 +218,7 @@ public class LevelCanvas : MonoBehaviour
     }
 
     //*---------------------------------------------------------------*//
-    //*------------------------ BUTTON METHODS -----------------------*//
+    //*---------------------- PAUSE/ACC BUTTONS ----------------------*//
     //*---------------------------------------------------------------*//
 
     public void TogglePauseButton() {
@@ -239,8 +239,24 @@ public class LevelCanvas : MonoBehaviour
 
     //-----------------------------------------------------------------//
 
+    public void PauseGame(){
+        levelLogic.PauseGame();
+    }
+
+    //-----------------------------------------------------------------//
+
+    public void AccelerateGame() {
+        levelLogic.AccelerateGame();
+    }
+
+    //*---------------------------------------------------------------*//
+    //*------------------------ BUILDING MODE ------------------------*//
+    //*---------------------------------------------------------------*//
+
     public void ToggleBuildingMode(TypeBuilding type) {
-        interactionMode = interactionMode != InteractionMode.Build ? InteractionMode.Build : InteractionMode.None;
+        interactionMode = interactionMode != InteractionMode.Build 
+                            ? InteractionMode.Build 
+                            : InteractionMode.None;
         typeBuilding = type;
 
         Debug.Log("Interaction mode: " + interactionMode);
@@ -251,34 +267,6 @@ public class LevelCanvas : MonoBehaviour
             levelLogic.DestroySpecialAttack();
         } else {
             levelLogic.HideBuildingTiles();
-        }
-    }
-
-    //-----------------------------------------------------------------//
-
-    public void ToggleSplashAttack() {
-        ToggleSpecialAttackMode(TypeAttack.SplashAttack);
-    }
-
-    //-----------------------------------------------------------------//
-
-    public void ToggleUniformAttack() {
-        ToggleSpecialAttackMode(TypeAttack.UniformAttack);
-    }
-
-    //-----------------------------------------------------------------//
-
-    public void ToggleSpecialAttackMode(TypeAttack type) {
-        interactionMode = interactionMode != InteractionMode.SpecialAttack ? InteractionMode.SpecialAttack : InteractionMode.None;
-
-        Debug.Log("Interaction mode: "+interactionMode);
-        Debug.Log("Type attack: "+type);
-
-        if (interactionMode == InteractionMode.SpecialAttack) {
-            levelLogic.InitialiseSpecialAttack(type,mainCamera.GetComponent<Camera>());
-            levelLogic.HideBuildingTiles();
-        } else {
-            levelLogic.DestroySpecialAttack();
         }
     }
 
@@ -306,19 +294,79 @@ public class LevelCanvas : MonoBehaviour
         ToggleBuildingMode(TypeBuilding.Generator);
     }
 
-    //-----------------------------------------------------------------//
+    //*---------------------------------------------------------------*//
+    //*---------------------- BUILDING SUBMENU -----------------------*//
+    //*---------------------------------------------------------------*//
 
-    public void PauseGame(){
-        levelLogic.PauseGame();
+    void HideBuildingSubmenu() {
+        buildingSubmenu.SetActive(false);
     }
 
     //-----------------------------------------------------------------//
 
-    public void AccelerateGame() {
-        levelLogic.AccelerateGame();
+    void ShowBuildingSubmenu() {
+        Vector3 screenPos = mainCamera
+                            .GetComponent<Camera>()
+                            .WorldToScreenPoint(selectedBuilding.transform.position);
+
+        buildingSubmenu.transform.position = screenPos;
+        buildingSubmenu.SetActive(true);
+    }
+    
+    //-----------------------------------------------------------------//
+
+    public void SellBuilding() {
+        levelLogic.Sell(selectedBuilding);
     }
 
     //-----------------------------------------------------------------//
+
+    public void RepairBuilding() {
+        levelLogic.Repair(selectedBuilding);
+    }
+
+    //-----------------------------------------------------------------//
+
+    public void UpgradeBuilding() {
+        levelLogic.Upgrade(selectedBuilding);
+    }
+
+    //*---------------------------------------------------------------*//
+    //*----------------------- SPECIAL ATTACKS -----------------------*//
+    //*---------------------------------------------------------------*//
+
+    public void ToggleSpecialAttackMode(TypeAttack type) {
+        interactionMode = interactionMode != InteractionMode.SpecialAttack 
+                            ? InteractionMode.SpecialAttack 
+                            : InteractionMode.None;
+
+        Debug.Log("Interaction mode: "+interactionMode);
+        Debug.Log("Type attack: "+type);
+
+        if (interactionMode == InteractionMode.SpecialAttack) {
+            levelLogic.InitialiseSpecialAttack(type,mainCamera.GetComponent<Camera>());
+            levelLogic.HideBuildingTiles();
+        } else {
+            levelLogic.DestroySpecialAttack();
+        }
+    }
+
+    //-----------------------------------------------------------------//
+
+    public void ToggleSplashAttack() {
+        ToggleSpecialAttackMode(TypeAttack.SplashAttack);
+    }
+
+    //-----------------------------------------------------------------//
+
+    public void ToggleUniformAttack() {
+        ToggleSpecialAttackMode(TypeAttack.UniformAttack);
+    }
+
+
+    //*---------------------------------------------------------------*//
+    //*---------------------- LEFT CLICK METHOD ----------------------*//
+    //*---------------------------------------------------------------*//
 
     public void LeftClick() {
         Ray ray = mainCamera.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
@@ -353,38 +401,6 @@ public class LevelCanvas : MonoBehaviour
             levelLogic.DeploySpecialAttack();
             interactionMode = InteractionMode.None;
         }
-    }
-
-    //-----------------------------------------------------------------//
-
-    public void SellBuilding() {
-        levelLogic.Sell(selectedBuilding);
-    }
-
-    //-----------------------------------------------------------------//
-
-    public void RepairBuilding() {
-        levelLogic.Repair(selectedBuilding);
-    }
-
-    //-----------------------------------------------------------------//
-
-    public void UpgradeBuilding() {
-        levelLogic.Upgrade(selectedBuilding);
-    }
-
-    //-----------------------------------------------------------------//
-
-    void HideBuildingSubmenu() {
-        buildingSubmenu.SetActive(false);
-    }
-
-    //-----------------------------------------------------------------//
-
-    void ShowBuildingSubmenu() {
-        Vector3 screenPos = mainCamera.GetComponent<Camera>().WorldToScreenPoint(selectedBuilding.transform.position);
-        buildingSubmenu.transform.position = screenPos;
-        buildingSubmenu.SetActive(true);
     }
 
     //!---------------------------------------------------------------!//

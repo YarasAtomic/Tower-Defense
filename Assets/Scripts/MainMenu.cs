@@ -50,19 +50,16 @@ public class MainMenu : MonoBehaviour
 
     [SerializeField] float CAMERA_LINEAR_SPEED = 1f;
     float CAMERA_ROTATION_SPEED = 0.8f;
-    void Update()
-    {
+    void Update(){
         Vector3 camPos = cameraSupport.transform.position;
         Vector3 planetPos = planet.transform.position;
         Quaternion camRot = cameraSupport.transform.rotation;
         
         if(menuMode == MenuMode.levelSelection){
-
             camPos = Vector3.Lerp(camPos,planetPos,Time.deltaTime*CAMERA_LINEAR_SPEED);
             var targetRotation = Quaternion.FromToRotation(cameraSupport.transform.forward, planetPos-selectedLevel.gameObject.transform.position) * camRot;
-            camRot = Quaternion.Slerp(cameraSupport.transform.rotation, targetRotation, Time.deltaTime * CAMERA_ROTATION_SPEED);
+            camRot = Quaternion.Slerp(camRot, targetRotation, Time.deltaTime * CAMERA_ROTATION_SPEED);
         }else if(menuMode == MenuMode.saveFiles){
-
             camPos = Vector3.Lerp(camPos,Vector3.zero,Time.deltaTime*CAMERA_LINEAR_SPEED);
             var targetRotation = Quaternion.FromToRotation(cameraSupport.transform.forward, Vector3.forward) * camRot;
             camRot = Quaternion.Slerp(camRot, targetRotation, Time.deltaTime * CAMERA_ROTATION_SPEED);

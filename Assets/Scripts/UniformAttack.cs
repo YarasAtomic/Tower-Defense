@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class UniformAttack : SpecialAttack
 {
+    //!---------------------------------------------------------------!//
+    //!---------------------------------------------------------------!//
+    //!---------------------- CLASS ATTRIBUTES -----------------------!//
+    //!---------------------------------------------------------------!//
+    //!---------------------------------------------------------------!//
+
     [SerializeField] float RADIUS = 4;
     [SerializeField] int DAMAGE = 10;
     [SerializeField] static float COOLDOWN = 20;
@@ -15,6 +21,17 @@ public class UniformAttack : SpecialAttack
     float scale = 0;
     float beamTimer = 0;
     float BEAM_DURATION = 0.5f;
+
+    //!---------------------------------------------------------------!//
+    //!---------------------------------------------------------------!//
+    //!------------------------ CLASS METHODS ------------------------!//
+    //!---------------------------------------------------------------!//
+    //!---------------------------------------------------------------!//
+
+    //*---------------------------------------------------------------*//
+    //*---------------------------- START ----------------------------*//
+    //*---------------------------------------------------------------*//
+
     public new void Start(){
         base.Start();
         beam = transform.Find("field").gameObject;
@@ -29,9 +46,33 @@ public class UniformAttack : SpecialAttack
         projectionTileMesh.transform.position = new Vector3(-RADIUS,0,-RADIUS);
 
     }
-    public static float GetCooldown(){
-        return COOLDOWN;
+
+    //*---------------------------------------------------------------*//
+    //*---------------------------- UPDATE ---------------------------*//
+    //*---------------------------------------------------------------*//
+
+    public new void Update(){
+        base.Update();
+
+        if(!exploded) return;
+
+        if(beamTimer < BEAM_DURATION && scale < RADIUS){
+            scale+=GameTime.DeltaTime * BEAM_SPEED;
+            mainCamera.gameObject.GetComponent<CameraController>().SetShake(0.6f);
+        }else if(beamTimer >= BEAM_DURATION && scale > 0){
+            scale-=GameTime.DeltaTime * BEAM_SPEED;
+        }else if(scale < 0){
+            scale = 0;
+        }
+
+        beamTimer+=GameTime.DeltaTime;
+        
+        beam.transform.localScale = new Vector3(scale,100,scale) * 2; // el cilindro tiene radio 0.5
     }
+
+    //*---------------------------------------------------------------*//
+    //*------------------------ EXECUTE ATTACK -----------------------*//
+    //*---------------------------------------------------------------*//
 
     protected override void ExecuteAttack(){
         // Aqui ocurre la explosión, se efectua el daño.
@@ -54,22 +95,17 @@ public class UniformAttack : SpecialAttack
         }
     }
 
-    public new void Update(){
-        base.Update();
+    //*---------------------------------------------------------------*//
+    //*---------------------------- GETTERS --------------------------*//
+    //*---------------------------------------------------------------*//
 
-        if(!exploded) return;
-
-        if(beamTimer < BEAM_DURATION && scale < RADIUS){
-            scale+=GameTime.DeltaTime * BEAM_SPEED;
-            mainCamera.gameObject.GetComponent<CameraController>().SetShake(0.6f);
-        }else if(beamTimer >= BEAM_DURATION && scale > 0){
-            scale-=GameTime.DeltaTime * BEAM_SPEED;
-        }else if(scale < 0){
-            scale = 0;
-        }
-
-        beamTimer+=GameTime.DeltaTime;
-        
-        beam.transform.localScale = new Vector3(scale,100,scale) * 2; // el cilindro tiene radio 0.5
+    public static float GetCooldown(){
+        return COOLDOWN;
     }
+
+    //!---------------------------------------------------------------!//
+    //!---------------------------------------------------------------!//
+    //!--------------------- END OF UniformAttack --------------------!//
+    //!---------------------------------------------------------------!//
+    //!---------------------------------------------------------------!//
 }

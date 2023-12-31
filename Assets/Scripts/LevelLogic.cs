@@ -127,15 +127,12 @@ public class LevelLogic : MonoBehaviour
     //-----------------------------------------------------------------//
 
     void InitialiseSpawner() {
-        // List<ValueTuple<GameObject,int>> enemyprefabs = new List<ValueTuple<GameObject,int>> {
-        //     new ValueTuple<GameObject,int> (enemyPrefab1, GetEnemyAtWaveOfType(currentWave,0)),
-        //     new ValueTuple<GameObject,int> (enemyPrefab2, GetEnemyAtWaveOfType(currentWave,1)),
-        //     new ValueTuple<GameObject,int> (enemyPrefab3, GetEnemyAtWaveOfType(currentWave,2)),
-        //     new ValueTuple<GameObject,int> (enemyPrefab4, GetEnemyAtWaveOfType(currentWave,3))
-        // };
         List<ValueTuple<GameObject,int>> enemyPrefabTuples = new List<ValueTuple<GameObject,int>>();
-        for(int i = 0; i < GetEnemyTypeCount();i++){
-            enemyPrefabTuples.Add(new ValueTuple<GameObject,int> (enemyPrefabList[i], GetEnemyAtWaveOfType(currentWave,i)));
+        for(int i = 0; i < GetEnemyTypeCount(); ++i){
+            enemyPrefabTuples.Add(
+                new ValueTuple<GameObject,int> (enemyPrefabList[i], 
+                GetEnemyAtWaveOfType(currentWave,i))
+            );
         }
         enemySpawn = new EnemySpawner(enemyPrefabTuples, splines, this);
     }
@@ -329,10 +326,18 @@ public class LevelLogic : MonoBehaviour
     public void InitialiseSpecialAttack(TypeAttack typeAttack,Camera mainCamera) {
         switch(typeAttack){
             case TypeAttack.UniformAttack:
-                specialAttack = Instantiate(uniformAttackPrefab,Vector3.zero,Quaternion.identity).GetComponent<SpecialAttack>();
+                specialAttack = Instantiate(
+                    uniformAttackPrefab,
+                    Vector3.zero,
+                    Quaternion.identity
+                ).GetComponent<SpecialAttack>();
                 break;
             case TypeAttack.SplashAttack:
-                specialAttack = Instantiate(splashAttackPrefab, Vector3.zero, Quaternion.identity).GetComponent<SpecialAttack>();
+                specialAttack = Instantiate(
+                    splashAttackPrefab, 
+                    Vector3.zero, 
+                    Quaternion.identity
+                ).GetComponent<SpecialAttack>();
                 break;
             default:
                 return;
@@ -346,9 +351,9 @@ public class LevelLogic : MonoBehaviour
     public bool IsSpecialAttackAvailable(TypeAttack typeAttack){
         switch(typeAttack){
             case TypeAttack.UniformAttack:
-                return uniformAttackTimer<=0;
+                return uniformAttackTimer <= 0;
             case TypeAttack.SplashAttack:
-                return splashAttackTimer<=0;
+                return splashAttackTimer <= 0;
         }
         return false;
     }
@@ -358,9 +363,9 @@ public class LevelLogic : MonoBehaviour
     public float GetSpecialAttackTimer(TypeAttack typeAttack){
         switch(typeAttack){
             case TypeAttack.UniformAttack:
-                return uniformAttackTimer/UniformAttack.GetCooldown();
+                return uniformAttackTimer / UniformAttack.GetCooldown();
             case TypeAttack.SplashAttack:
-                return splashAttackTimer/SplashAttack.GetCooldown();
+                return splashAttackTimer / SplashAttack.GetCooldown();
         }
         return 1;
     }
@@ -378,7 +383,7 @@ public class LevelLogic : MonoBehaviour
 
     public void DeploySpecialAttack() {
         specialAttack.Deploy();
-        if(specialAttack.GetType()==typeof(SplashAttack)){
+        if(specialAttack.GetType() == typeof(SplashAttack)){
             splashAttackTimer = SplashAttack.GetCooldown();
         }else if(specialAttack.GetType()==typeof(UniformAttack)){
             uniformAttackTimer = UniformAttack.GetCooldown();

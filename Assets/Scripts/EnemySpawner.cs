@@ -7,9 +7,7 @@ public class EnemySpawner
 {    
     List<GameObject> splines;
     [SerializeField] float delay;
-
     [SerializeField] int maxEnemies;
-
     [SerializeField] int spawnedEnemies;
 
     List<GameObject> enemyWave;
@@ -44,12 +42,6 @@ public class EnemySpawner
         }
 
         while (splitted.Count < length) {
-            // foreach ((GameObject, int) enemy in enemyWave) {
-            //     if (enemy.Item2 <= 0) continue;
-            //     splitted.Add(enemy.Item1);
-            //     enemy.Item2--;
-            // }
-
             for (int i=0; i<enemyWave.Count; ++i) {
                 if (enemiesLeft[i] <= 0) continue;
                 splitted.Add(enemyWave[i].Item1);

@@ -47,7 +47,7 @@ MonoBehaviour:
   cellSize: 1
   gridWidth: 10
   gridHeight: 10
-  yOffset: 0.5
+  yOffset: 0
   material: {fileID: 2100000, guid: 849196292ae88a541993a7e5584c4118, type: 2}
 --- !u!1 &3486078645114359898
 GameObject:
