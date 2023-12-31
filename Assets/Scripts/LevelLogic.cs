@@ -71,7 +71,6 @@ public class LevelLogic : MonoBehaviour
         splashAttackTimer   = 0;
         enemySpawn          = null;
         ALL_POSITIONS       = FindObjectsOfType<BuildingTile>(true);
-        Debug.Log(ALL_POSITIONS.Length);
     }
 
     //*---------------------------------------------------------------*//
@@ -276,7 +275,6 @@ public class LevelLogic : MonoBehaviour
     //-----------------------------------------------------------------//
 
     int GetEnemyAtWaveOfType(int wave,int enemyType){
-        Debug.Log("waveList " + wave + " total " + GetTotalWaves() + " type " + enemyType);
         return waveList[wave * GetEnemyTypeCount() + enemyType];
     }
 

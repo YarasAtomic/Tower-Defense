@@ -25,7 +25,6 @@ public class Lighting : MonoBehaviour
     }
 
     void UpdatePos(){
-        Debug.Log("Updating "+vertexCount);
         lineRenderer.positionCount = vertexCount;
         for(int i = 0 ; i < vertexCount; i++){
             Vector3 vertexPos = (end-origin) / vertexCount * i + origin + Random.insideUnitSphere * LIGHT_MAX_RANDOM;

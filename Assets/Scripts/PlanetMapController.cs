@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlanetMapController : MonoBehaviour
 {
     // Start is called before the first frame update
+    [SerializeField] float rotationSpeed = 1;
     void Start()
     {
         
@@ -13,6 +14,6 @@ public class PlanetMapController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.Rotate( new Vector3 (0,1*GameTime.DeltaTime,0));
+        transform.Rotate( new Vector3 (0,1*GameTime.DeltaTime * rotationSpeed,0));
     }
 }

@@ -207,13 +207,13 @@ public class LevelCanvas : MonoBehaviour
             splashAttackTimerIMG.GetComponent<Image>().fillAmount = 1-levelLogic.GetSpecialAttackTimer(TypeAttack.SplashAttack);
             splashAttackButton.GetComponent<Button>().interactable = false;
         }else{
-            splashAttackButton.GetComponent<Button>().interactable = true;
+            splashAttackButton.GetComponent<Button>().interactable = !GameTime.IsPaused();
         }
         if(!levelLogic.IsSpecialAttackAvailable(TypeAttack.UniformAttack)){
             uniformAttackTimerIMG.GetComponent<Image>().fillAmount = 1-levelLogic.GetSpecialAttackTimer(TypeAttack.UniformAttack);
             uniformAttackButton.GetComponent<Button>().interactable = false;
         }else{
-            uniformAttackButton.GetComponent<Button>().interactable = true;
+            uniformAttackButton.GetComponent<Button>().interactable = !GameTime.IsPaused();
         }
     }
 
@@ -228,8 +228,8 @@ public class LevelCanvas : MonoBehaviour
         skipButton.GetComponent<Button>().interactable = !GameTime.IsPaused();
         accelerateButton.GetComponent<Button>().interactable = !GameTime.IsPaused();
         tower1Button.GetComponent<Button>().interactable = !GameTime.IsPaused();
-        splashAttackButton.GetComponent<Button>().interactable = !GameTime.IsPaused();
-        uniformAttackButton.GetComponent<Button>().interactable = !GameTime.IsPaused();
+        // splashAttackButton.GetComponent<Button>().interactable = !GameTime.IsPaused();
+        // uniformAttackButton.GetComponent<Button>().interactable = !GameTime.IsPaused();
         if (GameTime.IsPaused()) {
             levelLogic.HideBuildingTiles();
             levelLogic.DestroySpecialAttack();
