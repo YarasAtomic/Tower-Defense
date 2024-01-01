@@ -12,13 +12,10 @@ public class LevelLogic : MonoBehaviour
     //!---------------------- CLASS ATTRIBUTES -----------------------!//
     //!---------------------------------------------------------------!//
     //!---------------------------------------------------------------!//
-    // public int[,] waves = {{1,0,0,0},{1,0,0,0},{1,0,0,0},{1,0,0,0}};
+
     [HideInInspector] public List<int> waveList;
-    // int waveCount = 4;
 
-    // Posición de la base en el nivel
-    // [SerializeField] BuildingTile BASE_POSITION;
-
+    [SerializeField] Save saveAsset;
     // Todas las posiciones donde se pueden colocar una torre o generador en el nivel
     BuildingTile[] ALL_POSITIONS;
 
@@ -29,6 +26,7 @@ public class LevelLogic : MonoBehaviour
     float accWaveTimer;
     float splashAttackTimer;
     float uniformAttackTimer;
+    bool levelFinished = false;
     EnemySpawner enemySpawn;
     SpecialAttack specialAttack;
     
@@ -44,10 +42,7 @@ public class LevelLogic : MonoBehaviour
     [SerializeField] GameObject generatorPrefab;
 
     [SerializeField] List<GameObject> enemyPrefabList;
-    // [SerializeField] GameObject enemyPrefab1;
-    // [SerializeField] GameObject enemyPrefab2;
-    // [SerializeField] GameObject enemyPrefab3;
-    // [SerializeField] GameObject enemyPrefab4;
+
     [SerializeField] GameObject splashAttackPrefab;
     [SerializeField] GameObject uniformAttackPrefab;
     
@@ -100,7 +95,12 @@ public class LevelLogic : MonoBehaviour
 
         // Si estamos en la ultima oleada y no hay enemigos
         if  (currentWave == GetTotalWaves() && !InWave()) {
-            // levelFinished = true;
+            if(!levelFinished){
+                saveAsset.GetSaveFile().SetMaxStarsAtLevel(saveAsset.GetCurrentLevel(),ObtainedStars());
+                saveAsset.GetSaveFile().AddXp(ObtainedExp());
+                levelFinished = true;
+            }
+
             return;
         }
         

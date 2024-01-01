@@ -4948,7 +4948,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ea2bd40ecbe9784c807f6ac883aba5f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  waveList: 01000000010000000100000001000000010000000100000000000000320000000000000000000000
+  waveList: 01000000010000000100000001000000010000000100000001000000030000000100000000000000
+  saveAsset: {fileID: 11400000, guid: 0950354cadf0bb447a16f5d773ac25c4, type: 2}
   currentWave: 0
   destroyedTowers: 0
   currentResources: 0
@@ -10106,7 +10107,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1497261095}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1322807551}
+        m_TargetAssemblyTypeName: LevelCanvas, Assembly-CSharp
+        m_MethodName: LoadMap
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1497261095
 MonoBehaviour:
   m_ObjectHideFlags: 0

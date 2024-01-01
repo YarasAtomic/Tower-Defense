@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,7 +8,12 @@ public class SaveFile
     [SerializeField] List<int> levels;
     [SerializeField] int xp = 0;
 
-    public SaveFile(){}
+    public int shootingRadiusUpgrade = 0;
+    public int speedOfRepairUpgrade = 0;
+    public int weaponsArmoringUpgrade = 0;
+    public int refundUpgrade = 0;
+    public int cooldownUpgrade = 0;
+    public int supportPowerUpgrade = 0;
 
     public void AddXp(int n){
         xp+=n;

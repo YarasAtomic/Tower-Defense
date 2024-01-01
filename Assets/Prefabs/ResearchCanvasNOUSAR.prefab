@@ -6778,7 +6778,7 @@ GameObject:
   - component: {fileID: 5953944155943857365}
   - component: {fileID: 4987238365122503549}
   m_Layer: 5
-  m_Name: ResearchCanvas
+  m_Name: ResearchCanvasNOUSAR
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

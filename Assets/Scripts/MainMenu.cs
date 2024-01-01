@@ -18,7 +18,7 @@ public class MainMenu : MonoBehaviour
     [SerializeField] List<LevelInfo> levelList;
     [SerializeField] Save saveAsset;
     enum MenuMode{
-        saveFiles,levelSelection,levelInfo
+        saveFiles,levelSelection,research
     }
 
     [SerializeField] MenuMode menuMode = MenuMode.levelSelection;
@@ -26,6 +26,8 @@ public class MainMenu : MonoBehaviour
     [SerializeField] GameObject planet;
 
     GameObject saveFilesMenu;
+    GameObject mapMenu;
+    GameObject researchMenu;
     // Image 
     LevelPoint selectedLevel;
 
@@ -34,6 +36,20 @@ public class MainMenu : MonoBehaviour
     {
         selectedLevel = FindAnyObjectByType<LevelPoint>();
         saveFilesMenu = transform.Find("SavesMenu").gameObject;
+        mapMenu = transform.Find("MapMenu").gameObject;
+        researchMenu = transform.Find("ResearchMenu").gameObject;
+        mapMenu.SetActive(false);
+        researchMenu.SetActive(false);
+
+        // Si el currentLevel != -1, es que se acaba de jugar un nivel
+        if(saveAsset.GetCurrentLevel()!=-1){
+            menuMode = MenuMode.levelSelection;
+            saveAsset.SetCurrentLevel(-1);
+            saveFilesMenu.SetActive(false);
+            mapMenu.SetActive(true);
+            //! esto no es buena idea, si se cierra el juego mientras se está en un nivel, 
+            //! automaticamente se cargará el archivo de guardado al abrir el juego de nuevo
+        }
     }
 
     public bool IsShowingLevels(){
@@ -55,7 +71,8 @@ public class MainMenu : MonoBehaviour
         Vector3 planetPos = planet.transform.position;
         Quaternion camRot = cameraSupport.transform.rotation;
         
-        if(menuMode == MenuMode.levelSelection){
+        // Animacion de la camara al menu o al mapa
+        if(menuMode == MenuMode.levelSelection || menuMode == MenuMode.research){
             camPos = Vector3.Lerp(camPos,planetPos,Time.deltaTime*CAMERA_LINEAR_SPEED);
             var targetRotation = Quaternion.FromToRotation(cameraSupport.transform.forward, planetPos-selectedLevel.gameObject.transform.position) * camRot;
             camRot = Quaternion.Slerp(camRot, targetRotation, Time.deltaTime * CAMERA_ROTATION_SPEED);
@@ -69,6 +86,7 @@ public class MainMenu : MonoBehaviour
     }
 
     public void PlayLevel(int level){
+        saveAsset.SetCurrentLevel(level);
         levelList[level].Load();
     }
 
@@ -81,6 +99,7 @@ public class MainMenu : MonoBehaviour
         saveAsset.SetCurrentFile(n);
         menuMode = MenuMode.levelSelection;
         saveFilesMenu.SetActive(false);
+        mapMenu.SetActive(true);
 
         // Seleccionamos el level mas alto
         LevelPoint[] allLevelPoints = FindObjectsOfType<LevelPoint>();
@@ -91,6 +110,19 @@ public class MainMenu : MonoBehaviour
         for(int i = 0; i < allLevelPoints.Length;i++){
             selectedLevel = allLevelPoints[i].GetId() == lastLevelIndex ? allLevelPoints[i] : selectedLevel;
         }
-        Debug.Log("lastLevelIndex " +lastLevelIndex + " length " + allLevelPoints.Length);
+        Debug.Log("lastLevelIndex " +lastLevelIndex);
+    }
+
+    public void OpenResearchMenu(){
+        menuMode = MenuMode.research;
+        mapMenu.SetActive(false);
+        researchMenu.SetActive(true);
+    }
+
+    public void BackToMenu(){
+        menuMode = MenuMode.saveFiles;
+        mapMenu.SetActive(false);
+        researchMenu.SetActive(false);
+        saveFilesMenu.SetActive(true);
     }
 }

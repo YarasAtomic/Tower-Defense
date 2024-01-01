@@ -13,6 +13,7 @@ public class Research : MonoBehaviour
     private readonly float[] COOLDOWN_FACTOR  = {1f, 0.8f, 0.6f, 0.4f};
     private readonly float[] SUPPORT_POWER_FACTOR  = {1f, 1.2f, 1.4f, 1.6f};
 
+    // ! estaria bien usar camelCase porque en el resto de sitios se ha usado camelCase
     // Dynamic atributes
    [SerializeField] private int shooting_radius_upgrade;
    [SerializeField] private int speed_of_repair_upgrade;
@@ -125,18 +126,12 @@ public class Research : MonoBehaviour
         experience = expTemp;
         shooting_radius_upgrade = shootingRadiusTemp;
         speed_of_repair_upgrade = speedOfRepairTemp;
-        weapons_armoring_upgrade = weapons_armoring_upgrade;
+        weapons_armoring_upgrade = weaponsArmoringTemp;
         refund_upgrade = refundTemp;
         cooldown_upgrade = cooldownTemp;
         support_power_upgrade = supportTowerTemp;
         
     }
 
-    
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
 }

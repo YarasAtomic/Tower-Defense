@@ -48,15 +48,6 @@ public class ResearchCanvas : MonoBehaviour
     //*---------------------------- START ----------------------------*//
     //*---------------------------------------------------------------*//
 
-
-    //!---------------------------------------------------------------!//
-    //!---------------------------------------------------------------!//
-    //!---------------------- END OF LevelCanvas ---------------------!//
-    //!---------------------------------------------------------------!//
-    //!---------------------------------------------------------------!//
-
-
-
     void Start(){
       research = researchGameObject.GetComponent<Research>();
       
@@ -104,39 +95,39 @@ public class ResearchCanvas : MonoBehaviour
 
     public void setAllButtonsColors(){
       // Colores shootingRadius
-      GameObject button_1 =  transform.Find("shootingButtons/shootingRadiusButton_1").gameObject;
-      GameObject button_2 =  transform.Find("shootingButtons/shootingRadiusButton_2").gameObject;
-      GameObject button_3 =  transform.Find("shootingButtons/shootingRadiusButton_3").gameObject;
+      GameObject button_1 =  transform.Find("shootingRadius/shootingButtons/shootingRadiusButton_1").gameObject;
+      GameObject button_2 =  transform.Find("shootingRadius/shootingButtons/shootingRadiusButton_2").gameObject;
+      GameObject button_3 =  transform.Find("shootingRadius/shootingButtons/shootingRadiusButton_3").gameObject;
       setButtonsColors(button_1,button_2, button_3, shootingRadiusTemp, research.getShootingRadius());
 
       // Colores speedOfRepair
-      button_1 =  transform.Find("speedOfRepairButtons/speedOfRepairButton_1").gameObject;
-      button_2 =  transform.Find("speedOfRepairButtons/speedOfRepairButton_2").gameObject;
-      button_3 =  transform.Find("speedOfRepairButtons/speedOfRepairButton_3").gameObject;
+      button_1 =  transform.Find("speedOfRepair/speedOfRepairButtons/speedOfRepairButton_1").gameObject;
+      button_2 =  transform.Find("speedOfRepair/speedOfRepairButtons/speedOfRepairButton_2").gameObject;
+      button_3 =  transform.Find("speedOfRepair/speedOfRepairButtons/speedOfRepairButton_3").gameObject;
       setButtonsColors(button_1,button_2, button_3, speedOfRepairTemp, research.getSpeedOfRepair());
     
       // Colores weaponsArmoring
-      button_1 =  transform.Find("weaponsArmoringButtons/weaponsArmoringButton_1").gameObject;
-      button_2 =  transform.Find("weaponsArmoringButtons/weaponsArmoringButton_2").gameObject;
-      button_3 =  transform.Find("weaponsArmoringButtons/weaponsArmoringButton_3").gameObject;
+      button_1 =  transform.Find("weaponsArmoring/weaponsArmoringButtons/weaponsArmoringButton_1").gameObject;
+      button_2 =  transform.Find("weaponsArmoring/weaponsArmoringButtons/weaponsArmoringButton_2").gameObject;
+      button_3 =  transform.Find("weaponsArmoring/weaponsArmoringButtons/weaponsArmoringButton_3").gameObject;
       setButtonsColors(button_1,button_2, button_3,weaponsArmoringTemp ,research.getWeaponsArmoring());
 
       // Colores refundForSelling
-      button_1 =  transform.Find("refundForSellingButtons/refundForSellingButton_1").gameObject;
-      button_2 =  transform.Find("refundForSellingButtons/refundForSellingButton_2").gameObject;
-      button_3 =  transform.Find("refundForSellingButtons/refundForSellingButton_3").gameObject;
+      button_1 =  transform.Find("refundForSelling/refundForSellingButtons/refundForSellingButton_1").gameObject;
+      button_2 =  transform.Find("refundForSelling/refundForSellingButtons/refundForSellingButton_2").gameObject;
+      button_3 =  transform.Find("refundForSelling/refundForSellingButtons/refundForSellingButton_3").gameObject;
       setButtonsColors(button_1,button_2, button_3, refundTemp, research.getRefundForSelling());
 
       // Colores supportRecharge
-      button_1 =  transform.Find("supportRechargeButtons/supportRechargeButton_1").gameObject;
-      button_2 =  transform.Find("supportRechargeButtons/supportRechargeButton_2").gameObject;
-      button_3 =  transform.Find("supportRechargeButtons/supportRechargeButton_3").gameObject;
+      button_1 =  transform.Find("supportRechargeTime/supportRechargeButtons/supportRechargeButton_1").gameObject;
+      button_2 =  transform.Find("supportRechargeTime/supportRechargeButtons/supportRechargeButton_2").gameObject;
+      button_3 =  transform.Find("supportRechargeTime/supportRechargeButtons/supportRechargeButton_3").gameObject;
       setButtonsColors(button_1,button_2, button_3,cooldownTemp, research.getSupportRechargeTime());
 
       // Colores supportPower
-      button_1 =  transform.Find("supportPowerButtons/supportPowerButton_1").gameObject;
-      button_2 =  transform.Find("supportPowerButtons/supportPowerButton_2").gameObject;
-      button_3 =  transform.Find("supportPowerButtons/supportPowerButton_3").gameObject;
+      button_1 =  transform.Find("supportPower/supportPowerButtons/supportPowerButton_1").gameObject;
+      button_2 =  transform.Find("supportPower/supportPowerButtons/supportPowerButton_2").gameObject;
+      button_3 =  transform.Find("supportPower/supportPowerButtons/supportPowerButton_3").gameObject;
       setButtonsColors(button_1,button_2, button_3, supportPowerTemp , research.getSupportPower());
     }
     
@@ -166,7 +157,7 @@ public class ResearchCanvas : MonoBehaviour
         break;
       }
 
-      int exp = research.getExp();
+      int exp = research.getExp(); // ! no se usa
       switch (factor){
 
         // Todavia no hay nada comprado
@@ -244,7 +235,7 @@ public class ResearchCanvas : MonoBehaviour
         }
         GameObject research_textGameObject = transform.Find("experience/experienceText").gameObject;
         
-        research_textGameObject.GetComponent<TMP_Text>().text = exp_temp + " XP";
+        research_textGameObject.GetComponent<TMP_Text>().text = exp_temp + ""; // ! exp_temp es 0?
         
      }
 
@@ -261,9 +252,9 @@ public class ResearchCanvas : MonoBehaviour
         exp_temp -= purchase_exp;
       }
 
-      GameObject button_1 =  transform.Find("shootingButtons/shootingRadiusButton_1").gameObject;
-      GameObject button_2 =  transform.Find("shootingButtons/shootingRadiusButton_2").gameObject;
-      GameObject button_3 =  transform.Find("shootingButtons/shootingRadiusButton_3").gameObject;
+      GameObject button_1 =  transform.Find("shootingRadius/shootingButtons/shootingRadiusButton_1").gameObject;
+      GameObject button_2 =  transform.Find("shootingRadius/shootingButtons/shootingRadiusButton_2").gameObject;
+      GameObject button_3 =  transform.Find("shootingRadius/shootingButtons/shootingRadiusButton_3").gameObject;
       setButtonsColors(button_1,button_2, button_3, shootingRadiusTemp, research.getShootingRadius()); // Cambiamos los colores una vez que se haya comprado algo
       
 
@@ -280,9 +271,9 @@ public class ResearchCanvas : MonoBehaviour
       }
       
 
-      GameObject button_1 =  transform.Find("speedOfRepairButtons/speedOfRepairButton_1").gameObject;
-      GameObject button_2 =  transform.Find("speedOfRepairButtons/speedOfRepairButton_2").gameObject;
-      GameObject button_3 =  transform.Find("speedOfRepairButtons/speedOfRepairButton_3").gameObject;
+      GameObject button_1 =  transform.Find("speedOfRepair/speedOfRepairButtons/speedOfRepairButton_1").gameObject;
+      GameObject button_2 =  transform.Find("speedOfRepair/speedOfRepairButtons/speedOfRepairButton_2").gameObject;
+      GameObject button_3 =  transform.Find("speedOfRepair/speedOfRepairButtons/speedOfRepairButton_3").gameObject;
       
       setButtonsColors(button_1,button_2, button_3, speedOfRepairTemp, research.getSpeedOfRepair());
      
@@ -298,9 +289,9 @@ public class ResearchCanvas : MonoBehaviour
         exp_temp -= purchase_exp;
       }
 
-      GameObject button_1 =  transform.Find("weaponsArmoringButtons/weaponsArmoringButton_1").gameObject;
-      GameObject button_2 =  transform.Find("weaponsArmoringButtons/weaponsArmoringButton_2").gameObject;
-      GameObject button_3 =  transform.Find("weaponsArmoringButtons/weaponsArmoringButton_3").gameObject;
+      GameObject button_1 =  transform.Find("weaponsArmoring/weaponsArmoringButtons/weaponsArmoringButton_1").gameObject;
+      GameObject button_2 =  transform.Find("weaponsArmoring/weaponsArmoringButtons/weaponsArmoringButton_2").gameObject;
+      GameObject button_3 =  transform.Find("weaponsArmoring/weaponsArmoringButtons/weaponsArmoringButton_3").gameObject;
       
       setButtonsColors(button_1,button_2, button_3, weaponsArmoringTemp, research.getWeaponsArmoring());
      
@@ -316,15 +307,13 @@ public class ResearchCanvas : MonoBehaviour
         exp_temp -= purchase_exp;
       }
       
-      int factor = research.getRefundForSelling();
+      int factor = research.getRefundForSelling();// ! no se usa
 
-      GameObject button_1 =  transform.Find("refundForSellingButtons/refundForSellingButton_1").gameObject;
-      GameObject button_2 =  transform.Find("refundForSellingButtons/refundForSellingButton_2").gameObject;
-      GameObject button_3 =  transform.Find("refundForSellingButtons/refundForSellingButton_3").gameObject;
+      GameObject button_1 =  transform.Find("refundForSelling/refundForSellingButtons/refundForSellingButton_1").gameObject;
+      GameObject button_2 =  transform.Find("refundForSelling/refundForSellingButtons/refundForSellingButton_2").gameObject;
+      GameObject button_3 =  transform.Find("refundForSelling/refundForSellingButtons/refundForSellingButton_3").gameObject;
       
       setButtonsColors(button_1,button_2, button_3, refundTemp, research.getRefundForSelling());
-     
-      
     }
 
     public void HandleSupportRechargeTime() {
@@ -338,9 +327,9 @@ public class ResearchCanvas : MonoBehaviour
       
       int factor = research.getSupportRechargeTime();
 
-      GameObject button_1 =  transform.Find("supportRechargeButtons/supportRechargeButton_1").gameObject;
-      GameObject button_2 =  transform.Find("supportRechargeButtons/supportRechargeButton_2").gameObject;
-      GameObject button_3 =  transform.Find("supportRechargeButtons/supportRechargeButton_3").gameObject;
+      GameObject button_1 =  transform.Find("supportRechargeTime/supportRechargeButtons/supportRechargeButton_1").gameObject;
+      GameObject button_2 =  transform.Find("supportRechargeTime/supportRechargeButtons/supportRechargeButton_2").gameObject;
+      GameObject button_3 =  transform.Find("supportRechargeTime/supportRechargeButtons/supportRechargeButton_3").gameObject;
       
       setButtonsColors(button_1,button_2, button_3, cooldownTemp, research.getSupportRechargeTime());
     }
@@ -354,14 +343,18 @@ public class ResearchCanvas : MonoBehaviour
         exp_temp -= purchase_exp;
       }
 
-      GameObject button_1 =  transform.Find("supportPowerButtons/supportPowerButton_1").gameObject;
-      GameObject button_2 =  transform.Find("supportPowerButtons/supportPowerButton_2").gameObject;
-      GameObject button_3 =  transform.Find("supportPowerButtons/supportPowerButton_3").gameObject;
+      GameObject button_1 =  transform.Find("supportPower/supportPowerButtons/supportPowerButton_1").gameObject;
+      GameObject button_2 =  transform.Find("supportPower/supportPowerButtons/supportPowerButton_2").gameObject;
+      GameObject button_3 =  transform.Find("supportPower/supportPowerButtons/supportPowerButton_3").gameObject;
       
       setButtonsColors(button_1,button_2, button_3, supportPowerTemp, research.getSupportPower());
      
       
     }
-
+    //!---------------------------------------------------------------!//
+    //!---------------------------------------------------------------!//
+    //!-------------------- END OF ResearchCanvas --------------------!//
+    //!---------------------------------------------------------------!//
+    //!---------------------------------------------------------------!//
 }
 

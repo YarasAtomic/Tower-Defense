@@ -13,10 +13,29 @@ MonoBehaviour:
   m_Name: Save
   m_EditorClassIdentifier: 
   saveFiles:
-  - levels: 020000000100000003000000
-    xp: 0
+  - levels: 030000000300000003000000
+    xp: 60
+    shootingRadiusUpgrade: 0
+    speedOfRepairUpgrade: 0
+    weaponsArmoringUpgrade: 0
+    refundUpgrade: 0
+    cooldownUpgrade: 0
+    supportPowerUpgrade: 0
   - levels: 0100000002000000
     xp: 0
+    shootingRadiusUpgrade: 0
+    speedOfRepairUpgrade: 0
+    weaponsArmoringUpgrade: 0
+    refundUpgrade: 0
+    cooldownUpgrade: 0
+    supportPowerUpgrade: 0
   - levels: 02000000
     xp: 0
-  current: 1
+    shootingRadiusUpgrade: 0
+    speedOfRepairUpgrade: 0
+    weaponsArmoringUpgrade: 0
+    refundUpgrade: 0
+    cooldownUpgrade: 0
+    supportPowerUpgrade: 0
+  current: 0
+  currentLevel: -1

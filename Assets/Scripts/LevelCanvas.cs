@@ -4,6 +4,7 @@ using UnityEngine.EventSystems;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class LevelCanvas : MonoBehaviour
 {   
@@ -191,6 +192,12 @@ public class LevelCanvas : MonoBehaviour
         if (levelLogic.ObtainedStars() >= 3) {
             thirdStarIMG.GetComponent<RawImage>().color = new Color(1,1,1,1);
         }
+    }
+
+    //-----------------------------------------------------------------//
+
+    public void LoadMap(){
+        SceneManager.LoadScene("mainMenu");
     }
 
     //-----------------------------------------------------------------//
