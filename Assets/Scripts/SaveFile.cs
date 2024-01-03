@@ -46,4 +46,41 @@ public class SaveFile
         }
         return lastLevel;
     }
+
+    public int GetShootingRadius(){
+        return shootingRadiusUpgrade;
+    }
+    
+    public int GetSpeedOfRepair(){
+        return speedOfRepairUpgrade;
+    }
+
+    public int GetWeaponsArmoring(){
+        return weaponsArmoringUpgrade;
+    }
+
+    public int GetRefundForSelling(){
+        return refundUpgrade;
+    }
+
+    public int GetSupportRechargeTime(){
+        return cooldownUpgrade;
+    }
+
+    public int GetSupportPower(){
+        return supportPowerUpgrade;
+    }
+
+    public void UpdateStatus(int expTemp, int shootingRadiusTemp, int speedOfRepairTemp, int weaponsArmoringTemp, 
+                            int refundTemp, int cooldownTemp, int supportTowerTemp){
+    
+        xp = expTemp;
+        shootingRadiusUpgrade  = shootingRadiusTemp;
+        speedOfRepairUpgrade   = speedOfRepairTemp;
+        weaponsArmoringUpgrade = weaponsArmoringTemp;
+        refundUpgrade          = refundTemp;
+        cooldownUpgrade        = cooldownTemp;
+        supportPowerUpgrade    = supportTowerTemp;
+        
+    }
 }
