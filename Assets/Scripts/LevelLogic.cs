@@ -229,7 +229,7 @@ public class LevelLogic : MonoBehaviour
     //-----------------------------------------------------------------//
 
     public void Upgrade(Building b) {
-        int price = ((Tower) b).GetRepairPrice();
+        int price = ((Tower) b).GetUpgradePrice();
         if (price > currentResources) return;
         
         currentResources -= price;
@@ -238,23 +238,22 @@ public class LevelLogic : MonoBehaviour
 
     //-----------------------------------------------------------------//
 
-    public void Build(BuildingTile tile, TypeBuilding type){
-        
+    public void Build(BuildingTile tile, TypeBuilding type) {
         if (!tile.IsEmpty()) return;
 
-        int price; //TODO
+        int price;
         GameObject buildingPrefab;
         
-        if (type == TypeBuilding.Tower1) {
-            // price = Tower.GetPurchasePrice();
-            buildingPrefab = towerPrefab;
-        } else {
-            // price = Generator.GetPurchasePrice();
+        if (type == TypeBuilding.Generator) {
+            price = Generator.GetPurchasePrice();
             buildingPrefab = generatorPrefab;
+        } else {
+            price = Tower.GetPurchasePrice(type);
+            buildingPrefab = towerPrefab;
         }
 
-        // if (price > currentResources) return;
-        // currentResources -= price;
+        if (price > currentResources) return;
+        currentResources -= price;
         tile.Build(type, buildingPrefab);
     }
 
@@ -319,8 +318,7 @@ public class LevelLogic : MonoBehaviour
     //-----------------------------------------------------------------//
 
     public void AccelerateGame() {
-        GameTime.GameSpeed = 
-            (GameTime.GameSpeed == 4) ? (1) : (GameTime.GameSpeed * 2);
+        GameTime.GameSpeed = (GameTime.GameSpeed == 4) ? 1 : (GameTime.GameSpeed * 2);
     }
 
     //*---------------------------------------------------------------*//

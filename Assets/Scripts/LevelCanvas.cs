@@ -350,7 +350,7 @@ public class LevelCanvas : MonoBehaviour
             if (currentBuilding != null && currentBuilding != selectedBuilding) {
                 selectedBuilding = currentBuilding;
                 if (selectedBuilding is Generator) ShowBuildingSubmenu(false);
-				else ShowBuildingSubmenu(true, !((Tower) selectedBuilding).IsMaxUpgraded());
+				else ShowBuildingSubmenu(true, ((Tower) selectedBuilding).GetHealthPercentage() < 1.0f, !((Tower) selectedBuilding).IsMaxUpgraded());
             } else {
                 HideBuildingSubmenu();
                 selectedBuilding = null;
@@ -395,12 +395,13 @@ public class LevelCanvas : MonoBehaviour
 
     //-----------------------------------------------------------------//
 
-    void ShowBuildingSubmenu(bool allActions, bool canUpgrade = true) {
+    void ShowBuildingSubmenu(bool allActions, bool canRepair = true, bool canUpgrade = true) {
         Vector3 screenPos = mainCamera.GetComponent<Camera>().WorldToScreenPoint(selectedBuilding.transform.position);
         buildingSubmenu.transform.position = screenPos;
         buildingSubmenu.SetActive(true);
 
 		if (allActions) {
+			repairButton.GetComponent<Button>().interactable = canRepair;
 			upgradeButton.GetComponent<Button>().interactable = canUpgrade;
 			
 			repairButton.SetActive(true);

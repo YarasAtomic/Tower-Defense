@@ -10,10 +10,12 @@ public class Tower : Building
 	// CONST attributes
 	private readonly int MAX_UPGRADE = 2;
 	private readonly List<float> FACTOR_UPGRADE = new() { 1.0f, 1.2f, 1.4f};
-	private static readonly int PURCHASE_PRICE = 100;
+	private static readonly int PURCHASE_PRICE_T1 = 100;
+	private static readonly int PURCHASE_PRICE_T2 = 150;
+	private static readonly int PURCHASE_PRICE_T3 = 200;
 	private readonly int UPGRADE_PRICE = 50;
-	private readonly int BASE_HP_COST = 5;
-	private readonly float BASE_REPAIR_RATE = 0.25f;		// seconds
+	private readonly float BASE_HP_COST = 5.0f;
+	private readonly float BASE_REPAIR_RATE = 0.25f;	// seconds
 	private readonly int BASE_DAMAGE = 10;
 	private readonly float FIRE_RATE = 1.0f;			// seconds
 	[SerializeField] private readonly float BASE_SHOOTING_RADIUS = 15.0f;
@@ -56,11 +58,21 @@ public class Tower : Building
 
 	public override void Initialise(TypeBuilding typeBuilding, BuildingTile buildingTile) {
 		TYPE = typeBuilding;
+		MAX_SELLING_PRICE = 0.75f;
 
 		switch (TYPE) {
-			case TypeBuilding.Tower1: FAVOURITE_ENEMY = TypeEnemy.Enemy1; break;
-			case TypeBuilding.Tower2: FAVOURITE_ENEMY = TypeEnemy.Enemy2; break;
-			case TypeBuilding.Tower3: FAVOURITE_ENEMY = TypeEnemy.Enemy3; break;
+			case TypeBuilding.Tower1:
+				MAX_SELLING_PRICE *= PURCHASE_PRICE_T1;
+				FAVOURITE_ENEMY = TypeEnemy.Enemy1;
+				break;
+			case TypeBuilding.Tower2:
+				MAX_SELLING_PRICE *= PURCHASE_PRICE_T2;
+				FAVOURITE_ENEMY = TypeEnemy.Enemy2;
+				break;
+			case TypeBuilding.Tower3:
+				MAX_SELLING_PRICE *= PURCHASE_PRICE_T3;
+				FAVOURITE_ENEMY = TypeEnemy.Enemy3;
+				break;
 		}
 
 		tile = buildingTile;
@@ -73,16 +85,12 @@ public class Tower : Building
 	void Start() {
 		transform.rotation = Quaternion.Euler(0, 90, 0);
 
-		// General
-		maxHp = BASE_HP * FACTOR_UPGRADE[currentUpgrade];
-		hp = maxHp;
+		UpdateStats(true);
 		
 		// Costes
-		MAX_SELLING_PRICE = PURCHASE_PRICE * 0.75f;
 		repairRate = BASE_REPAIR_RATE; // * SPEED_OF_REPAIR_FACTOR[speed_of_repair_upgrade] - de research
 		
 		// Ataques
-		damage = BASE_DAMAGE * FACTOR_UPGRADE[currentUpgrade];
 		shootingRadius = BASE_SHOOTING_RADIUS; // * shooting_radius_factor[shooting_radius_upgrade]
 
 		SphereCollider collider = gameObject.GetComponent<SphereCollider>();
@@ -143,8 +151,13 @@ public class Tower : Building
 		return hp / maxHp;
 	}
 
-	public static int GetPurchasePrice() {
-		return PURCHASE_PRICE;
+	public static int GetPurchasePrice(TypeBuilding type) {
+		int purchasePrice = (type == TypeBuilding.Tower1)? PURCHASE_PRICE_T1 : (type == TypeBuilding.Tower2) ? PURCHASE_PRICE_T2 : PURCHASE_PRICE_T3;
+		return purchasePrice;
+	}
+
+	public int GetUpgradePrice() {
+		return UPGRADE_PRICE;
 	}
 
 	public int GetRepairPrice() {
@@ -154,7 +167,6 @@ public class Tower : Building
 
 	public override int GetSellingPrice() {
 		CalculateSellingPrice();
-		Debug.Log(sellingPrice);
 		return sellingPrice;
 	}
 
@@ -163,7 +175,7 @@ public class Tower : Building
 	}
 
 	private void CalculateRepairPrice() {
-		repairCost = BASE_HP_COST * (1 - (int) GetHealthPercentage());
+		repairCost = (int) (BASE_HP_COST * (1.0f - GetHealthPercentage()));
 	}
 
 	private void CalculateSellingPrice() {
@@ -236,6 +248,8 @@ public class Tower : Building
 		}
 
 		currentUpgrade += 1;
+		UpdateStats(false);
+
 		animator.SetTrigger("upgradeTower");
 	}
 
@@ -246,6 +260,18 @@ public class Tower : Building
 		repairing = true;
 	}
 
+	public override void DestroyBuilding() {
+		animator.SetTrigger("destroyTower");
+
+		TowerDestroyed();
+		tile.EmptyTile();
+
+		Destroy(gameObject);
+		Destroy(this);
+	}
+
+	//-----------------------------------------------------------------//
+
 	private void FireBullet(Quaternion rotation) {
 		GameObject initialPosition = firePoint ? firePointLeft : firePointRight;
 		GameObject vfx;
@@ -254,6 +280,18 @@ public class Tower : Building
 			vfx = Instantiate(effectToSpawn, initialPosition.transform.position, Quaternion.identity);
 			vfx.transform.rotation = rotation;
 		}
+
+		firePoint = !firePoint;
+	}
+
+	private void UpdateStats(bool init) {
+		// General
+		float prevMaxHp = maxHp;
+		maxHp = BASE_HP * FACTOR_UPGRADE[currentUpgrade];
+		hp = init ? maxHp : (hp + maxHp - prevMaxHp);
+
+		// Ataques
+		damage = BASE_DAMAGE * FACTOR_UPGRADE[currentUpgrade];
 	}
 
 	private void Repair() {
@@ -269,16 +307,6 @@ public class Tower : Building
 				repairing = false;
 			}
 		}
-	}
-
-	public override void DestroyBuilding() {
-		animator.SetTrigger("destroyTower");
-
-		TowerDestroyed();
-		tile.EmptyTile();
-
-		Destroy(gameObject);
-		Destroy(this);
 	}
 
 	//*---------------------------------------------------------------*//
