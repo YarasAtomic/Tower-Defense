@@ -47,6 +47,7 @@ public class MainMenu : MonoBehaviour
             saveAsset.SetCurrentLevel(-1);
             saveFilesMenu.SetActive(false);
             mapMenu.SetActive(true);
+            selectedLevel = GetLastLevel();
             //! esto no es buena idea, si se cierra el juego mientras se está en un nivel, 
             //! automaticamente se cargará el archivo de guardado al abrir el juego de nuevo
         }
@@ -102,15 +103,7 @@ public class MainMenu : MonoBehaviour
         mapMenu.SetActive(true);
 
         // Seleccionamos el level mas alto
-        LevelPoint[] allLevelPoints = FindObjectsOfType<LevelPoint>();
-
-        int lastLevelIndex = saveAsset.GetSaveFile().GetLastFinishedLevel();
-        lastLevelIndex = lastLevelIndex < levelList.Count - 1 ? lastLevelIndex+1 : lastLevelIndex; // Seleccionamos el siguiente nivel si está disponible
-
-        for(int i = 0; i < allLevelPoints.Length;i++){
-            selectedLevel = allLevelPoints[i].GetId() == lastLevelIndex ? allLevelPoints[i] : selectedLevel;
-        }
-        Debug.Log("lastLevelIndex " +lastLevelIndex);
+        selectedLevel = GetLastLevel();
     }
 
     public void OpenResearchMenu(){
@@ -124,5 +117,18 @@ public class MainMenu : MonoBehaviour
         mapMenu.SetActive(false);
         researchMenu.SetActive(false);
         saveFilesMenu.SetActive(true);
+    }
+
+    LevelPoint GetLastLevel(){
+        LevelPoint[] allLevelPoints = FindObjectsOfType<LevelPoint>();
+        LevelPoint levelPoint = null;
+
+        int lastLevelIndex = saveAsset.GetSaveFile().GetLastFinishedLevel();
+        lastLevelIndex = lastLevelIndex < levelList.Count - 1 ? lastLevelIndex+1 : lastLevelIndex; // Seleccionamos el siguiente nivel si está disponible
+
+        for(int i = 0; i < allLevelPoints.Length;i++){
+            levelPoint = allLevelPoints[i].GetId() == lastLevelIndex ? allLevelPoints[i] : selectedLevel;
+        }
+        return levelPoint;
     }
 }
