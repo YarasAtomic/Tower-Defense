@@ -2,7 +2,7 @@ using UnityEngine;
 
 public abstract class Building : MonoBehaviour
 {
-	private TypeBuilding type;
+	protected TypeBuilding TYPE;
 
     [SerializeField] protected float BASE_HP = 100.0f;
 	protected float MAX_SELLING_PRICE;
@@ -12,18 +12,18 @@ public abstract class Building : MonoBehaviour
 
 	protected Animator animator;
 
-	[SerializeField] protected BuildingTile tile;
+	protected BuildingTile tile;
 
 	// INIT method
 
-	public abstract void Initialise(BuildingTile buildingTile);
+	public abstract void Initialise(TypeBuilding typeBuilding, BuildingTile buildingTile);
 
 	// GET methods
 
 	public abstract float GetHealthPercentage();
 
 	public TypeBuilding GetTypeBuilding() {
-		return type;
+		return TYPE;
 	}
 
 	public abstract int GetSellingPrice();

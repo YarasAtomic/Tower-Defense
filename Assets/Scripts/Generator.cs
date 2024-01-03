@@ -10,7 +10,7 @@ public class Generator : Building
     /*[SerializeField]*/ private float timer;
     private LevelLogic levelLogic;
 
-	public override void Initialise(BuildingTile buildingTile) {
+	public override void Initialise(TypeBuilding typeBuilding, BuildingTile buildingTile) {
 		base.tile = buildingTile;
 	}
 

@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using System.Collections.Immutable;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Tower : Building
@@ -8,48 +8,62 @@ public class Tower : Building
 	private static int TOWERS_DESTROYED = 0;
 
 	// CONST attributes
-	private int MAX_UPGRADE = 2;
-	private List<float> FACTOR_UPGRADE = new List<float> {1.0f, 1.2f, 1.4f};
-	private static int PURCHASE_PRICE = 100;
-	private int UPGRADE_PRICE = 50;
-	private int BASE_HP_COST = 5;
-	private float BASE_REPAIR_RATE = 0.5f;		// seconds
-	private int BASE_DAMAGE = 10;
-	private int FAVOURITE_ENEMY = -1;
-	private float FIRE_RATE = 1.0f;				// seconds
-	[SerializeField] private float BASE_SHOOTING_RADIUS = 10.0f;
-	private float BASE_ROTATION_SPEED = 100.0f;
+	private readonly int MAX_UPGRADE = 2;
+	private readonly List<float> FACTOR_UPGRADE = new() { 1.0f, 1.2f, 1.4f};
+	private static readonly int PURCHASE_PRICE = 100;
+	private readonly int UPGRADE_PRICE = 50;
+	private readonly int BASE_HP_COST = 5;
+	private readonly float BASE_REPAIR_RATE = 0.5f;		// seconds
+	private readonly int BASE_DAMAGE = 10;
+	private readonly float FIRE_RATE = 1.0f;			// seconds
+	[SerializeField] private readonly float BASE_SHOOTING_RADIUS = 15.0f;
+	private readonly float BASE_ROTATION_SPEED = 100.0f;
 
 	// COSTS attributes
-	private int currentUpgrade;
+	private int currentUpgrade = 0;
 	private float maxHp;
 	private int repairCost;
 	private float repairRate;
-	private float repairHp;
-	private float maxRepairHp;
+	private float repairHp = 0.0f;
+	private float maxRepairHp = 0.0f;
 	private float damage;
 	private float shootingRadius;
 	
 	// ENEMY DETECTION attributes
-	private List<Enemy> enemiesInRange;
-	private TypeEnemy favouriteEnemyType;
-	private Enemy selectedEnemy;
+	private readonly List<Enemy> enemiesInRange = new();
+	private TypeEnemy FAVOURITE_ENEMY;
+	private Enemy selectedEnemy = null;
 
 	// STATE attributes
-	Quaternion initialRotation;
-	private float repairTimer;
-	private bool repairing;
-	private float fireTimer;
-	private bool patrolling;
-	private bool attacking;
-	private bool firing;
+	private Quaternion initialRotation;
+	private float initTimer;
+	private float repairTimer = 0.0f;
+	private bool repairing = false;
+	private float fireTimer = 0.0f;
+	private bool patrolling = true;
+	private bool attacking = false;
+	private bool firing = false;
+
+	// BULLET animation
+	private bool firePoint = true;
+	private GameObject firePointLeft;
+	private GameObject firePointRight;
+	[SerializeField] private GameObject effectToSpawn;
 
 	//*---------------------------------------------------------------*//
     //*-------------------------- INITIALISE -------------------------*//
     //*---------------------------------------------------------------*//
 
-	public override void Initialise(BuildingTile buildingTile) {
-		base.tile = buildingTile;
+	public override void Initialise(TypeBuilding typeBuilding, BuildingTile buildingTile) {
+		TYPE = typeBuilding;
+
+		switch (TYPE) {
+			case TypeBuilding.Tower1: FAVOURITE_ENEMY = TypeEnemy.Enemy1; break;
+			case TypeBuilding.Tower2: FAVOURITE_ENEMY = TypeEnemy.Enemy2; break;
+			case TypeBuilding.Tower3: FAVOURITE_ENEMY = TypeEnemy.Enemy3; break;
+		}
+
+		tile = buildingTile;
 	}
 
 	//*---------------------------------------------------------------*//
@@ -57,16 +71,15 @@ public class Tower : Building
     //*---------------------------------------------------------------*//
 
 	void Start() {
+		transform.rotation = Quaternion.Euler(0, 90, 0);
+
 		// General
-		currentUpgrade = 0;
-		maxHp = base.BASE_HP * FACTOR_UPGRADE[currentUpgrade];
-		base.hp = maxHp;
+		maxHp = BASE_HP * FACTOR_UPGRADE[currentUpgrade];
+		hp = maxHp;
 		
 		// Costes
-		base.MAX_SELLING_PRICE = PURCHASE_PRICE * 0.75f;
+		MAX_SELLING_PRICE = PURCHASE_PRICE * 0.75f;
 		repairRate = BASE_REPAIR_RATE; // * SPEED_OF_REPAIR_FACTOR[speed_of_repair_upgrade] - de research
-		repairHp = 0.0f;
-		maxRepairHp = 0.0f;
 		
 		// Ataques
 		damage = BASE_DAMAGE * FACTOR_UPGRADE[currentUpgrade];
@@ -74,21 +87,24 @@ public class Tower : Building
 
 		SphereCollider collider = gameObject.GetComponent<SphereCollider>();
 		collider.radius = shootingRadius;
-
-		enemiesInRange = new List<Enemy>();
-		favouriteEnemyType = TypeEnemy.Enemy1;
-		selectedEnemy = null;
 		
 		// Estados
 		initialRotation = transform.Find("Armature/MainBody/NeckLow/NeckUp/Head").rotation;
-		repairTimer = 0.0f;
-		repairing = false;
-		fireTimer = 0.0f;
-		patrolling = true;
-		attacking = false;
-		firing = false;
 		
 		animator = gameObject.GetComponent<Animator>();
+		AnimationClip animationClip = animator.runtimeAnimatorController.animationClips[1];
+		initTimer = animationClip.length * 10.0f;
+
+		// Proyectil
+		firePointLeft = transform.Find("Armature/MainBody/NeckLow/NeckUp/Head/Head_L/Cannon_L/Cannon_L_end").gameObject;
+		Vector3 position = firePointLeft.transform.position;
+		position.x += 0.8f;
+		firePointLeft.transform.position = position;
+
+		firePointRight = transform.Find("Armature/MainBody/NeckLow/NeckUp/Head/Head_R/Cannon_R/Cannon_R_end").gameObject;
+		position = firePointRight.transform.position;
+		position.x += 0.8f;
+		firePointRight.transform.position = position;
 	}
 
 	//*---------------------------------------------------------------*//
@@ -96,7 +112,14 @@ public class Tower : Building
     //*---------------------------------------------------------------*//
 
 	void Update() {
+		if (initTimer > 0.0f) {
+			initTimer -= GameTime.DeltaTime;
+			return;
+		}
+
 		animator.speed = GameTime.GameSpeed;
+		animator.SetBool("repairTower", repairing);
+		animator.SetBool("patrolling", patrolling);
 
 		if (repairing) Repair();
 
@@ -117,7 +140,7 @@ public class Tower : Building
 	private static void TowerDestroyed() => TOWERS_DESTROYED += 1;
 
 	public override float GetHealthPercentage() {
-		return base.hp / maxHp;
+		return hp / maxHp;
 	}
 
 	public static int GetPurchasePrice() {
@@ -131,8 +154,8 @@ public class Tower : Building
 
 	public override int GetSellingPrice() {
 		CalculateSellingPrice();
-		Debug.Log(base.sellingPrice);
-		return base.sellingPrice;
+		Debug.Log(sellingPrice);
+		return sellingPrice;
 	}
 
 	public bool IsMaxUpgraded() {
@@ -144,7 +167,7 @@ public class Tower : Building
 	}
 
 	private void CalculateSellingPrice() {
-		base.sellingPrice = (int) (base.MAX_SELLING_PRICE * (GetHealthPercentage()) * FACTOR_UPGRADE[currentUpgrade]); // * REFUND_FACTOR[refund_upgrade]
+		sellingPrice = (int) (MAX_SELLING_PRICE * GetHealthPercentage() * FACTOR_UPGRADE[currentUpgrade]); // * REFUND_FACTOR[refund_upgrade]
 	}
 
 	//*---------------------------------------------------------------*//
@@ -156,12 +179,12 @@ public class Tower : Building
 			float minDist = float.MaxValue;
 			
 			foreach (Enemy enemy in enemiesInRange) {
-				if (enemy.GetTypeEnemy() == favouriteEnemyType) {
+				if (enemy.GetTypeEnemy() == FAVOURITE_ENEMY) {
 					selectedEnemy = enemy;
 					break;
 				}
 				else {
-					float dist = Vector3.Distance(this.transform.position, enemy.transform.position);
+					float dist = Vector3.Distance(transform.position, enemy.transform.position);
 					if (dist < minDist) {
 						minDist = dist;
 						selectedEnemy = enemy;
@@ -170,10 +193,7 @@ public class Tower : Building
 			}
 
 			patrolling = false;
-			attacking = true;
-
-			// animator.SetBool("attackingEnemy", attacking);
-			animator.SetBool("patrolling", false);
+			attacking = true;			
 		}
 	}
 
@@ -188,9 +208,7 @@ public class Tower : Building
 			animator.enabled = false;
 
 			float angle = Quaternion.Angle(childTransform.rotation, newRotation);
-			// float rotatingTime = angle / rotationSpeed;
-			// fireTimer = (fireTimer >= rotatingTime) ? fireTimer : rotatingTime;
-			fireTimer = FIRE_RATE - ((angle*Mathf.Deg2Rad) / rotationSpeed) - 0.25f;
+			fireTimer = FIRE_RATE - (angle*Mathf.Deg2Rad / rotationSpeed) - 0.25f;
 
 			firing = true;
 		}
@@ -200,7 +218,8 @@ public class Tower : Building
 			fireTimer += GameTime.DeltaTime;
 
 			if (fireTimer >= FIRE_RATE) {
-				selectedEnemy.Damage((int) damage);
+				FireBullet(childTransform.rotation);
+				// selectedEnemy.Damage((int) damage);
 				if (selectedEnemy.GetHealthPercentage() <= 0) {
 					EnemyOutOfRange(selectedEnemy);
 				}
@@ -217,41 +236,46 @@ public class Tower : Building
 		}
 
 		currentUpgrade += 1; // La comprobación se hace fuera
-		animator.SetInteger("towerLevel", currentUpgrade);
+		animator.SetTrigger("upgradeTower");
 	}
 
 	public void RepairTower() {
 		repairHp = 0.0f;
-		maxRepairHp = maxHp - base.hp;
-		
+		maxRepairHp = maxHp - hp;
+
 		repairing = true;
 	}
 
+	private void FireBullet(Quaternion rotation) {
+		GameObject initialPosition = firePoint ? firePointLeft : firePointRight;
+		GameObject vfx;
+
+		if (initialPosition != null) {
+			vfx = Instantiate(effectToSpawn, initialPosition.transform.position, Quaternion.identity);
+			vfx.transform.rotation = rotation;
+		}
+	}
+
 	private void Repair() {
-		animator.SetBool("repairTower", repairing);
 		repairTimer += GameTime.DeltaTime;
 
 		if (repairTimer >= repairRate) {
-			base.hp += 1;
+			hp += 1;
 			repairHp += 1;
 			repairTimer = 0.0f;
 
 			if (repairHp >= maxRepairHp) {
-				if (base.hp > maxHp) base.hp = maxHp;
+				if (hp > maxHp) hp = maxHp;
 				repairing = false;
 			}
 		}
 	}
 
 	public override void DestroyBuilding() {
-		Debug.Log("Tower destroyed");
-		animator.SetBool("destroyTower", true);
+		animator.SetTrigger("destroyTower");
 
 		TowerDestroyed();
-		Debug.Log(base.tile);
-
-		base.tile.EmptyTile();
-		// base.tile.Show();
+		tile.EmptyTile();
 
 		Destroy(gameObject);
 		Destroy(this);
@@ -264,7 +288,7 @@ public class Tower : Building
 	void OnTriggerEnter(Collider collision) {
 		// Debug.Log("Nuevo Enemy");
 		Enemy enemy = collision.gameObject.GetComponent<Enemy>();
-		if (CheckForObstacles(enemy.transform.position) && enemy.GetHealthPercentage() > 0) enemiesInRange.Add(enemy);
+		if (enemy != null && CheckForObstacles(enemy.transform.position) && enemy.GetHealthPercentage() > 0) enemiesInRange.Add(enemy);
 	}
 
 	void OnTriggerExit(Collider collision) {
@@ -277,13 +301,12 @@ public class Tower : Building
     //*---------------------------------------------------------------*//
 
 	private bool CheckForObstacles(Vector3 enemyPosition) {
-		RaycastHit raycastHit;
 		Vector3 dir = (transform.position - enemyPosition).normalized;
 
 		bool hit = Physics.Raycast(
 			transform.position,
 			dir,
-			out raycastHit,
+			out RaycastHit raycastHit,
 			shootingRadius,
 			LayerMask.GetMask("Terrain")
 		);
