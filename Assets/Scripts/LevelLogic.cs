@@ -91,7 +91,7 @@ public class LevelLogic : MonoBehaviour
         }
 
         // Si hay enemigos
-        if (Enemy.GetCount() != 0) return; // TODO hay que ver quien gestiona los recursos de los generadores
+        if (Enemy.GetCount() != 0) return;
 
         // Si estamos en la ultima oleada y no hay enemigos
         if  (currentWave == GetTotalWaves() && !InWave()) {

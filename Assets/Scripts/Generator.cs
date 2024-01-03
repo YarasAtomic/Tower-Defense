@@ -17,10 +17,7 @@ public class Generator : Building
     public void SetLevelLogic (LevelLogic level){
         levelLogic = level;
     }
-	// Start is called before the first frame update
 	
-
-    // Start is called before the first frame update
     void Start() {
         base.BASE_HP = 100;
         base.MAX_SELLING_PRICE = 90;
