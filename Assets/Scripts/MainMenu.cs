@@ -117,6 +117,14 @@ public class MainMenu : MonoBehaviour
         menuMode = MenuMode.research;
         mapMenu.SetActive(false);
         researchMenu.SetActive(true);
+        researchMenu.GetComponent<ResearchCanvas>().UpdateValues();
+        
+    }
+
+    public void CloseResearchMenu(){
+        menuMode = MenuMode.levelSelection;
+        researchMenu.SetActive(false);
+        mapMenu.SetActive(true);
     }
 
     public void BackToMenu(){
@@ -125,4 +133,5 @@ public class MainMenu : MonoBehaviour
         researchMenu.SetActive(false);
         saveFilesMenu.SetActive(true);
     }
+
 }
