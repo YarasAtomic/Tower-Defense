@@ -13,7 +13,7 @@ public class Tower : Building
 	private static readonly int PURCHASE_PRICE = 100;
 	private readonly int UPGRADE_PRICE = 50;
 	private readonly int BASE_HP_COST = 5;
-	private readonly float BASE_REPAIR_RATE = 0.5f;		// seconds
+	private readonly float BASE_REPAIR_RATE = 0.25f;		// seconds
 	private readonly int BASE_DAMAGE = 10;
 	private readonly float FIRE_RATE = 1.0f;			// seconds
 	[SerializeField] private readonly float BASE_SHOOTING_RADIUS = 15.0f;
@@ -219,7 +219,7 @@ public class Tower : Building
 
 			if (fireTimer >= FIRE_RATE) {
 				FireBullet(childTransform.rotation);
-				// selectedEnemy.Damage((int) damage);
+				selectedEnemy.Damage((int) damage);
 				if (selectedEnemy.GetHealthPercentage() <= 0) {
 					EnemyOutOfRange(selectedEnemy);
 				}
@@ -235,7 +235,7 @@ public class Tower : Building
 			return;
 		}
 
-		currentUpgrade += 1; // La comprobación se hace fuera
+		currentUpgrade += 1;
 		animator.SetTrigger("upgradeTower");
 	}
 
