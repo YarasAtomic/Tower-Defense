@@ -33,16 +33,6 @@ public class ResearchCanvas : MonoBehaviour
 
     private bool firstFind;
 
-// Atributos no temporales
-    private int shootingRadius;
-    private int speedOfRepair;
-    private int weaponsArmoring;
-
-    private int refund;
-    private int cooldown;
-    private int supportPower;
-  
-
 
 // Atributos temp
     private int exp_temp;
@@ -90,24 +80,17 @@ public class ResearchCanvas : MonoBehaviour
 
     void Start(){
     
-      bloquedColor = new Color(0.66f, 0.66f, 0.66f); // No puedo hacer nada con este botón
-      purchasedColor = new Color (0.08f,0.26f, 0.53f); // Ya he comprado esta mejora
-      availableColor = new Color(0.94f,0.94f,0.11f); // puedo comprar esta mejora
+      bloquedColor = new Color(0.24f, 0.24f, 0.24f); // No puedo hacer nada con este botón
+      purchasedColor = new Color (0.28f,0.47f, 1f); // Ya he comprado esta mejora
+      availableColor = new Color(0.64f,0.64f,0.64f); // puedo comprar esta mejora
       firstFind = true;
 
       UpdateValues();
 
     }
 
-    // TODO: Sobra uno de estos valores en vd, pero no sé cual de los dos eliminar
     // TODO : Sigue sin funcionar del todo 
     public void UpdateValues(){
-      shootingRadius = saveAsset.GetSaveFile().GetShootingRadius();
-      speedOfRepair = saveAsset.GetSaveFile().GetSpeedOfRepair();
-      weaponsArmoring = saveAsset.GetSaveFile().GetWeaponsArmoring();
-      refund = saveAsset.GetSaveFile().GetRefundForSelling();
-      cooldown = saveAsset.GetSaveFile().GetSupportRechargeTime();
-      supportPower = saveAsset.GetSaveFile().GetSupportPower();
 
       exp_temp = saveAsset.GetSaveFile().GetXp();
       shootingRadiusTemp = saveAsset.GetSaveFile().GetShootingRadius();
