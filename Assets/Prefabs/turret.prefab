@@ -179,6 +179,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   BASE_HP: 100
+  BASE_DAMAGE: 2
+  FIRE_RATE: 1
+  BASE_SHOOTING_RADIUS: 15
   effectToSpawn: {fileID: 9206983499976447835, guid: c4c5420d85b5eae81a36fd560aab549a, type: 3}
 --- !u!65 &-4578544996540584081
 BoxCollider:

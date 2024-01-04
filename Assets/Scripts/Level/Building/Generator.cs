@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class Generator : Building
 {
-	private static readonly int PURCHASE_PRICE = 100;
-    private readonly float RESOURCE_RATE = 0.5f;
-    private readonly int RESOURCE_AMOUNT = 10;
+	[SerializeField] private static readonly int PURCHASE_PRICE = 100;
+    [SerializeField] private float RESOURCE_RATE = 0.5f;
+    [SerializeField] private int RESOURCE_AMOUNT = 10;
     private float timer;
     private LevelLogic levelLogic;
 
@@ -35,7 +35,7 @@ public class Generator : Building
     // Update is called once per frame
     void Update() {
 		timer += GameTime.DeltaTime;
-		if(timer > RESOURCE_RATE){
+		if(timer > RESOURCE_RATE && levelLogic.InWave()){
 			levelLogic.AddResources(RESOURCE_AMOUNT);
 			timer = 0;
 		}

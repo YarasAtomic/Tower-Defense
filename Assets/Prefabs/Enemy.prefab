@@ -96,14 +96,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9e5ddd0c4cc3674c8ef2a9bc1731a5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MAX_HEALTH: 50
+  MAX_HEALTH: 10
   health: 10
   speed: 5
   RESOURCE_DROP: 10
   TYPE: 0
   DEATH_TIME: 4
-  ATTACK_DELAY: 0.5
-  DAMAGE: 10
+  ATTACK_DELAY: 1
+  DAMAGE: 5
 --- !u!1001 &4686904267200294911
 PrefabInstance:
   m_ObjectHideFlags: 0

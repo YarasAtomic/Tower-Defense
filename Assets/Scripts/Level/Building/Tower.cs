@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Tower : Building
 {
+
 	// STATIC attributes
 	private static int TOWERS_DESTROYED = 0;
 
@@ -16,9 +17,9 @@ public class Tower : Building
 	private readonly int UPGRADE_PRICE = 50;
 	private readonly float BASE_HP_COST = 5.0f;
 	private readonly float BASE_REPAIR_RATE = 0.25f;	// seconds
-	private readonly int BASE_DAMAGE = 10;
-	private readonly float FIRE_RATE = 1.0f;			// seconds
-	[SerializeField] private readonly float BASE_SHOOTING_RADIUS = 15.0f;
+	[SerializeField] private int BASE_DAMAGE = 10;
+	[SerializeField] private float FIRE_RATE = 1.0f;			// seconds
+	[SerializeField] private float BASE_SHOOTING_RADIUS = 15.0f;
 	private readonly float BASE_ROTATION_SPEED = 100.0f;
 
 	// COSTS attributes
@@ -58,7 +59,7 @@ public class Tower : Building
 
 	public override void Initialise(TypeBuilding typeBuilding, BuildingTile buildingTile) {
 		TYPE = typeBuilding;
-		MAX_SELLING_PRICE = 0.75f;
+		MAX_SELLING_PRICE = 0.55f;
 
 		switch (TYPE) {
 			case TypeBuilding.Tower1:
@@ -88,10 +89,10 @@ public class Tower : Building
 		UpdateStats(true);
 		
 		// Costes
-		repairRate = BASE_REPAIR_RATE; // * SPEED_OF_REPAIR_FACTOR[speed_of_repair_upgrade] - de research
+		repairRate = BASE_REPAIR_RATE * Research.SPEED_OF_REPAIR_FACTOR[SingletonScriptableObject<Save>.Instance.GetSaveFile().GetShootingRadius()];
 		
 		// Ataques
-		shootingRadius = BASE_SHOOTING_RADIUS; // * shooting_radius_factor[shooting_radius_upgrade]
+		shootingRadius = BASE_SHOOTING_RADIUS * Research.SHOOTING_RADIUS_FACTOR[SingletonScriptableObject<Save>.Instance.GetSaveFile().GetShootingRadius()];
 
 		SphereCollider collider = gameObject.GetComponent<SphereCollider>();
 		collider.radius = shootingRadius;
@@ -179,7 +180,7 @@ public class Tower : Building
 	}
 
 	private void CalculateSellingPrice() {
-		sellingPrice = (int) (MAX_SELLING_PRICE * GetHealthPercentage() * FACTOR_UPGRADE[currentUpgrade]); // * REFUND_FACTOR[refund_upgrade]
+		sellingPrice = (int) (MAX_SELLING_PRICE * GetHealthPercentage() * FACTOR_UPGRADE[currentUpgrade] * Research.REFUND_FACTOR[SingletonScriptableObject<Save>.Instance.GetSaveFile().GetRefundForSelling()]) ;
 	}
 
 	//*---------------------------------------------------------------*//

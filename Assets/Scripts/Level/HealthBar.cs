@@ -27,7 +27,7 @@ public class HealthBar : MonoBehaviour
         enemyParent = transform.parent.GetComponent<Enemy>();
         towerParent = transform.parent.GetComponent<Tower>();
 		generatorParent = transform.parent.GetComponent<Generator>();
-
+        bar.SetActive(false); 
     }
 
     // Update is called once per frame
@@ -48,5 +48,6 @@ public class HealthBar : MonoBehaviour
             Destroy(gameObject);
             Destroy(this);
         }
+        bar.SetActive(true);
     }
 }

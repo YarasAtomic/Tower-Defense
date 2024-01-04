@@ -354,53 +354,53 @@ public class LevelCanvas : MonoBehaviour
     
     //-----------------------------------------------------------------//
 
-    public void SellBuilding() {
-        levelLogic.Sell(selectedBuilding);
-    }
+    // public void SellBuilding() {
+    //     levelLogic.Sell(selectedBuilding);
+    // }
 
     //-----------------------------------------------------------------//
 
-    public void RepairBuilding() {
-        levelLogic.Repair(selectedBuilding);
-    }
+    // public void RepairBuilding() {
+    //     levelLogic.Repair(selectedBuilding);
+    // }
 
     //-----------------------------------------------------------------//
 
-    public void UpgradeBuilding() {
-        levelLogic.Upgrade(selectedBuilding);
-    }
+    // public void UpgradeBuilding() {
+    //     levelLogic.Upgrade(selectedBuilding);
+    // }
 
     //*---------------------------------------------------------------*//
     //*----------------------- SPECIAL ATTACKS -----------------------*//
     //*---------------------------------------------------------------*//
 
-    public void ToggleSpecialAttackMode(TypeAttack type) {
-        interactionMode = interactionMode != InteractionMode.SpecialAttack 
-                            ? InteractionMode.SpecialAttack 
-                            : InteractionMode.None;
+    // public void ToggleSpecialAttackMode(TypeAttack type) {
+    //     interactionMode = interactionMode != InteractionMode.SpecialAttack 
+    //                         ? InteractionMode.SpecialAttack 
+    //                         : InteractionMode.None;
 
-        Debug.Log("Interaction mode: "+interactionMode);
-        Debug.Log("Type attack: "+type);
+    //     Debug.Log("Interaction mode: "+interactionMode);
+    //     Debug.Log("Type attack: "+type);
 
-        if (interactionMode == InteractionMode.SpecialAttack) {
-            levelLogic.InitialiseSpecialAttack(type,mainCamera.GetComponent<Camera>());
-            levelLogic.HideBuildingTiles();
-        } else {
-            levelLogic.DestroySpecialAttack();
-        }
-    }
-
-    //-----------------------------------------------------------------//
-
-    public void ToggleSplashAttack() {
-        ToggleSpecialAttackMode(TypeAttack.SplashAttack);
-    }
+    //     if (interactionMode == InteractionMode.SpecialAttack) {
+    //         levelLogic.InitialiseSpecialAttack(type,mainCamera.GetComponent<Camera>());
+    //         levelLogic.HideBuildingTiles();
+    //     } else {
+    //         levelLogic.DestroySpecialAttack();
+    //     }
+    // }
 
     //-----------------------------------------------------------------//
 
-    public void ToggleUniformAttack() {
-        ToggleSpecialAttackMode(TypeAttack.UniformAttack);
-    }
+    // public void ToggleSplashAttack() {
+    //     ToggleSpecialAttackMode(TypeAttack.SplashAttack);
+    // }
+
+    //-----------------------------------------------------------------//
+
+    // public void ToggleUniformAttack() {
+    //     ToggleSpecialAttackMode(TypeAttack.UniformAttack);
+    // }
 
 
     //*---------------------------------------------------------------*//
@@ -470,9 +470,9 @@ public class LevelCanvas : MonoBehaviour
 
     //-----------------------------------------------------------------//
 
-    void HideBuildingSubmenu() {
-        buildingSubmenu.SetActive(false);
-    }
+    // void HideBuildingSubmenu() {
+    //     buildingSubmenu.SetActive(false);
+    // }
 
     //-----------------------------------------------------------------//
 

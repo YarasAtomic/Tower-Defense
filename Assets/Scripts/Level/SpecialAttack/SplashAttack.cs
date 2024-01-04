@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UniformAttack : SpecialAttack
+public class SplashAttack : SpecialAttack
 {
     //!---------------------------------------------------------------!//
     //!---------------------------------------------------------------!//
@@ -10,18 +10,14 @@ public class UniformAttack : SpecialAttack
     //!---------------------------------------------------------------!//
     //!---------------------------------------------------------------!//
 
-    [SerializeField] float RADIUS = 4;
-    [SerializeField] int DAMAGE = 10;
-    [SerializeField] static float COOLDOWN = 20;
-
-    GameObject beam;
+    [SerializeField] float RADIUS = 5;
+    [SerializeField] int DAMAGE = 15;
+    [SerializeField] static float COOLDOWN = 10;
+    [SerializeField] float NUKE_SPEED = 100;
+    GameObject particle;
     GameObject projector;
-
-    [SerializeField] float BEAM_SPEED = 70;
-    float scale = 0;
-    float beamTimer = 0;
-    float BEAM_DURATION = 0.5f;
-
+    GameObject nuke;
+    
     //!---------------------------------------------------------------!//
     //!---------------------------------------------------------------!//
     //!------------------------ CLASS METHODS ------------------------!//
@@ -31,13 +27,12 @@ public class UniformAttack : SpecialAttack
     //*---------------------------------------------------------------*//
     //*---------------------------- START ----------------------------*//
     //*---------------------------------------------------------------*//
-
+    
     public new void Start(){
         base.Start();
-        beam = transform.Find("field").gameObject;
+        particle = transform.Find("particle").gameObject;
         projector = transform.Find("projector").gameObject;
-        
-        beam.transform.localScale = Vector3.zero;
+        nuke = transform.Find("Nuke").gameObject;
 
         ProjectionTileMesh projectionTileMesh = projector.GetComponent<ProjectionTileMesh>();
 
@@ -45,6 +40,7 @@ public class UniformAttack : SpecialAttack
         projectionTileMesh.gridWidth = (int)RADIUS * 2;
         projectionTileMesh.transform.position = new Vector3(-RADIUS,0,-RADIUS);
 
+        nuke.SetActive(false);
     }
 
     //*---------------------------------------------------------------*//
@@ -52,22 +48,12 @@ public class UniformAttack : SpecialAttack
     //*---------------------------------------------------------------*//
 
     public new void Update(){
-        base.Update();
-
-        if(!exploded) return;
-
-        if(beamTimer < BEAM_DURATION && scale < RADIUS){
-            scale+=GameTime.DeltaTime * BEAM_SPEED;
-            mainCamera.gameObject.GetComponent<CameraController>().SetShake(0.6f);
-        }else if(beamTimer >= BEAM_DURATION && scale > 0){
-            scale-=GameTime.DeltaTime * BEAM_SPEED;
-        }else if(scale < 0){
-            scale = 0;
+        if(deployed){
+            nuke.SetActive(true);
+            nuke.transform.position += Vector3.down * GameTime.DeltaTime * NUKE_SPEED;
         }
 
-        beamTimer+=GameTime.DeltaTime;
-        
-        beam.transform.localScale = new Vector3(scale,100,scale) * 2; // el cilindro tiene radio 0.5
+        base.Update();
     }
 
     //*---------------------------------------------------------------*//
@@ -76,8 +62,10 @@ public class UniformAttack : SpecialAttack
 
     protected override void ExecuteAttack(){
         // Aqui ocurre la explosión, se efectua el daño.
-        Debug.Log("explota ataque uniforme");
+        Debug.Log("explota ataque splash");
         projector.SetActive(false);
+        particle.SetActive(true);
+        mainCamera.gameObject.GetComponent<CameraController>().SetShake(1);
 
         // Detectar enemigos dentro del radio de explosión
         Collider[] colliders = Physics.OverlapSphere(transform.position, RADIUS);
@@ -89,7 +77,7 @@ public class UniformAttack : SpecialAttack
 
             Enemy enemy = collider.GetComponent<Enemy>();
             if (enemy != null) {
-                enemy.Damage(DAMAGE);
+                enemy.Damage((int)((RADIUS-distance)/RADIUS * DAMAGE));
                 Debug.Log("Daño realizado a un enemigo");
             }
         }
@@ -100,12 +88,12 @@ public class UniformAttack : SpecialAttack
     //*---------------------------------------------------------------*//
 
     public static float GetCooldown(){
-        return COOLDOWN;
+        return COOLDOWN * Research.COOLDOWN_FACTOR[SingletonScriptableObject<Save>.Instance.GetSaveFile().GetSupportRechargeTime()];
     }
 
     //!---------------------------------------------------------------!//
     //!---------------------------------------------------------------!//
-    //!--------------------- END OF UniformAttack --------------------!//
+    //!--------------------- END OF SplashAttack ---------------------!//
     //!---------------------------------------------------------------!//
     //!---------------------------------------------------------------!//
 }

@@ -23,6 +23,8 @@ public class LevelLogic : MonoBehaviour
     [HideInInspector] public List<int> waveList;
 
     [SerializeField] Save saveAsset;
+
+    SaveFile saveFile;
     // Todas las posiciones donde se pueden colocar una torre o generador en el nivel
     BuildingTile[] ALL_POSITIONS;
 
@@ -65,6 +67,8 @@ public class LevelLogic : MonoBehaviour
     //*---------------------------------------------------------------*//
     void Start()
     {
+        saveFile = saveAsset.GetSaveFile();
+
 		interactionMode     = InteractionMode.None;
 
         destroyedTowers     = 0;
@@ -121,8 +125,8 @@ public class LevelLogic : MonoBehaviour
         // Si estamos en la ultima oleada y no hay enemigos
         if  (currentWave == GetTotalWaves() && !InWave()) {
             if(!levelFinished){
-                saveAsset.GetSaveFile().SetMaxStarsAtLevel(saveAsset.GetCurrentLevel(),ObtainedStars());
-                saveAsset.GetSaveFile().AddXp(ObtainedExp());
+                saveFile.SetMaxStarsAtLevel(saveAsset.GetCurrentLevel(),ObtainedStars());
+                saveFile.AddXp(ObtainedExp());
                 levelFinished = true;
             }
 
@@ -386,9 +390,9 @@ public class LevelLogic : MonoBehaviour
     public float GetSpecialAttackTimer(TypeAttack typeAttack){
         switch(typeAttack){
             case TypeAttack.UniformAttack:
-                return uniformAttackTimer / UniformAttack.GetCooldown();
+                return uniformAttackTimer / (UniformAttack.GetCooldown());
             case TypeAttack.SplashAttack:
-                return splashAttackTimer / SplashAttack.GetCooldown();
+                return splashAttackTimer / (SplashAttack.GetCooldown());
         }
         return 1;
     }
