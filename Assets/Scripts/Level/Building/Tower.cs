@@ -1,10 +1,8 @@
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Tower : Building
 {
-
 	// STATIC attributes
 	private static int TOWERS_DESTROYED = 0;
 
@@ -18,7 +16,7 @@ public class Tower : Building
 	private readonly float BASE_HP_COST = 5.0f;
 	private readonly float BASE_REPAIR_RATE = 0.25f;	// seconds
 	[SerializeField] private int BASE_DAMAGE = 10;
-	[SerializeField] private float FIRE_RATE = 1.0f;			// seconds
+	[SerializeField] private float FIRE_RATE = 1.0f;	// seconds
 	[SerializeField] private float BASE_SHOOTING_RADIUS = 15.0f;
 	private readonly float BASE_ROTATION_SPEED = 100.0f;
 
@@ -131,12 +129,10 @@ public class Tower : Building
 		animator.SetBool("patrolling", patrolling);
 
 		if (repairing) Repair();
-
-		if (patrolling) {
-			if (!animator.enabled) ActivateAnimation();
-			CheckEnemiesInRange();
-		}
-		else if (attacking) {
+		if (patrolling && !animator.enabled) ActivateAnimation();
+		
+		CheckEnemiesInRange();
+		if (attacking) {
 			AttackEnemy();
 		}
 	}
@@ -187,26 +183,60 @@ public class Tower : Building
     //*--------------------------- ACTIONS ---------------------------*//
     //*---------------------------------------------------------------*//
 
+	// public void CheckEnemiesInRange() {
+	// 	if (selectedEnemy == null && enemiesInRange.Count != 0) {
+	// 		float minDist = float.MaxValue;
+			
+	// 		foreach (Enemy enemy in enemiesInRange) {
+	// 			if (enemy.GetTypeEnemy() == FAVOURITE_ENEMY) {
+	// 				selectedEnemy = enemy;
+	// 				break;
+	// 			}
+	// 			else {
+	// 				float dist = Vector3.Distance(transform.position, enemy.transform.position);
+	// 				if (dist < minDist) {
+	// 					minDist = dist;
+	// 					selectedEnemy = enemy;
+	// 				}
+	// 			}
+	// 		}
+
+	// 		patrolling = false;
+	// 		attacking = true;
+	// 	}
+	// }
+
 	public void CheckEnemiesInRange() {
-		if (selectedEnemy == null && enemiesInRange.Count != 0) {
+		if (selectedEnemy == null) {
+			Collider[] hitColliders = Physics.OverlapSphere(transform.position, shootingRadius);
 			float minDist = float.MaxValue;
 			
-			foreach (Enemy enemy in enemiesInRange) {
-				if (enemy.GetTypeEnemy() == FAVOURITE_ENEMY) {
-					selectedEnemy = enemy;
-					break;
-				}
-				else {
-					float dist = Vector3.Distance(transform.position, enemy.transform.position);
-					if (dist < minDist) {
-						minDist = dist;
+			foreach (Collider hit in hitColliders) {
+				Enemy enemy = hit.GetComponent<Enemy>();
+				if (enemy != null && enemy.GetHealthPercentage() > 0) {
+					if (enemy.GetTypeEnemy() == FAVOURITE_ENEMY) {
 						selectedEnemy = enemy;
+
+						patrolling = false;
+						attacking = true;
+						break;
+					}
+					else {
+						float dist = Vector3.Distance(transform.position, enemy.transform.position);
+						if (dist < minDist) {
+							minDist = dist;
+							selectedEnemy = enemy;
+						}
 					}
 				}
 			}
-
-			patrolling = false;
-			attacking = true;			
+		}
+		else {
+			float dist = Vector3.Distance(transform.position, selectedEnemy.transform.position);
+			if (dist > shootingRadius) {
+				EnemyOutOfRange(selectedEnemy);
+				CheckEnemiesInRange();
+			}
 		}
 	}
 
@@ -314,16 +344,16 @@ public class Tower : Building
     //*------------------------- COLLISSIONS -------------------------*//
     //*---------------------------------------------------------------*//
 
-	void OnTriggerEnter(Collider collision) {
-		// Debug.Log("Nuevo Enemy");
-		Enemy enemy = collision.gameObject.GetComponent<Enemy>();
-		if (enemy != null && CheckForObstacles(enemy.transform.position) && enemy.GetHealthPercentage() > 0) enemiesInRange.Add(enemy);
-	}
+	// void OnTriggerEnter(Collider collision) {
+	// 	// Debug.Log("Nuevo Enemy");
+	// 	Enemy enemy = collision.gameObject.GetComponent<Enemy>();
+	// 	if (enemy != null && CheckForObstacles(enemy.transform.position) && enemy.GetHealthPercentage() > 0) enemiesInRange.Add(enemy);
+	// }
 
-	void OnTriggerExit(Collider collision) {
-		// Debug.Log("Se va Enemy");
-		EnemyOutOfRange(collision.gameObject.GetComponent<Enemy>());
-	}
+	// void OnTriggerExit(Collider collision) {
+	// 	// Debug.Log("Se va Enemy");
+	// 	EnemyOutOfRange(collision.gameObject.GetComponent<Enemy>());
+	// }
 
 	//*---------------------------------------------------------------*//
     //*--------------------------- AUXILIAR --------------------------*//
@@ -344,7 +374,7 @@ public class Tower : Building
 	}
 
 	private void EnemyOutOfRange(Enemy enemy) {
-		enemiesInRange.Remove(enemy);
+		// enemiesInRange.Remove(enemy);
 
 		if (enemy == selectedEnemy) {
 			selectedEnemy = null;

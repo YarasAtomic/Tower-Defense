@@ -5,6 +5,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System.Linq;
 
 public class LevelCanvas : MonoBehaviour
 {   
@@ -410,32 +411,41 @@ public class LevelCanvas : MonoBehaviour
     public void LeftClick() {
         Ray ray = mainCamera.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
         //Debug.DrawRay(mainCamera.GetComponent<Camera>().transform.position, ray.direction*100);
-        RaycastHit hit;
-        if(!Physics.Raycast(ray,out hit)) return;
+        RaycastHit[] hits = Physics.RaycastAll(ray);
+		if (hits.Length == 0) return;
         
         if (GameTime.IsPaused() || Utils.IsPointerOverUIObject()) {
             return;
         }
 
+		BuildingTile tile = null;
+		Building currentBuilding = null;
+		foreach (RaycastHit hit in hits) {
+			if (hit.collider is not SphereCollider) {
+				tile = hit.transform.GetComponent<BuildingTile>();
+				if (tile != null) break;
+				
+				currentBuilding = hit.transform.GetComponent<Building>();
+			}
+		}
+
         if (levelLogic.GetInteractionMode() == LevelLogic.InteractionMode.Build) {
-            BuildingTile tile = hit.collider.gameObject.GetComponent<BuildingTile>();
-            if(tile!=null){
-                // Debug.Log("Tile");
-                levelLogic.Build(tile, typeBuilding);
-            }
+			if (tile != null) {
+				levelLogic.Build(tile, typeBuilding);
+				return;
+			}
         }
 
         if (levelLogic.GetInteractionMode() == LevelLogic.InteractionMode.None
 		||  levelLogic.GetInteractionMode() == LevelLogic.InteractionMode.Build) {
-            Building currentBuilding = hit.collider.gameObject.GetComponent<Building>();
-            if (currentBuilding != null && currentBuilding != selectedBuilding) {
-                selectedBuilding = currentBuilding;
-                if (selectedBuilding is Generator) ShowBuildingSubmenu(false);
+			if (currentBuilding != null && currentBuilding != selectedBuilding) {
+				selectedBuilding = currentBuilding;
+				if (selectedBuilding is Generator) ShowBuildingSubmenu(false);
 				else ShowBuildingSubmenu(true, ((Tower) selectedBuilding).GetHealthPercentage() < 1.0f, !((Tower) selectedBuilding).IsMaxUpgraded());
-            } else {
-                HideBuildingSubmenu();
-                selectedBuilding = null;
-            }
+			} else {
+				HideBuildingSubmenu();
+				selectedBuilding = null;
+			}
         }
 
         if (levelLogic.GetInteractionMode() == LevelLogic.InteractionMode.SpecialAttack) {
