@@ -16,9 +16,8 @@ public class Generator : Building
 
     public void SetLevelLogic (LevelLogic level){
         levelLogic = level;
-    }	
-
-    // Start is called before the first frame update
+    }
+	
     void Start() {
         // General
 		hp = BASE_HP;

@@ -4,6 +4,7 @@ using UnityEngine.EventSystems;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class LevelCanvas : MonoBehaviour
 {   
@@ -191,6 +192,12 @@ public class LevelCanvas : MonoBehaviour
 
     //-----------------------------------------------------------------//
 
+    public void LoadMap(){
+        SceneManager.LoadScene("mainMenu");
+    }
+
+    //-----------------------------------------------------------------//
+
     void HandleMouseInputs() {
         if (Input.GetMouseButtonDown(0)) {
             LeftClick();
@@ -202,19 +209,19 @@ public class LevelCanvas : MonoBehaviour
         if(!levelLogic.IsSpecialAttackAvailable(TypeAttack.SplashAttack)){
             splashAttackTimerIMG.GetComponent<Image>().fillAmount = 1-levelLogic.GetSpecialAttackTimer(TypeAttack.SplashAttack);
             splashAttackButton.GetComponent<Button>().interactable = false;
-        }else if (!GameTime.IsPaused()){
-            splashAttackButton.GetComponent<Button>().interactable = true;
+        }else{
+            splashAttackButton.GetComponent<Button>().interactable = !GameTime.IsPaused();
         }
         if(!levelLogic.IsSpecialAttackAvailable(TypeAttack.UniformAttack)){
             uniformAttackTimerIMG.GetComponent<Image>().fillAmount = 1-levelLogic.GetSpecialAttackTimer(TypeAttack.UniformAttack);
             uniformAttackButton.GetComponent<Button>().interactable = false;
-        }else if (!GameTime.IsPaused()){
-            uniformAttackButton.GetComponent<Button>().interactable = true;
+        }else{
+            uniformAttackButton.GetComponent<Button>().interactable = !GameTime.IsPaused();
         }
     }
 
     //*---------------------------------------------------------------*//
-    //*------------------------ BUTTON METHODS -----------------------*//
+    //*---------------------- PAUSE/ACC BUTTONS ----------------------*//
     //*---------------------------------------------------------------*//
 
     public void TogglePauseButton() {
@@ -238,6 +245,20 @@ public class LevelCanvas : MonoBehaviour
     }
 
     //-----------------------------------------------------------------//
+
+    public void PauseGame(){
+        levelLogic.PauseGame();
+    }
+
+    //-----------------------------------------------------------------//
+
+    public void AccelerateGame() {
+        levelLogic.AccelerateGame();
+    }
+
+    //*---------------------------------------------------------------*//
+    //*------------------------ BUILDING MODE ------------------------*//
+    //*---------------------------------------------------------------*//
 
     public void ToggleBuildingMode(TypeBuilding type) {
         levelLogic.SetInteractionMode((levelLogic.GetInteractionMode() != LevelLogic.InteractionMode.Build)
@@ -312,19 +333,79 @@ public class LevelCanvas : MonoBehaviour
         ToggleBuildingMode(TypeBuilding.Generator);
     }
 
-    //-----------------------------------------------------------------//
+    //*---------------------------------------------------------------*//
+    //*---------------------- BUILDING SUBMENU -----------------------*//
+    //*---------------------------------------------------------------*//
 
-    public void PauseGame(){
-        levelLogic.PauseGame();
+    void HideBuildingSubmenu() {
+        buildingSubmenu.SetActive(false);
     }
 
     //-----------------------------------------------------------------//
 
-    public void AccelerateGame() {
-        levelLogic.AccelerateGame();
+    void ShowBuildingSubmenu() {
+        Vector3 screenPos = mainCamera
+                            .GetComponent<Camera>()
+                            .WorldToScreenPoint(selectedBuilding.transform.position);
+
+        buildingSubmenu.transform.position = screenPos;
+        buildingSubmenu.SetActive(true);
+    }
+    
+    //-----------------------------------------------------------------//
+
+    public void SellBuilding() {
+        levelLogic.Sell(selectedBuilding);
     }
 
     //-----------------------------------------------------------------//
+
+    public void RepairBuilding() {
+        levelLogic.Repair(selectedBuilding);
+    }
+
+    //-----------------------------------------------------------------//
+
+    public void UpgradeBuilding() {
+        levelLogic.Upgrade(selectedBuilding);
+    }
+
+    //*---------------------------------------------------------------*//
+    //*----------------------- SPECIAL ATTACKS -----------------------*//
+    //*---------------------------------------------------------------*//
+
+    public void ToggleSpecialAttackMode(TypeAttack type) {
+        interactionMode = interactionMode != InteractionMode.SpecialAttack 
+                            ? InteractionMode.SpecialAttack 
+                            : InteractionMode.None;
+
+        Debug.Log("Interaction mode: "+interactionMode);
+        Debug.Log("Type attack: "+type);
+
+        if (interactionMode == InteractionMode.SpecialAttack) {
+            levelLogic.InitialiseSpecialAttack(type,mainCamera.GetComponent<Camera>());
+            levelLogic.HideBuildingTiles();
+        } else {
+            levelLogic.DestroySpecialAttack();
+        }
+    }
+
+    //-----------------------------------------------------------------//
+
+    public void ToggleSplashAttack() {
+        ToggleSpecialAttackMode(TypeAttack.SplashAttack);
+    }
+
+    //-----------------------------------------------------------------//
+
+    public void ToggleUniformAttack() {
+        ToggleSpecialAttackMode(TypeAttack.UniformAttack);
+    }
+
+
+    //*---------------------------------------------------------------*//
+    //*---------------------- LEFT CLICK METHOD ----------------------*//
+    //*---------------------------------------------------------------*//
 
     public void LeftClick() {
         Ray ray = mainCamera.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);

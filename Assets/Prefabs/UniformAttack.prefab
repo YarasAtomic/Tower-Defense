@@ -184,7 +184,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   RADIUS: 4
   DAMAGE: 10
-  FIELD_SPEED: 30
+  BEAM_SPEED: 70
 --- !u!1 &3525643286494544200
 GameObject:
   m_ObjectHideFlags: 0
@@ -315,5 +315,5 @@ MonoBehaviour:
   cellSize: 1
   gridWidth: 10
   gridHeight: 10
-  yOffset: 2
+  yOffset: 0
   material: {fileID: 2100000, guid: 849196292ae88a541993a7e5584c4118, type: 2}
