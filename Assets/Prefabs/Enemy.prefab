@@ -102,8 +102,8 @@ MonoBehaviour:
   RESOURCE_DROP: 10
   TYPE: 0
   DEATH_TIME: 4
-  ATTACK_DELAY: 0.5
-  DAMAGE: 10
+  ATTACK_DELAY: 1
+  DAMAGE: 5
 --- !u!1001 &4686904267200294911
 PrefabInstance:
   m_ObjectHideFlags: 0
