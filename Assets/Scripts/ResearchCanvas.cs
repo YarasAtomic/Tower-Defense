@@ -27,11 +27,10 @@ public class ResearchCanvas : MonoBehaviour
     [SerializeField] MainMenu mainMenu;
 
 // Atributos colores
-    [SerializeField] private Color bloquedColor;
-    [SerializeField] private Color purchasedColor;
-    [SerializeField] private Color availableColor;
+    [SerializeField] Color blockedColor;
+    [SerializeField] Color purchasedColor;
 
-    private bool firstFind;
+    private bool firstFind = true;
 
 
 // Atributos temp
@@ -55,7 +54,7 @@ public class ResearchCanvas : MonoBehaviour
                
     GameObject weaponsArmoringButton_1,
                weaponsArmoringButton_2,
-               weaponsArmoringButton_3;               
+               weaponsArmoringButton_3;
     GameObject refundForSellingButton_1,
                refundForSellingButton_2,
                refundForSellingButton_3;
@@ -80,18 +79,18 @@ public class ResearchCanvas : MonoBehaviour
 
     void Start(){
     
-      bloquedColor = new Color(0.24f, 0.24f, 0.24f); // No puedo hacer nada con este botón
-      purchasedColor = new Color (0.28f,0.47f, 1f); // Ya he comprado esta mejora
-      availableColor = new Color(0.64f,0.64f,0.64f); // puedo comprar esta mejora
-      firstFind = true;
+      // blockedColor = new Color(0.24f, 0.24f, 0.24f); // No puedo hacer nada con este botón
+      // purchasedColor = new Color (0.28f,0.47f, 1f); // Ya he comprado esta mejora
+      // availableColor = new Color(0.64f,0.64f,0.64f); // puedo comprar esta mejora
+      // firstFind = true;
 
-      UpdateValues();
+      // UpdateValues();
 
     }
 
     // TODO : Sigue sin funcionar del todo 
     public void UpdateValues(){
-
+      Debug.Log("update values");
       exp_temp = saveAsset.GetSaveFile().GetXp();
       shootingRadiusTemp = saveAsset.GetSaveFile().GetShootingRadius();
       speedOfRepairTemp = saveAsset.GetSaveFile().GetSpeedOfRepair();
@@ -101,7 +100,7 @@ public class ResearchCanvas : MonoBehaviour
       supportPowerTemp = saveAsset.GetSaveFile().GetSupportPower();
 
       if(firstFind){
-
+        Debug.Log("first find");
         shootingRadiusButton_1 =  transform.Find("shootingRadius/shootingButtons/shootingRadiusButton_1").gameObject;
         shootingRadiusButton_2 =  transform.Find("shootingRadius/shootingButtons/shootingRadiusButton_2").gameObject;
         shootingRadiusButton_3 =  transform.Find("shootingRadius/shootingButtons/shootingRadiusButton_3").gameObject;
@@ -126,15 +125,9 @@ public class ResearchCanvas : MonoBehaviour
         supportPowerButton_2 =  transform.Find("supportPower/supportPowerButtons/supportPowerButton_2").gameObject;
         supportPowerButton_3 =  transform.Find("supportPower/supportPowerButtons/supportPowerButton_3").gameObject;
         firstFind = false;
-
       }
       SetAllButtonsColors();
     }
-
-    void Update(){
-    }
-
-
 
     //*---------------------------------------------------------------*//
     //*---------------------- BUTTONS COLORS -------------------------*//
@@ -142,6 +135,7 @@ public class ResearchCanvas : MonoBehaviour
 
 
     public void SetAllButtonsColors(){
+      Debug.Log("all buttons");
       // Colores shootingRadius
 
       SetButtonsColors(shootingRadiusButton_1, shootingRadiusButton_2, shootingRadiusButton_3, shootingRadiusTemp );
@@ -168,85 +162,23 @@ public class ResearchCanvas : MonoBehaviour
     }
     
     public void SetButtonsColors( GameObject button_1, GameObject  button_2, GameObject button_3, int factor){
-      var colors = button_1.GetComponent<Button>().colors; // TODO : Esto habria que cambiarlo pero no se como porque da error
-      colors.normalColor = availableColor;
-      
-      switch(factor){
-        case 0:
-          colors.disabledColor = bloquedColor;
+        GameObject[] buttons = {button_1,button_2,button_3};
 
-          if(exp_temp >= UPGRADE_PRICES[0] ){
-            button_1.GetComponent<Button>().interactable = true;
+        for(int i = 0; i < buttons.Length; i++){
+          Button currentButton = buttons[i].GetComponent<Button>();
+          ColorBlock colors = currentButton.colors;
+          if(factor == i){
+            currentButton.interactable = exp_temp >= UPGRADE_PRICES[i];
+          }else if(factor < i){
+            colors.disabledColor = blockedColor;
+            currentButton.colors = colors;
+            currentButton.interactable = false;
           }else{
-            button_1.GetComponent<Button>().interactable = false;
+            colors.disabledColor = purchasedColor;
+            currentButton.colors = colors;
+            currentButton.interactable = false;
           }
-
-          button_2.GetComponent<Button>().interactable = false;
-          button_3.GetComponent<Button>().interactable = false;
-        
-          
-          button_1.GetComponent<Button>().colors = colors;
-          button_2.GetComponent<Button>().colors = colors;
-          button_3.GetComponent<Button>().colors = colors;
-
-        break;
-
-        case 1:
-          colors.disabledColor = purchasedColor;
-          button_1.GetComponent<Button>().interactable = false;
-          button_1.GetComponent<Button>().colors = colors;
-
-          if(exp_temp >= UPGRADE_PRICES[1] ){
-            button_2.GetComponent<Button>().interactable = true;
-          }else{
-            button_2.GetComponent<Button>().interactable = false;
-          }
-          colors.disabledColor = bloquedColor;
-
-          button_3.GetComponent<Button>().interactable = false;
-
-          button_2.GetComponent<Button>().colors = colors;
-          button_3.GetComponent<Button>().colors = colors;
-
-        break;
-        
-        case 2:
-          colors.disabledColor = purchasedColor;
-          button_1.GetComponent<Button>().interactable = false;
-          button_2.GetComponent<Button>().interactable = false;
-          
-          button_1.GetComponent<Button>().colors = colors;
-          button_2.GetComponent<Button>().colors = colors;
-
-          if(exp_temp >= UPGRADE_PRICES[2] ){
-            button_3.GetComponent<Button>().interactable = true;
-          }else{
-            button_3.GetComponent<Button>().interactable = false;
-          }
-          colors.disabledColor = bloquedColor;
-
-          button_3.GetComponent<Button>().colors = colors;
-
-
-        break;
-       
-        case 3:
-          colors.disabledColor = purchasedColor;
-
-          button_1.GetComponent<Button>().interactable = false;
-          button_2.GetComponent<Button>().interactable = false;
-          button_3.GetComponent<Button>().interactable = false;
-        
-          
-          button_1.GetComponent<Button>().colors = colors;
-          button_2.GetComponent<Button>().colors = colors;
-          button_3.GetComponent<Button>().colors = colors;
-        break;
-      }
-
-        
- 
-        
+        }
      }
 
     //*---------------------------------------------------------------*//
