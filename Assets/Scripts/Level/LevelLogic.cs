@@ -249,13 +249,27 @@ public class LevelLogic : MonoBehaviour
             price = Generator.GetPurchasePrice();
             buildingPrefab = generatorPrefab;
         } else {
-            price = Tower.GetPurchasePrice(type);
-            buildingPrefab = towerPrefab;
+			switch (type)
+			{
+				default:
+				case TypeBuilding.Tower1:
+					price = Tower1.GetPurchasePrice();
+					buildingPrefab = towerPrefab;
+					break;
+				case TypeBuilding.Tower2:
+					price = Tower2.GetPurchasePrice();
+					buildingPrefab = towerPrefab;
+					break;
+				case TypeBuilding.Tower3:
+					price = Tower3.GetPurchasePrice();
+					buildingPrefab = towerPrefab;
+					break;
+			}
         }
 
         if (price > currentResources) return;
         currentResources -= price;
-        tile.Build(type, buildingPrefab);
+        tile.Build(buildingPrefab);
     }
 
     //*---------------------------------------------------------------*//

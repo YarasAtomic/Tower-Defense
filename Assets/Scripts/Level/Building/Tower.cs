@@ -1,24 +1,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Tower : Building
+public abstract class Tower : Building
 {
 	// STATIC attributes
 	private static int TOWERS_DESTROYED = 0;
 
 	// CONST attributes
-	private readonly int MAX_UPGRADE = 2;
-	private readonly List<float> FACTOR_UPGRADE = new() { 1.0f, 1.2f, 1.4f};
-	private static readonly int PURCHASE_PRICE_T1 = 100;
-	private static readonly int PURCHASE_PRICE_T2 = 150;
-	private static readonly int PURCHASE_PRICE_T3 = 200;
-	private readonly int UPGRADE_PRICE = 50;
-	private readonly float BASE_HP_COST = 5.0f;
-	private readonly float BASE_REPAIR_RATE = 0.25f;	// seconds
-	[SerializeField] private int BASE_DAMAGE = 10;
-	[SerializeField] private float FIRE_RATE = 1.0f;	// seconds
-	[SerializeField] private float BASE_SHOOTING_RADIUS = 15.0f;
-	private readonly float BASE_ROTATION_SPEED = 100.0f;
+	private const int MAX_UPGRADE = 2;
+	private readonly List<float> FACTOR_UPGRADE = new() { 1.0f, 1.2f, 1.4f };
+	private const int UPGRADE_PRICE = 50;
+	private const float BASE_HP_COST = 5.0f;
+	private const float BASE_REPAIR_RATE = 0.25f;	// seconds
+	[SerializeField] protected int BASE_DAMAGE;
+	[SerializeField] protected float FIRE_RATE;			// seconds
+	[SerializeField] protected float BASE_SHOOTING_RADIUS;
+	protected float BASE_ROTATION_SPEED;
+	protected TypeEnemy FAVOURITE_ENEMY;
 
 	// COSTS attributes
 	private int currentUpgrade = 0;
@@ -31,8 +29,7 @@ public class Tower : Building
 	private float shootingRadius;
 	
 	// ENEMY DETECTION attributes
-	private readonly List<Enemy> enemiesInRange = new();
-	private TypeEnemy FAVOURITE_ENEMY;
+	// private readonly List<Enemy> enemiesInRange = new();
 	private Enemy selectedEnemy = null;
 
 	// STATE attributes
@@ -55,25 +52,7 @@ public class Tower : Building
     //*-------------------------- INITIALISE -------------------------*//
     //*---------------------------------------------------------------*//
 
-	public override void Initialise(TypeBuilding typeBuilding, BuildingTile buildingTile) {
-		TYPE = typeBuilding;
-		MAX_SELLING_PRICE = 0.55f;
-
-		switch (TYPE) {
-			case TypeBuilding.Tower1:
-				MAX_SELLING_PRICE *= PURCHASE_PRICE_T1;
-				FAVOURITE_ENEMY = TypeEnemy.Enemy1;
-				break;
-			case TypeBuilding.Tower2:
-				MAX_SELLING_PRICE *= PURCHASE_PRICE_T2;
-				FAVOURITE_ENEMY = TypeEnemy.Enemy2;
-				break;
-			case TypeBuilding.Tower3:
-				MAX_SELLING_PRICE *= PURCHASE_PRICE_T3;
-				FAVOURITE_ENEMY = TypeEnemy.Enemy3;
-				break;
-		}
-
+	public override void Initialise(BuildingTile buildingTile) {
 		tile = buildingTile;
 	}
 
@@ -81,19 +60,17 @@ public class Tower : Building
     //*---------------------------- START ----------------------------*//
     //*---------------------------------------------------------------*//
 
-	void Start() {
+	protected virtual void Start() {
 		transform.rotation = Quaternion.Euler(0, 90, 0);
 
 		UpdateStats(true);
 		
 		// Costes
 		repairRate = BASE_REPAIR_RATE * Research.SPEED_OF_REPAIR_FACTOR[SingletonScriptableObject<Save>.Instance.GetSaveFile().GetShootingRadius()];
+		MAX_SELLING_PRICE = 0.55f;
 		
 		// Ataques
 		shootingRadius = BASE_SHOOTING_RADIUS * Research.SHOOTING_RADIUS_FACTOR[SingletonScriptableObject<Save>.Instance.GetSaveFile().GetShootingRadius()];
-
-		SphereCollider collider = gameObject.GetComponent<SphereCollider>();
-		collider.radius = shootingRadius;
 		
 		// Estados
 		initialRotation = transform.Find("Armature/MainBody/NeckLow/NeckUp/Head").rotation;
@@ -146,11 +123,6 @@ public class Tower : Building
 
 	public override float GetHealthPercentage() {
 		return hp / maxHp;
-	}
-
-	public static int GetPurchasePrice(TypeBuilding type) {
-		int purchasePrice = (type == TypeBuilding.Tower1)? PURCHASE_PRICE_T1 : (type == TypeBuilding.Tower2) ? PURCHASE_PRICE_T2 : PURCHASE_PRICE_T3;
-		return purchasePrice;
 	}
 
 	public int GetUpgradePrice() {
@@ -213,7 +185,7 @@ public class Tower : Building
 			
 			foreach (Collider hit in hitColliders) {
 				Enemy enemy = hit.GetComponent<Enemy>();
-				if (enemy != null && enemy.GetHealthPercentage() > 0) {
+				if (!CheckForObstacles(enemy.transform.position) && enemy != null && enemy.GetHealthPercentage() > 0) {
 					if (enemy.GetTypeEnemy() == FAVOURITE_ENEMY) {
 						selectedEnemy = enemy;
 
@@ -361,14 +333,40 @@ public class Tower : Building
 
 	private bool CheckForObstacles(Vector3 enemyPosition) {
 		Vector3 dir = (transform.position - enemyPosition).normalized;
+		Ray ray = new(transform.position, dir);
+		Debug.DrawRay(transform.position, dir);
 
-		bool hit = Physics.Raycast(
-			transform.position,
-			dir,
-			out RaycastHit raycastHit,
-			shootingRadius,
-			LayerMask.GetMask("Terrain")
-		);
+		bool hit = false;
+		RaycastHit[] hits = Physics.RaycastAll(ray);
+
+		float obstacleDist = 0.0f;
+		float enemyDist = Vector3.Distance(transform.position, enemyPosition);
+		foreach (RaycastHit raycastHit in hits) {
+			Enemy enemy = raycastHit.transform.GetComponent<Enemy>();
+			if (enemy == null) {
+				obstacleDist = Vector3.Distance(transform.position, raycastHit.transform.position);
+				if (obstacleDist > 0) break;
+			}
+		}
+
+		Debug.Log(obstacleDist);
+		Debug.Log(enemyDist);
+
+		if (enemyDist >= obstacleDist) hit = true;
+
+		// Enemy enemy = hitInfo.collider.gameObject.GetComponent<Enemy>();
+		// if (enemy == null) {
+		// 	Debug.Log("Obstaculo");
+		// 	hit = true;
+		// }
+
+		// bool hit = Physics.Raycast(
+		// 	transform.position,
+		// 	dir,
+		// 	out RaycastHit raycastHit,
+		// 	shootingRadius,
+		// 	LayerMask.GetMask("Terrain")
+		// );
 
 		return hit;
 	}

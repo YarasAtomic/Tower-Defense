@@ -5,12 +5,12 @@ using UnityEngine;
 public class Generator : Building
 {
 	[SerializeField] private static readonly int PURCHASE_PRICE = 100;
-    [SerializeField] private float RESOURCE_RATE = 0.5f;
-    [SerializeField] private int RESOURCE_AMOUNT = 10;
+    [SerializeField] private const float RESOURCE_RATE = 0.5f;
+    [SerializeField] private const int RESOURCE_AMOUNT = 10;
     private float timer;
     private LevelLogic levelLogic;
 
-	public override void Initialise(TypeBuilding typeBuilding, BuildingTile buildingTile) {
+	public override void Initialise(BuildingTile buildingTile) {
 		tile = buildingTile;
 	}
 

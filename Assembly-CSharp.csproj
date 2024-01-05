@@ -66,10 +66,12 @@
   <ItemGroup>
     <Compile Include="Assets/Scripts/Level/LevelLogic.cs" />
     <Compile Include="Assets/Scripts/Level/MatrixEditor.cs" />
+    <Compile Include="Assets/Scripts/Level/Building/Tower2.cs" />
     <Compile Include="Assets/Scripts/Level/Building/Building.cs" />
     <Compile Include="Assets/Scripts/Level/Building/Generator.cs" />
     <Compile Include="Assets/Scripts/Level/Enemy/TypeEnemy.cs" />
     <Compile Include="Assets/Scripts/Level/SpecialAttack/UniformAttack.cs" />
+    <Compile Include="Assets/Scripts/Level/Building/Tower3.cs" />
     <Compile Include="Assets/Scripts/Level/Enemy/SplineAnimationController.cs" />
     <Compile Include="Assets/Scripts/Save.cs" />
     <Compile Include="Assets/Scripts/Level/Building/Tower.cs" />
@@ -79,6 +81,7 @@
     <Compile Include="Assets/Scripts/Level/Building/TypeBuilding.cs" />
     <Compile Include="Assets/Scripts/Level/Building/Projectile.cs" />
     <Compile Include="Assets/Scripts/SingletonScriptableObject.cs" />
+    <Compile Include="Assets/Scripts/Level/Building/Tower1.cs" />
     <Compile Include="Assets/Scripts/Level/EnemySpawner.cs" />
     <Compile Include="Assets/Scripts/Level/SpecialAttack/ProjectionTileMesh.cs" />
     <Compile Include="Assets/Scripts/GameTime.cs" />

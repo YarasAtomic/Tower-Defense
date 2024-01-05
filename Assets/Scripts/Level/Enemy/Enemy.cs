@@ -69,7 +69,8 @@ public class Enemy : MonoBehaviour
     //*---------------------------- START ----------------------------*//
     //*---------------------------------------------------------------*//
 
-    void Start(){
+    void Start()
+	{
         id = (enemyCount++)-1;
         health = MAX_HEALTH;
         splineAnimationController = GetSplineAnimationController();
@@ -90,8 +91,8 @@ public class Enemy : MonoBehaviour
     //*---------------------------- UPDATE ---------------------------*//
     //*---------------------------------------------------------------*//
 
-    void Update(){
-
+    void Update()
+	{
         splineAnimationController.speed = isMoving ? speed : 0;
         animator.speed = GameTime.GameSpeed;
 
@@ -103,25 +104,30 @@ public class Enemy : MonoBehaviour
         animator.SetBool("attacking",attacking);
         UpdatePos();
 
-        RaycastHit hit;
-        
-        if(UpdateRaycast(out hit)){
-            Enemy otherEnemy = hit.collider.gameObject.GetComponent<Enemy>();
-            Building otherBuilding = hit.collider.gameObject.GetComponent<Building>();
-            if(otherEnemy!=null){
-                HandleCollisionWithEnemy(otherEnemy);
-            }else if(otherBuilding!=null && hit.collider is BoxCollider){ //TODO lo ideal sería hacer un overlap sphere
-                HandleCollisionWithBuilding(otherBuilding);
-            }
-        }else if(splineAnimationController.distancePercentage < 1){
-            attacking = false;
-            isMoving = true;
-            animator.SetBool("moving",true);
-        }else{
-            animator.SetBool("moving",false);
-        }
-        
-    }
+		if (UpdateRaycast(out RaycastHit hit))
+		{
+			Enemy otherEnemy = hit.collider.gameObject.GetComponent<Enemy>();
+			Building otherBuilding = hit.collider.gameObject.GetComponent<Building>();
+			if (otherEnemy != null)
+			{
+				HandleCollisionWithEnemy(otherEnemy);
+			}
+			else if (otherBuilding != null)
+			{
+				HandleCollisionWithBuilding(otherBuilding);
+			}
+		}
+		else if (splineAnimationController.distancePercentage < 1)
+		{
+			attacking = false;
+			isMoving = true;
+			animator.SetBool("moving", true);
+		}
+		else
+		{
+			animator.SetBool("moving", false);
+		}
+	}
 
     //-----------------------------------------------------------------//
 
