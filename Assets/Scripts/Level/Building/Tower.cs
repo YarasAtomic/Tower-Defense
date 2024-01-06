@@ -67,6 +67,8 @@ public abstract class Tower : Building
 		shootingRadius = BASE_SHOOTING_RADIUS * Research.SHOOTING_RADIUS_FACTOR[SingletonScriptableObject<Save>.Instance.GetSaveFile().GetShootingRadius()];
 		
 		animator = gameObject.GetComponent<Animator>();
+		AnimationClip animationClip = animator.runtimeAnimatorController.animationClips[1];
+		initTimer = animationClip.length * 10.0f;
 	}
 
 	//*---------------------------------------------------------------*//

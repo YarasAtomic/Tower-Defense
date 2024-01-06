@@ -40,7 +40,7 @@ public abstract class Building : MonoBehaviour
 	}
 
 	public void DamageBuilding(int dmg) {
-		hp -= dmg;
+		hp -= dmg/* * Research.WEAPONS_ARMORING_FACTOR[SingletonScriptableObject<Save>.Instance.GetSaveFile().GetWeaponsArmoring()]*/;
 		if (hp <= 0) DestroyBuilding();
     }
 

@@ -27,9 +27,6 @@ public class Tower2 : Tower
 
 		// Estados
 		initialRotation = transform.rotation;
-
-		AnimationClip animationClip = animator.runtimeAnimatorController.animationClips[0];
-		initTimer = animationClip.length * 10.0f;
 	}
 
 	//*---------------------------------------------------------------*//

@@ -44,9 +44,6 @@ public class Tower1 : Tower
 		position = firePointRight.transform.position;
 		position.x += 0.8f;
 		firePointRight.transform.position = position;
-
-		AnimationClip animationClip = animator.runtimeAnimatorController.animationClips[1];
-		initTimer = animationClip.length * 10.0f;
 	}
 
 	//*---------------------------------------------------------------*//

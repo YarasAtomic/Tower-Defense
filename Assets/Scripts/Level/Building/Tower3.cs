@@ -27,9 +27,6 @@ public class Tower3 : Tower
 
 		// Estados
 		initialRotation = transform.Find("Armature/Base/Support").rotation;
-
-		AnimationClip animationClip = animator.runtimeAnimatorController.animationClips[0];
-		initTimer = animationClip.length * 10.0f;
 	}
 
 	//*---------------------------------------------------------------*//
