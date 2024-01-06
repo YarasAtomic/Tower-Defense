@@ -10,8 +10,8 @@ public class Enemy : MonoBehaviour
     //!---------------------------------------------------------------!//
 
     static int enemyCount = 0;
-    [SerializeField] int MAX_HEALTH = 100;
-    [SerializeField] int health;
+    [SerializeField] private int MAX_HEALTH = 100;
+    private int health;
     [SerializeField] float speed;
     [SerializeField] int RESOURCE_DROP;
     

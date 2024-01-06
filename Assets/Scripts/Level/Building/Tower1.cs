@@ -21,7 +21,7 @@ public class Tower1 : Tower
 		// Constantes
 		BASE_HP = 100.0f;
 		BASE_DAMAGE = 10;
-		FIRE_RATE = 1.0f;
+		FIRE_RATE = 1.5f;
 		BASE_SHOOTING_RADIUS = 15.0f;
 		BASE_ROTATION_SPEED = 100.0f;
 		FAVOURITE_ENEMY = TypeEnemy.Enemy1;
@@ -54,7 +54,22 @@ public class Tower1 : Tower
 		return PURCHASE_PRICE;
 	}
 
-	protected override void Fire(Quaternion rotation) {
+	//*---------------------------------------------------------------*//
+	//*--------------------------- ACTIONS ---------------------------*//
+	//*---------------------------------------------------------------*//
+
+	public override void AttackEnemy()
+	{
+		Transform childTransform = transform.Find("Armature/MainBody/NeckLow/NeckUp/Head");
+		Quaternion newRotation = Quaternion.LookRotation((childTransform.position - selectedEnemy.transform.position).normalized);
+		newRotation *= Quaternion.Euler(0, 180, 0);
+
+		RotateHead(newRotation, childTransform);
+		Fire(childTransform);
+	}
+
+	protected override void FireAnimation(Quaternion rotation)
+	{
 		GameObject initialPosition = firePoint ? firePointLeft : firePointRight;
 		GameObject vfx;
 
@@ -64,5 +79,17 @@ public class Tower1 : Tower
 		}
 
 		firePoint = !firePoint;
+	}
+
+	//*---------------------------------------------------------------*//
+    //*--------------------------- AUXILIAR --------------------------*//
+    //*---------------------------------------------------------------*//
+
+	protected override void ActivateAnimation()
+	{
+		Transform childTransform = transform.Find("Armature/MainBody/NeckLow/NeckUp/Head");
+		childTransform.rotation = Quaternion.Slerp(childTransform.rotation, initialRotation, 2.0f * GameTime.DeltaTime);
+
+		if (Quaternion.Angle(childTransform.rotation, initialRotation) < 0.1f) base.ActivateAnimation();
 	}
 }

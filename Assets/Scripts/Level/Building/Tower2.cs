@@ -14,8 +14,8 @@ public class Tower2 : Tower
 	{
 		// Constantes
 		BASE_HP = 150.0f;
-		BASE_DAMAGE = 25;
-		FIRE_RATE = 2.0f;
+		BASE_DAMAGE = 3;
+		FIRE_RATE = 0.3f;
 		BASE_SHOOTING_RADIUS = 8.0f;
 		BASE_ROTATION_SPEED = 0.0f; // Para esta tener en cuenta que no hay rotación y se dispara directamente
 		FAVOURITE_ENEMY = TypeEnemy.Enemy2;
@@ -33,11 +33,33 @@ public class Tower2 : Tower
     //*----------------------------- GET -----------------------------*//
     //*---------------------------------------------------------------*//
 
-	public static int GetPurchasePrice() {
+	public static int GetPurchasePrice()
+	{
 		return PURCHASE_PRICE;
 	}
 
-	protected override void Fire(Quaternion rotation) {
+	//*---------------------------------------------------------------*//
+    //*--------------------------- ACTIONS ---------------------------*//
+    //*---------------------------------------------------------------*//
+
+	public override void AttackEnemy()
+	{
+		if (!firing) {
+			animator.enabled = false;
+			
+			fireTimer = 0.0f;
+			firing = true;
+		}
+
+		Fire(transform);
+	}
+
+	protected override void FireAnimation(Quaternion rotation)
+	{
 
 	}
+
+	//*---------------------------------------------------------------*//
+    //*--------------------------- AUXILIAR --------------------------*//
+    //*---------------------------------------------------------------*//
 }

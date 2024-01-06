@@ -30,23 +30,24 @@ public abstract class Tower : Building
 	
 	// ENEMY DETECTION attributes
 	// private readonly List<Enemy> enemiesInRange = new();
-	private Enemy selectedEnemy = null;
+	protected Enemy selectedEnemy = null;
 
 	// STATE attributes
 	protected Quaternion initialRotation;
 	protected float initTimer;
 	private float repairTimer = 0.0f;
 	private bool repairing = false;
-	private float fireTimer = 0.0f;
+	protected float fireTimer = 0.0f;
 	private bool patrolling = true;
 	private bool attacking = false;
-	private bool firing = false;
+	protected bool firing = false;
 
 	//*---------------------------------------------------------------*//
     //*-------------------------- INITIALISE -------------------------*//
     //*---------------------------------------------------------------*//
 
-	public override void Initialise(BuildingTile buildingTile) {
+	public override void Initialise(BuildingTile buildingTile)
+	{
 		tile = buildingTile;
 	}
 
@@ -54,7 +55,8 @@ public abstract class Tower : Building
     //*---------------------------- START ----------------------------*//
     //*---------------------------------------------------------------*//
 
-	protected virtual void Start() {
+	protected virtual void Start()
+	{
 		transform.rotation = Quaternion.Euler(0, 90, 0);
 
 		UpdateStats(true);
@@ -75,7 +77,8 @@ public abstract class Tower : Building
     //*---------------------------- UPDATE ---------------------------*//
     //*---------------------------------------------------------------*//
 
-	void Update() {
+	void Update()
+	{
 		if (initTimer > 0.0f) {
 			initTimer -= GameTime.DeltaTime;
 			return;
@@ -89,9 +92,7 @@ public abstract class Tower : Building
 		if (patrolling && !animator.enabled) ActivateAnimation();
 		
 		CheckEnemiesInRange();
-		if (attacking) {
-			AttackEnemy();
-		}
+		if (attacking) AttackEnemy();
 	}
 
 	//*---------------------------------------------------------------*//
@@ -101,33 +102,40 @@ public abstract class Tower : Building
 	public static int GetTowersDestroyed() => TOWERS_DESTROYED;
 	private static void TowerDestroyed() => TOWERS_DESTROYED += 1;
 
-	public override float GetHealthPercentage() {
+	public override float GetHealthPercentage()
+	{
 		return hp / maxHp;
 	}
 
-	public int GetUpgradePrice() {
+	public int GetUpgradePrice()
+	{
 		return UPGRADE_PRICE;
 	}
 
-	public int GetRepairPrice() {
+	public int GetRepairPrice()
+	{
 		CalculateRepairPrice();
 		return repairCost;
 	}
 
-	public override int GetSellingPrice() {
+	public override int GetSellingPrice()
+	{
 		CalculateSellingPrice();
 		return sellingPrice;
 	}
 
-	public bool IsMaxUpgraded() {
+	public bool IsMaxUpgraded()
+	{
 		return currentUpgrade >= MAX_UPGRADE;
 	}
 
-	private void CalculateRepairPrice() {
+	private void CalculateRepairPrice()
+	{
 		repairCost = (int) (BASE_HP_COST * (1.0f - GetHealthPercentage()));
 	}
 
-	private void CalculateSellingPrice() {
+	private void CalculateSellingPrice()
+	{
 		sellingPrice = (int) (MAX_SELLING_PRICE * GetHealthPercentage() * FACTOR_UPGRADE[currentUpgrade] * Research.REFUND_FACTOR[SingletonScriptableObject<Save>.Instance.GetSaveFile().GetRefundForSelling()]) ;
 	}
 
@@ -135,7 +143,8 @@ public abstract class Tower : Building
     //*--------------------------- ACTIONS ---------------------------*//
     //*---------------------------------------------------------------*//
 
-	// public void CheckEnemiesInRange() {
+	// public void CheckEnemiesInRange()
+	// {
 	// 	if (selectedEnemy == null && enemiesInRange.Count != 0) {
 	// 		float minDist = float.MaxValue;
 			
@@ -158,7 +167,8 @@ public abstract class Tower : Building
 	// 	}
 	// }
 
-	public void CheckEnemiesInRange() {
+	public void CheckEnemiesInRange()
+	{
 		if (selectedEnemy == null) {
 			Collider[] hitColliders = Physics.OverlapSphere(transform.position, shootingRadius);
 			float minDist = float.MaxValue;
@@ -168,9 +178,6 @@ public abstract class Tower : Building
 				if (enemy != null && enemy.GetHealthPercentage() > 0 && !CheckForObstacles(enemy.transform.position)) {
 					if (enemy.GetTypeEnemy() == FAVOURITE_ENEMY) {
 						selectedEnemy = enemy;
-
-						patrolling = false;
-						attacking = true;
 						break;
 					}
 					else {
@@ -182,6 +189,11 @@ public abstract class Tower : Building
 					}
 				}
 			}
+
+			if (selectedEnemy != null) {
+				patrolling = false;
+				attacking = true;
+			}
 		}
 		else {
 			float dist = Vector3.Distance(transform.position, selectedEnemy.transform.position);
@@ -192,39 +204,10 @@ public abstract class Tower : Building
 		}
 	}
 
-	public void AttackEnemy() {		
-		Transform childTransform = transform.Find("Armature/MainBody/NeckLow/NeckUp/Head");
-		Quaternion newRotation = Quaternion.LookRotation((childTransform.position - selectedEnemy.transform.position).normalized);
-		newRotation *= Quaternion.Euler(0, 180, 0);
+	public abstract void AttackEnemy();
 
-		float rotationSpeed = BASE_ROTATION_SPEED * GameTime.DeltaTime;
-
-		if (!firing) {
-			animator.enabled = false;
-
-			float angle = Quaternion.Angle(childTransform.rotation, newRotation);
-			fireTimer = FIRE_RATE - (angle*Mathf.Deg2Rad / rotationSpeed) - 0.25f;
-
-			firing = true;
-		}
-		childTransform.rotation = Quaternion.RotateTowards(childTransform.rotation, newRotation, rotationSpeed);
-		
-		if (firing) {
-			fireTimer += GameTime.DeltaTime;
-
-			if (fireTimer >= FIRE_RATE) {
-				Fire(childTransform.rotation);
-				selectedEnemy.Damage((int) damage);
-				if (selectedEnemy.GetHealthPercentage() <= 0) {
-					EnemyOutOfRange(selectedEnemy);
-				}
-				
-				fireTimer = 0.0f;
-			}
-		}
-	}
-
-	public void UpgradeTower() {
+	public void UpgradeTower()
+	{
 		if (IsMaxUpgraded()) {
 			currentUpgrade = MAX_UPGRADE;
 			return;
@@ -236,14 +219,16 @@ public abstract class Tower : Building
 		animator.SetTrigger("upgradeTower");
 	}
 
-	public void RepairTower() {
+	public void RepairTower()
+	{
 		repairHp = 0.0f;
 		maxRepairHp = maxHp - hp;
 
 		repairing = true;
 	}
 
-	public override void DestroyBuilding() {
+	public override void DestroyBuilding()
+	{
 		animator.SetTrigger("destroyTower");
 
 		TowerDestroyed();
@@ -255,9 +240,46 @@ public abstract class Tower : Building
 
 	//-----------------------------------------------------------------//
 
-	protected abstract void Fire(Quaternion rotation);
+	protected void RotateHead(Quaternion rotationObjective, Transform childTransform)
+	{
+		float rotationSpeed = BASE_ROTATION_SPEED * GameTime.DeltaTime;
 
-	private void UpdateStats(bool init) {
+		if (!firing) {
+			animator.enabled = false;
+
+			float angle = Quaternion.Angle(childTransform.rotation, rotationObjective);
+			fireTimer = FIRE_RATE - (angle*Mathf.Deg2Rad / rotationSpeed) - 0.25f;
+			if (fireTimer > 0) fireTimer = 0.0f;
+
+			firing = true;
+		}
+		childTransform.rotation = Quaternion.RotateTowards(childTransform.rotation, rotationObjective, rotationSpeed);
+	}
+
+	protected void Fire(Transform childTransform)
+	{
+		if (firing) {
+			fireTimer += GameTime.DeltaTime;
+
+			Debug.Log(fireTimer);
+			Debug.Log(FIRE_RATE);
+
+			if (fireTimer >= FIRE_RATE) {
+				FireAnimation(childTransform.rotation);
+				selectedEnemy.Damage((int) damage);
+				if (selectedEnemy.GetHealthPercentage() <= 0) {
+					EnemyOutOfRange(selectedEnemy);
+				}
+				
+				fireTimer = 0.0f;
+			}
+		}
+	}
+
+	protected abstract void FireAnimation(Quaternion rotation);
+
+	private void UpdateStats(bool init)
+	{
 		// General
 		float prevMaxHp = maxHp;
 		maxHp = BASE_HP * FACTOR_UPGRADE[currentUpgrade];
@@ -267,7 +289,8 @@ public abstract class Tower : Building
 		damage = BASE_DAMAGE * FACTOR_UPGRADE[currentUpgrade];
 	}
 
-	private void Repair() {
+	private void Repair()
+	{
 		repairTimer += GameTime.DeltaTime;
 
 		if (repairTimer >= repairRate) {
@@ -286,7 +309,8 @@ public abstract class Tower : Building
     //*------------------------- COLLISSIONS -------------------------*//
     //*---------------------------------------------------------------*//
 
-	// void OnTriggerEnter(Collider collision) {
+	// void OnTriggerEnter(Collider collision)
+	// {
 	// 	// Debug.Log("Nuevo Enemy");
 	// 	Enemy enemy = collision.gameObject.GetComponent<Enemy>();
 	// 	if (enemy != null && CheckForObstacles(enemy.transform.position) && enemy.GetHealthPercentage() > 0) enemiesInRange.Add(enemy);
@@ -301,10 +325,11 @@ public abstract class Tower : Building
     //*--------------------------- AUXILIAR --------------------------*//
     //*---------------------------------------------------------------*//
 
-	private bool CheckForObstacles(Vector3 enemyPosition) {
+	private bool CheckForObstacles(Vector3 enemyPosition)
+	{
 		Vector3 dir = (transform.position - enemyPosition).normalized;
 		Ray ray = new(transform.position, dir);
-		Debug.DrawRay(transform.position, dir);
+		// Debug.DrawRay(transform.position, dir);
 
 		bool hit = false;
 		RaycastHit[] hits = Physics.RaycastAll(ray);
@@ -319,8 +344,8 @@ public abstract class Tower : Building
 			}
 		}
 
-		Debug.Log(obstacleDist);
-		Debug.Log(enemyDist);
+		// Debug.Log(obstacleDist);
+		// Debug.Log(enemyDist);
 
 		if (enemyDist >= obstacleDist) hit = true;
 
@@ -341,7 +366,8 @@ public abstract class Tower : Building
 		return hit;
 	}
 
-	private void EnemyOutOfRange(Enemy enemy) {
+	private void EnemyOutOfRange(Enemy enemy)
+	{
 		// enemiesInRange.Remove(enemy);
 
 		if (enemy == selectedEnemy) {
@@ -353,14 +379,10 @@ public abstract class Tower : Building
 		}
 	}
 
-	private void ActivateAnimation() {
-		Transform childTransform = transform.Find("Armature/MainBody/NeckLow/NeckUp/Head");
-		childTransform.rotation = Quaternion.Slerp(childTransform.rotation, initialRotation, 2.0f * GameTime.DeltaTime);
-
-		if (Quaternion.Angle(childTransform.rotation, initialRotation) < 0.1f) {
-			animator.enabled = true;
-			animator.SetBool("patrolling", true);
-			animator.Play("Patrol", -1, 0.0f);
-		}
+	protected virtual void ActivateAnimation()
+	{
+		animator.enabled = true;
+		animator.SetBool("patrolling", true);
+		animator.Play("Patrol", -1, 0.0f);
 	}
 }
