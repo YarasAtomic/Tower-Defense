@@ -33,20 +33,14 @@ public abstract class Tower : Building
 	private Enemy selectedEnemy = null;
 
 	// STATE attributes
-	private Quaternion initialRotation;
-	private float initTimer;
+	protected Quaternion initialRotation;
+	protected float initTimer;
 	private float repairTimer = 0.0f;
 	private bool repairing = false;
 	private float fireTimer = 0.0f;
 	private bool patrolling = true;
 	private bool attacking = false;
 	private bool firing = false;
-
-	// BULLET animation
-	private bool firePoint = true;
-	private GameObject firePointLeft;
-	private GameObject firePointRight;
-	[SerializeField] private GameObject effectToSpawn;
 
 	//*---------------------------------------------------------------*//
     //*-------------------------- INITIALISE -------------------------*//
@@ -72,23 +66,7 @@ public abstract class Tower : Building
 		// Ataques
 		shootingRadius = BASE_SHOOTING_RADIUS * Research.SHOOTING_RADIUS_FACTOR[SingletonScriptableObject<Save>.Instance.GetSaveFile().GetShootingRadius()];
 		
-		// Estados
-		initialRotation = transform.Find("Armature/MainBody/NeckLow/NeckUp/Head").rotation;
-		
 		animator = gameObject.GetComponent<Animator>();
-		AnimationClip animationClip = animator.runtimeAnimatorController.animationClips[1];
-		initTimer = animationClip.length * 10.0f;
-
-		// Proyectil
-		firePointLeft = transform.Find("Armature/MainBody/NeckLow/NeckUp/Head/Head_L/Cannon_L/Cannon_L_end").gameObject;
-		Vector3 position = firePointLeft.transform.position;
-		position.x += 0.8f;
-		firePointLeft.transform.position = position;
-
-		firePointRight = transform.Find("Armature/MainBody/NeckLow/NeckUp/Head/Head_R/Cannon_R/Cannon_R_end").gameObject;
-		position = firePointRight.transform.position;
-		position.x += 0.8f;
-		firePointRight.transform.position = position;
 	}
 
 	//*---------------------------------------------------------------*//
@@ -185,7 +163,7 @@ public abstract class Tower : Building
 			
 			foreach (Collider hit in hitColliders) {
 				Enemy enemy = hit.GetComponent<Enemy>();
-				if (!CheckForObstacles(enemy.transform.position) && enemy != null && enemy.GetHealthPercentage() > 0) {
+				if (enemy != null && enemy.GetHealthPercentage() > 0 && !CheckForObstacles(enemy.transform.position)) {
 					if (enemy.GetTypeEnemy() == FAVOURITE_ENEMY) {
 						selectedEnemy = enemy;
 
@@ -233,7 +211,7 @@ public abstract class Tower : Building
 			fireTimer += GameTime.DeltaTime;
 
 			if (fireTimer >= FIRE_RATE) {
-				FireBullet(childTransform.rotation);
+				Fire(childTransform.rotation);
 				selectedEnemy.Damage((int) damage);
 				if (selectedEnemy.GetHealthPercentage() <= 0) {
 					EnemyOutOfRange(selectedEnemy);
@@ -275,17 +253,7 @@ public abstract class Tower : Building
 
 	//-----------------------------------------------------------------//
 
-	private void FireBullet(Quaternion rotation) {
-		GameObject initialPosition = firePoint ? firePointLeft : firePointRight;
-		GameObject vfx;
-
-		if (initialPosition != null) {
-			vfx = Instantiate(effectToSpawn, initialPosition.transform.position, Quaternion.identity);
-			vfx.transform.rotation = rotation;
-		}
-
-		firePoint = !firePoint;
-	}
+	protected abstract void Fire(Quaternion rotation);
 
 	private void UpdateStats(bool init) {
 		// General

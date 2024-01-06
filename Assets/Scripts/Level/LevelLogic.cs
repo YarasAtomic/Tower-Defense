@@ -47,7 +47,9 @@ public class LevelLogic : MonoBehaviour
 
     [SerializeField] List<GameObject> splines;
 
-    [SerializeField] GameObject towerPrefab;
+    [SerializeField] GameObject tower1Prefab;
+	[SerializeField] GameObject tower2Prefab;
+	[SerializeField] GameObject tower3Prefab;
     [SerializeField] GameObject generatorPrefab;
 
     [SerializeField] List<GameObject> enemyPrefabList;
@@ -254,15 +256,15 @@ public class LevelLogic : MonoBehaviour
 				default:
 				case TypeBuilding.Tower1:
 					price = Tower1.GetPurchasePrice();
-					buildingPrefab = towerPrefab;
+					buildingPrefab = tower1Prefab;
 					break;
 				case TypeBuilding.Tower2:
 					price = Tower2.GetPurchasePrice();
-					buildingPrefab = towerPrefab;
+					buildingPrefab = tower2Prefab;
 					break;
 				case TypeBuilding.Tower3:
 					price = Tower3.GetPurchasePrice();
-					buildingPrefab = towerPrefab;
+					buildingPrefab = tower3Prefab;
 					break;
 			}
         }

@@ -132,7 +132,7 @@ PrefabInstance:
       addedObject: {fileID: 1376198797323524198}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7a8f2bfe73499b443b4c844a1ea5e8f4, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1211760944227137975}
+      addedObject: {fileID: 3849745737210761126}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7a8f2bfe73499b443b4c844a1ea5e8f4, type: 3}
       insertIndex: -1
       addedObject: {fileID: -4578544996540584081}
@@ -163,7 +163,7 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &1211760944227137975
+--- !u!114 &3849745737210761126
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -172,14 +172,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1592611678219321010}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0e5245bdb18ea4f8490f95dad5005d9b, type: 3}
+  m_Script: {fileID: 11500000, guid: 78e070f77fdd99192a6afb0c23b5b5d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BASE_HP: 100
-  BASE_DAMAGE: 2
-  FIRE_RATE: 1
-  BASE_SHOOTING_RADIUS: 15
-  effectToSpawn: {fileID: 9206983499976447835, guid: c4c5420d85b5eae81a36fd560aab549a, type: 3}
+  BASE_DAMAGE: 0
+  FIRE_RATE: 0
+  BASE_SHOOTING_RADIUS: 0
+  effectToSpawn: {fileID: 0}
 --- !u!65 &-4578544996540584081
 BoxCollider:
   m_ObjectHideFlags: 0

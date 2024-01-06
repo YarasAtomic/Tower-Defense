@@ -5304,7 +5304,9 @@ MonoBehaviour:
   - {fileID: 1218705565}
   - {fileID: 93811143}
   - {fileID: 1457937829}
-  towerPrefab: {fileID: 1592611678219321010, guid: 0b69feb5625d8a3408ff96e75f484b41, type: 3}
+  tower1Prefab: {fileID: 1592611678219321010, guid: 0b69feb5625d8a3408ff96e75f484b41, type: 3}
+  tower2Prefab: {fileID: 4014985168154800473, guid: 067c61b7a1f7fa0e49f481e0dc476b40, type: 3}
+  tower3Prefab: {fileID: 5921958398571088519, guid: 7bfcf9bdae27525d880bb6573b98da04, type: 3}
   generatorPrefab: {fileID: 2314873308747693560, guid: bee40e1b792d75e448130d29f0d83440, type: 3}
   enemyPrefabList:
   - {fileID: 5842406656117501284, guid: c173669ce46dbacbe82574d3637d0f37, type: 3}

@@ -1,4 +1,5 @@
 using Unity.VisualScripting;
+using UnityEngine;
 
 public class Tower3 : Tower
 {
@@ -23,6 +24,12 @@ public class Tower3 : Tower
 
 		// Costes
 		MAX_SELLING_PRICE *= PURCHASE_PRICE;
+
+		// Estados
+		initialRotation = transform.Find("Armature/Base/Support").rotation;
+
+		AnimationClip animationClip = animator.runtimeAnimatorController.animationClips[0];
+		initTimer = animationClip.length * 10.0f;
 	}
 
 	//*---------------------------------------------------------------*//
@@ -31,5 +38,9 @@ public class Tower3 : Tower
 
 	public static int GetPurchasePrice() {
 		return PURCHASE_PRICE;
+	}
+
+	protected override void Fire(Quaternion rotation) {
+
 	}
 }
