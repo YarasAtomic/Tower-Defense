@@ -48,7 +48,9 @@ public class LevelLogic : MonoBehaviour
 
     [SerializeField] List<GameObject> splines;
 
-    [SerializeField] GameObject towerPrefab;
+    [SerializeField] GameObject tower1Prefab;
+	[SerializeField] GameObject tower2Prefab;
+	[SerializeField] GameObject tower3Prefab;
     [SerializeField] GameObject generatorPrefab;
 
     [SerializeField] List<GameObject> enemyPrefabList;
@@ -256,13 +258,27 @@ public class LevelLogic : MonoBehaviour
             price = Generator.GetPurchasePrice();
             buildingPrefab = generatorPrefab;
         } else {
-            price = Tower.GetPurchasePrice(type);
-            buildingPrefab = towerPrefab;
+			switch (type)
+			{
+				default:
+				case TypeBuilding.Tower1:
+					price = Tower1.GetPurchasePrice();
+					buildingPrefab = tower1Prefab;
+					break;
+				case TypeBuilding.Tower2:
+					price = Tower2.GetPurchasePrice();
+					buildingPrefab = tower2Prefab;
+					break;
+				case TypeBuilding.Tower3:
+					price = Tower3.GetPurchasePrice();
+					buildingPrefab = tower3Prefab;
+					break;
+			}
         }
 
         if (price > currentResources) return;
         currentResources -= price;
-        tile.Build(type, buildingPrefab);
+        tile.Build(buildingPrefab);
     }
 
     //*---------------------------------------------------------------*//

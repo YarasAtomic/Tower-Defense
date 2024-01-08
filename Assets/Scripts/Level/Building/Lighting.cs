@@ -11,6 +11,7 @@ public class Lighting : MonoBehaviour
     [SerializeField] Vector3 origin;
     [SerializeField] Vector3 end;
     float lightDelayTimer = 0;
+	float lifeTimer = 0.5f;
     [SerializeField] float LIGHT_DELAY = 0.01f;
     [SerializeField] float LIGHT_MAX_RANDOM = 1.0f;
     // Start is called before the first frame update
@@ -19,7 +20,7 @@ public class Lighting : MonoBehaviour
         UpdatePos();
     }
 
-    void Initialise(Vector3 o,Vector3 e){
+    public void Initialise(Vector3 o,Vector3 e){
         origin = o;
         end = e;
     }
@@ -39,7 +40,8 @@ public class Lighting : MonoBehaviour
             UpdatePos();
         }
         lightDelayTimer += GameTime.DeltaTime;
+		
+		lifeTimer -= GameTime.DeltaTime;
+		if (lifeTimer <= 0f) Destroy(gameObject);
     }
-
-
 }

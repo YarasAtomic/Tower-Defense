@@ -278,7 +278,6 @@ public abstract class Enemy : MonoBehaviour
     public void Attack(){
         if(targetedBuilding!=null){
             targetedBuilding.DamageBuilding(DAMAGE);
-            Debug.Log("Attack");
         }
             
     }

@@ -22,9 +22,9 @@ public class BuildingTile : MonoBehaviour
         
     }
 
-    public void Build(TypeBuilding typeBuilding, GameObject buildingPrefab){
+    public void Build(GameObject buildingPrefab){
         building = Instantiate(buildingPrefab, transform.position, Quaternion.identity).GetComponent<Building>();
-        building.Initialise(typeBuilding, this);
+        building.Initialise(this);
 
         if(building is Generator){
             ((Generator) building).SetLevelLogic(levelLogic);

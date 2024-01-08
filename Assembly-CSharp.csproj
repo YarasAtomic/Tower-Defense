@@ -66,21 +66,26 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\Level\LevelLogic.cs" />
     <Compile Include="Assets\Scripts\Level\MatrixEditor.cs" />
+    <Compile Include="Assets\Scripts\Level\Building\Tower2.cs" />
     <Compile Include="Assets\Scripts\Level\Building\Base.cs" />
     <Compile Include="Assets\Scripts\Level\Building\Building.cs" />
     <Compile Include="Assets\Scripts\Level\Building\Generator.cs" />
     <Compile Include="Assets\Scripts\Level\Enemy\TypeEnemy.cs" />
     <Compile Include="Assets\Scripts\Level\Enemy\EnemyBiped.cs" />
     <Compile Include="Assets\Scripts\Level\SpecialAttack\UniformAttack.cs" />
+    <Compile Include="Assets\Scripts\Level\Building\Tower3.cs" />
     <Compile Include="Assets\Scripts\Level\Enemy\SplineAnimationController.cs" />
     <Compile Include="Assets\Scripts\Save.cs" />
     <Compile Include="Assets\Scripts\Level\Building\Tower.cs" />
     <Compile Include="Assets\Scripts\Level\CameraController.cs" />
+    <Compile Include="Assets\Scripts\Level\Building\BulletParabola.cs" />
     <Compile Include="Assets\Scripts\Level\Building\BuildingTile.cs" />
     <Compile Include="Assets\Scripts\Level\LevelCanvas.cs" />
     <Compile Include="Assets\Scripts\Level\Building\TypeBuilding.cs" />
+    <Compile Include="Assets\Scripts\Level\Building\CannonProjectile.cs" />
     <Compile Include="Assets\Scripts\Level\Building\Projectile.cs" />
     <Compile Include="Assets\Scripts\SingletonScriptableObject.cs" />
+    <Compile Include="Assets\Scripts\Level\Building\Tower1.cs" />
     <Compile Include="Assets\Scripts\Level\EnemySpawner.cs" />
     <Compile Include="Assets\Scripts\Level\Enemy\EnemyEye.cs" />
     <Compile Include="Assets\Scripts\Level\Enemy\EnemyCrab.cs" />

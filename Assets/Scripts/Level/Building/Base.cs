@@ -5,7 +5,7 @@ using UnityEngine;
 public class Base : Building
 {
     [SerializeField] LevelLogic levelLogic;
-    public override void Initialise(TypeBuilding typeBuilding, BuildingTile buildingTile) {}
+    public override void Initialise(BuildingTile buildingTile) {}
 
     public override int GetSellingPrice() {
 		return int.MaxValue;
