@@ -1,10 +1,15 @@
 using Unity.VisualScripting;
+using UnityEditor.ShaderKeywordFilter;
 using UnityEngine;
 
 public class Tower3 : Tower
 {
 	// CONST attributes
 	private static readonly int PURCHASE_PRICE = 200;
+
+	// STATE attributes
+	private Quaternion initialCannonRotation;
+	private BulletParabola bulletParabola;
 
 	//*---------------------------------------------------------------*//
     //*---------------------------- START ----------------------------*//
@@ -16,7 +21,7 @@ public class Tower3 : Tower
 		BASE_HP = 200.0f;
 		BASE_DAMAGE = 50;
 		FIRE_RATE = 4.0f;
-		BASE_SHOOTING_RADIUS = 20.0f;
+		BASE_SHOOTING_RADIUS = 25.0f;
 		BASE_ROTATION_SPEED = 80.0f;
 		FAVOURITE_ENEMY = TypeEnemy.Enemy3;
 		
@@ -27,6 +32,8 @@ public class Tower3 : Tower
 
 		// Estados
 		initialRotation = transform.Find("Armature/Base/Support").rotation;
+		initialCannonRotation = transform.Find("Armature/Base/Support/Cannon").localRotation;
+		initialCannonRotation *= Quaternion.Euler(0, 0, 35);
 
 		initTimer = 2.0f;
 	}
@@ -72,53 +79,66 @@ public class Tower3 : Tower
 
 			firing = true;
 		}
-		// childTransform.rotation = Quaternion.RotateTowards(childTransform.rotation, newRotation, rotationSpeed);
 
-		// Rotación del cañón
-		float gravity = Physics.gravity.magnitude;
-		float initialVelocity = 100.0f;
-		
-		Vector3 direction = selectedEnemy.transform.position - cannonTransform.position;
-		float y = direction.y;
-		direction.y = 0.0f;
-		float x = direction.magnitude;
-		
-		float powVel = initialVelocity * initialVelocity;
-		float rootVal = powVel*powVel - gravity * (gravity*x*x + 2*y*powVel);
-
-		if (rootVal >= 0f) {
-			float root = Mathf.Sqrt(rootVal);
-
-			float highAngle = powVel + root;
-			float lowAngle = powVel - root;
-			
-			float cannonAngle = Mathf.Atan2(highAngle, gravity * x) * Mathf.Rad2Deg;
-			Quaternion rotation = Quaternion.Euler(0, 0, 360 - cannonAngle);
-			// rotation *= Quaternion.Euler(0, 0, 45);
-			
-			// Quaternion initialRotation = cannonTransform.rotation;
-			// initialRotation.y = newRotation.y;
-			// cannonTransform.rotation = initialRotation;
-			cannonTransform.rotation = Quaternion.RotateTowards(cannonTransform.rotation, rotation, rotationSpeed);
-		}
+		// Rotación del cañón (cálculo de la parábola)
+		Vector3 fireDirection = FromTo(cannonTransform.position, selectedEnemy.transform.position);
+		float cannonAngle = Vector3.Angle(new Vector3(fireDirection.x, 0, fireDirection.z).normalized, fireDirection);
+		Quaternion rotation = Quaternion.Euler(0, cannonTransform.localRotation.eulerAngles.y, cannonAngle) * Quaternion.Euler(0, 0, -90);
 		
 		childTransform.rotation = Quaternion.RotateTowards(childTransform.rotation, newRotation, rotationSpeed);
+		cannonTransform.localRotation = Quaternion.RotateTowards(cannonTransform.localRotation, rotation, rotationSpeed);
 	}
 
 	protected override void FireAnimation(Quaternion rotation)
 	{
+		Vector3 origin = new(bulletParabola.origin.x, bulletParabola.origin.y + 2, bulletParabola.origin.z);
+		Debug.Log(bulletParabola.velocity);
 
+		CannonProjectile vfx = Instantiate(effectToSpawn, origin, Quaternion.identity).GetComponent<CannonProjectile>();
+		vfx.Initialise(bulletParabola);
 	}
 
 	//*---------------------------------------------------------------*//
     //*--------------------------- AUXILIAR --------------------------*//
     //*---------------------------------------------------------------*//
 
+	private Vector3 FromTo(Vector3 origin, Vector3 end){
+		bulletParabola = new();
+
+		bulletParabola.origin = origin;
+		bulletParabola.end = end;
+
+		bulletParabola.hDiff = new(end.x - origin.x, 0, end.z - origin.z);
+		bulletParabola.hDir = bulletParabola.hDiff.normalized;
+
+        bulletParabola.hDistance = bulletParabola.hDiff.magnitude;
+        bulletParabola.height = end.y - origin.y;
+        bulletParabola.curve = (float) (
+			bulletParabola.height -
+			2 * BulletParabola.maxHeight -
+			2 * Mathf.Sqrt(
+				BulletParabola.maxHeight*BulletParabola.maxHeight -
+				BulletParabola.maxHeight * bulletParabola.height
+			)
+		) /
+		(bulletParabola.hDistance*bulletParabola.hDistance);
+        bulletParabola.slope = bulletParabola.height / bulletParabola.hDistance - bulletParabola.curve * bulletParabola.hDistance;
+        bulletParabola.velocity = (float) Mathf.Sqrt(BulletParabola.gravity/bulletParabola.curve);
+
+        return (bulletParabola.hDir + Vector3.up * bulletParabola.slope).normalized;
+    }
+
 	protected override void ActivateAnimation()
 	{
 		Transform childTransform = transform.Find("Armature/Base/Support");
-		childTransform.rotation = Quaternion.Slerp(childTransform.rotation, initialRotation, 2.0f * GameTime.DeltaTime);
+		Transform cannonTransform = transform.Find("Armature/Base/Support/Cannon");
 
-		if (Quaternion.Angle(childTransform.rotation, initialRotation) < 0.1f) base.ActivateAnimation();
+		childTransform.rotation = Quaternion.Slerp(childTransform.rotation, initialRotation, 2.0f * GameTime.DeltaTime);
+		cannonTransform.localRotation = Quaternion.Slerp(cannonTransform.localRotation, initialCannonRotation, 2.0f * GameTime.DeltaTime);
+
+		float childAngle = Quaternion.Angle(childTransform.rotation, initialRotation);
+		float cannonAngle = Quaternion.Angle(cannonTransform.localRotation, initialRotation);
+
+		if (childAngle < 0.001f && cannonAngle > 179.999f) base.ActivateAnimation();
 	}
 }

@@ -10,7 +10,6 @@ public class Tower1 : Tower
 	private bool firePoint = true;
 	private GameObject firePointLeft;
 	private GameObject firePointRight;
-	[SerializeField] private GameObject effectToSpawn;
 
 	//*---------------------------------------------------------------*//
     //*---------------------------- START ----------------------------*//

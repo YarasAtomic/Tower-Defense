@@ -186,6 +186,8 @@ MonoBehaviour:
   BASE_DAMAGE: 0
   FIRE_RATE: 0
   BASE_SHOOTING_RADIUS: 0
+  selectedEnemy: {fileID: 0}
+  effectToSpawn: {fileID: 3570033859995711600, guid: faebe5a3923a686c9946ce8a4a8a0d7b, type: 3}
 --- !u!65 &-5174695126571970828
 BoxCollider:
   m_ObjectHideFlags: 0

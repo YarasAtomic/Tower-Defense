@@ -6,8 +6,6 @@ public class Tower2 : Tower
 	// CONST attributes
 	private static readonly int PURCHASE_PRICE = 150;
 
-	[SerializeField] private GameObject effectToSpawn;
-
 	//*---------------------------------------------------------------*//
     //*---------------------------- START ----------------------------*//
     //*---------------------------------------------------------------*//

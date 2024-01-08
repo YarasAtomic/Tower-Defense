@@ -1,16 +1,24 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
-public class Projectile : MonoBehaviour {
-	private float speed = 20.0f;
+public class CannonProjectile : MonoBehaviour
+{
+	private BulletParabola bulletParabola;
+	private float time = 0f;
 
 	[SerializeField] private GameObject explosionPrefab;
 	[SerializeField] private GameObject collisionPrefab;
 
+	public void Initialise(BulletParabola bulletParabola)
+	{
+		this.bulletParabola = bulletParabola;
+	}
+
     // Start is called before the first frame update
     void Start()
-	{
+    {
         if (explosionPrefab != null) {
 			GameObject explosionVFX = Instantiate(explosionPrefab, transform.position, Quaternion.identity);
 			explosionVFX.transform.forward = gameObject.transform.forward;
@@ -27,15 +35,23 @@ public class Projectile : MonoBehaviour {
 
     // Update is called once per frame
     void Update()
+    {
+        transform.position = PosAt(time);
+        time += GameTime.DeltaTime;
+    }
+
+	Vector3 PosAt(float t)
 	{
-        if (speed != 0) {
-			transform.position += GameTime.DeltaTime * speed * transform.forward;
-		}
+        float hPos = bulletParabola.velocity * t;
+        return bulletParabola.origin + hPos*bulletParabola.hDir + (bulletParabola.curve*hPos*hPos + bulletParabola.slope*hPos) * Vector3.up;
     }
 
 	void OnCollisionEnter (Collision collision)
 	{
-		speed = 0.0f;
+		Building building = collision.collider.GetComponent<Building>();
+		if (building != null) return;
+		
+		bulletParabola.velocity = 0.0f;
 
 		Quaternion contactRotation = Quaternion.FromToRotation(Vector3.up, collision.contacts[0].normal);
 		Vector3 contactPosition = collision.contacts[0].point;

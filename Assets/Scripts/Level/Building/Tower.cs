@@ -12,9 +12,9 @@ public abstract class Tower : Building
 	private const int UPGRADE_PRICE = 50;
 	private const float BASE_HP_COST = 5.0f;
 	private const float BASE_REPAIR_RATE = 0.25f;	// seconds
-	[SerializeField] protected int BASE_DAMAGE;
-	[SerializeField] protected float FIRE_RATE;			// seconds
-	[SerializeField] protected float BASE_SHOOTING_RADIUS;
+	protected int BASE_DAMAGE;
+	protected float FIRE_RATE;			// seconds
+	protected float BASE_SHOOTING_RADIUS;
 	protected float BASE_ROTATION_SPEED;
 	protected TypeEnemy FAVOURITE_ENEMY;
 
@@ -28,9 +28,10 @@ public abstract class Tower : Building
 	private float damage;
 	private float shootingRadius;
 	
-	// ENEMY DETECTION attributes
+	// ENEMY ATTACKING attributes
 	// private readonly List<Enemy> enemiesInRange = new();
-	[SerializeField] protected Enemy selectedEnemy = null;
+	protected Enemy selectedEnemy = null;
+	[SerializeField] protected GameObject effectToSpawn;
 
 	// STATE attributes
 	protected Quaternion initialRotation;
