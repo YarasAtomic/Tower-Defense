@@ -179,7 +179,7 @@ public class ResearchCanvas : MonoBehaviour
     //*---------------------- ACTION BUTTONS -------------------------*//
     //*---------------------------------------------------------------*//
     public void HandleDoneButton() {
-      saveAsset.GetSaveFile().UpdateStatus(exp_temp, shootingRadiusTemp, speedOfRepairTemp, weaponsArmoringTemp,
+      saveAsset.GetSaveFile().UpdateResearchStatus(exp_temp, shootingRadiusTemp, speedOfRepairTemp, weaponsArmoringTemp,
                              refundTemp, cooldownTemp, supportPowerTemp);
       
       SetAllButtonsColors();

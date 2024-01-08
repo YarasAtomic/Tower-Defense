@@ -92,7 +92,6 @@ public class Tower3 : Tower
 	protected override void FireAnimation(Quaternion rotation)
 	{
 		Vector3 origin = new(bulletParabola.origin.x, bulletParabola.origin.y + 2, bulletParabola.origin.z);
-		Debug.Log(bulletParabola.velocity);
 
 		CannonProjectile vfx = Instantiate(effectToSpawn, origin, Quaternion.identity).GetComponent<CannonProjectile>();
 		vfx.Initialise(bulletParabola);

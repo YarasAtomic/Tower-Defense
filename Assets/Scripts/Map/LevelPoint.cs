@@ -76,10 +76,11 @@ public class LevelPoint : MonoBehaviour
             playButtonMaterial.color = new Color(0,0,0,0);
         }
     }
-
+    float FIXED_SIZE = 0.0015f;
     bool UpdateDistanceColor(){
         float distance = Vector3.Distance(transform.position,mainCamera.gameObject.transform.position);
-        
+        float size = distance * FIXED_SIZE * mainCamera.fieldOfView;
+        transform.localScale = Vector3.one * size;
         if(mainMenu.IsShowingLevels()&&mainMenu.GetSelectedLevel().GetId()==levelId){
             ShowInfo(saveFile.StarsAtLevel(levelId));
         }else{

@@ -14,7 +14,7 @@ public class LevelLogic : MonoBehaviour
     //!---------------------------------------------------------------!//
 
 	public enum InteractionMode{
-        Build, SpecialAttack, None
+        Build, SpecialAttack, None, Camera
     };
 
     InteractionMode interactionMode;
@@ -27,15 +27,16 @@ public class LevelLogic : MonoBehaviour
     SaveFile saveFile;
     // Todas las posiciones donde se pueden colocar una torre o generador en el nivel
     BuildingTile[] ALL_POSITIONS;
+    Base baseBuilding;
 
     public int currentWave;
-    public int destroyedTowers;
     public int currentResources;
     int accWaveResources;
     float accWaveTimer;
     float splashAttackTimer;
     float uniformAttackTimer;
     bool levelFinished = false;
+    bool levelGameOver = false;
     EnemySpawner enemySpawn;
     SpecialAttack specialAttack;
     
@@ -73,7 +74,6 @@ public class LevelLogic : MonoBehaviour
 
 		interactionMode     = InteractionMode.None;
 
-        destroyedTowers     = 0;
         currentWave         = 0;
         currentResources    = INITIAL_RESOURCES;
         accWaveTimer        = ACC_WAVE_MAX_TIME;
@@ -84,7 +84,12 @@ public class LevelLogic : MonoBehaviour
 		foreach(BuildingTile buildingTile in ALL_POSITIONS) {
 			buildingTile.Initialise(this);
 		}
-        // Debug.Log(ALL_POSITIONS.Length);
+        Tower.RestartDestroyedTowerCounter();
+    }
+
+    public void GameOver(){
+        GameTime.Resume();
+        levelGameOver = true;
     }
 
     //*---------------------------------------------------------------*//
@@ -176,10 +181,10 @@ public class LevelLogic : MonoBehaviour
     public int ObtainedStars(){
         int numberOfStars = 1;
 
-        if (destroyedTowers == 0) {
+        if (Tower.GetTowersDestroyed() == 0) {
             numberOfStars++;
         }
-        if (/*!Base.HasBeenDamaged()*/true) {
+        if (!baseBuilding.HasBeenDamaged()) {
             numberOfStars++;
         }
 
@@ -189,7 +194,8 @@ public class LevelLogic : MonoBehaviour
     //-----------------------------------------------------------------//
 
     public int ObtainedExp(){
-        float factorExp = destroyedTowers == 1 ? 0.5f : 0f;
+        float factorExp = Tower.GetTowersDestroyed() == 1 ? 0.5f : 0f;
+        factorExp += baseBuilding.GetHealthPercentage() != 1 ?  baseBuilding.GetHealthPercentage() : 0f;
 
         return (int)((ObtainedStars() + factorExp) * STAR_XP);
     }
@@ -214,6 +220,7 @@ public class LevelLogic : MonoBehaviour
         }
     }
 
+    //-----------------------------------------------------------------//
     public void Sell(Building b) {
         currentResources += b.GetSellingPrice();
         b.SellBuilding();
@@ -319,6 +326,12 @@ public class LevelLogic : MonoBehaviour
         return waveList[wave * GetEnemyTypeCount() + enemyType];
     }
 
+    //-----------------------------------------------------------------//
+
+    public void SetBaseBuilding(Base baseBuilding){
+        this.baseBuilding = baseBuilding;
+    }
+
     //*---------------------------------------------------------------*//
     //*------------------------ BUTTON METHODS -----------------------*//
     //*---------------------------------------------------------------*//
@@ -349,6 +362,11 @@ public class LevelLogic : MonoBehaviour
 
     public bool LevelFinished() {
         return currentWave == GetTotalWaves() && !InWave();
+    }
+
+    //-----------------------------------------------------------------//
+    public bool LevelGameOver(){
+        return levelGameOver;
     }
 
     //*---------------------------------------------------------------*//
@@ -406,9 +424,9 @@ public class LevelLogic : MonoBehaviour
     public float GetSpecialAttackTimer(TypeAttack typeAttack){
         switch(typeAttack){
             case TypeAttack.UniformAttack:
-                return uniformAttackTimer / (UniformAttack.GetCooldown());
+                return uniformAttackTimer / UniformAttack.GetCooldown();
             case TypeAttack.SplashAttack:
-                return splashAttackTimer / (SplashAttack.GetCooldown());
+                return splashAttackTimer / SplashAttack.GetCooldown();
         }
         return 1;
     }

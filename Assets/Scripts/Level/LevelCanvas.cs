@@ -30,7 +30,8 @@ public class LevelCanvas : MonoBehaviour
     GameObject accelerateButton,
                accelerateTMP;
 
-    GameObject levelFinishedPanel,
+    GameObject levelGameOverPanel,
+               levelFinishedPanel,
                levelFinishedTMP,
                menuButton,
                menuButtonTMP,
@@ -54,6 +55,12 @@ public class LevelCanvas : MonoBehaviour
                uniformAttackButton,
                splashAttackTimerIMG,
                uniformAttackTimerIMG;
+    GameObject cameraIMG,
+               mapIMG;
+    GameObject healthBars;
+    Image fade;
+    int fadeMode = -1;
+    float FADE_SPEED = 1;
 
     [SerializeField] GameObject levelLogicGameObject;
 
@@ -62,8 +69,8 @@ public class LevelCanvas : MonoBehaviour
     TypeBuilding typeBuilding;
 
     Building selectedBuilding;
-
-    [SerializeField] GameObject mainCamera;
+    Camera mainCamera;
+    Camera currentCamera;
 
 
     //!---------------------------------------------------------------!//
@@ -78,6 +85,8 @@ public class LevelCanvas : MonoBehaviour
 
     void Start()
     {
+        mainCamera = Camera.main;
+        currentCamera = mainCamera;
         resourcePanel = transform.Find("resourcePanel").gameObject;
         wavesTMP      = transform.Find("resourcePanel/wavesTMP").gameObject;
         resourcesTMP  = transform.Find("resourcePanel/resourcesTMP").gameObject;
@@ -93,6 +102,7 @@ public class LevelCanvas : MonoBehaviour
         accelerateButton = transform.Find("accelerateButton").gameObject;
         accelerateTMP    = transform.Find("accelerateButton/accelerateTMP").gameObject;
     
+        levelGameOverPanel = transform.Find("levelGameOverPanel").gameObject;
         levelFinishedPanel = transform.Find("levelFinishedPanel").gameObject;
         levelFinishedTMP   = transform.Find("levelFinishedPanel/levelFinishedTMP").gameObject;
         menuButton         = transform.Find("levelFinishedPanel/menuButton").gameObject;
@@ -118,9 +128,15 @@ public class LevelCanvas : MonoBehaviour
         splashAttackTimerIMG = transform.Find("splashAttackButton/splashAttackTimerIMG").gameObject;
         uniformAttackTimerIMG = transform.Find("uniformAttackButton/uniformAttackTimerIMG").gameObject;
 
+        cameraIMG  = transform.Find("cameraButton/cameraIMG").gameObject;
+        mapIMG     = transform.Find("cameraButton/mapIMG").gameObject;
+
+        fade = transform.Find("Fade").gameObject.GetComponent<Image>();
+
         levelLogic = levelLogicGameObject.GetComponent<LevelLogic>();
 
         typeBuilding = TypeBuilding.Tower1;
+        healthBars = GameObject.Find("HealthBars");
     }  
 
     //*---------------------------------------------------------------*//
@@ -135,12 +151,23 @@ public class LevelCanvas : MonoBehaviour
         HandleFinishedLevel();
         HandleMouseInputs();
         HandleSpecialAttack();
+        HandleFadeInOut();
     }
 
     //*---------------------------------------------------------------*//
     //*--------------------------- HANDLERS --------------------------*//
     //*---------------------------------------------------------------*//
 
+    void HandleFadeInOut(){
+        if((fadeMode == -1 && fade.color.a > 0)||(fadeMode == 1 && fade.color.a < 1)){
+            fade.color = new Color(fade.color.r,fade.color.g,fade.color.b,fade.color.a + GameTime.DeltaTime*FADE_SPEED * fadeMode);
+        }
+        if(fadeMode == 1 && fade.color.a >= 1){
+            LoadMap();
+        }
+    }
+
+    //-----------------------------------------------------------------//
     void HandleResourcePanel() {
         wavesTMP.GetComponent<TMP_Text>().text = 
             "wave: " + levelLogic.GetCurrentWave() 
@@ -173,6 +200,11 @@ public class LevelCanvas : MonoBehaviour
     //-----------------------------------------------------------------//
 
     void HandleFinishedLevel() {
+
+        if(levelLogic.LevelGameOver()){
+            levelGameOverPanel.SetActive(true);
+        }
+
         if (!levelLogic.LevelFinished()) return;
 
         levelFinishedPanel.SetActive(true);
@@ -193,12 +225,6 @@ public class LevelCanvas : MonoBehaviour
 
     //-----------------------------------------------------------------//
 
-    public void LoadMap(){
-        SceneManager.LoadScene("mainMenu");
-    }
-
-    //-----------------------------------------------------------------//
-
     void HandleMouseInputs() {
         if (Input.GetMouseButtonDown(0)) {
             LeftClick();
@@ -211,13 +237,13 @@ public class LevelCanvas : MonoBehaviour
             splashAttackTimerIMG.GetComponent<Image>().fillAmount = 1-levelLogic.GetSpecialAttackTimer(TypeAttack.SplashAttack);
             splashAttackButton.GetComponent<Button>().interactable = false;
         }else{
-            splashAttackButton.GetComponent<Button>().interactable = !GameTime.IsPaused();
+            splashAttackButton.GetComponent<Button>().interactable = !GameTime.IsPaused() && !(levelLogic.GetInteractionMode()==LevelLogic.InteractionMode.Camera);
         }
         if(!levelLogic.IsSpecialAttackAvailable(TypeAttack.UniformAttack)){
             uniformAttackTimerIMG.GetComponent<Image>().fillAmount = 1-levelLogic.GetSpecialAttackTimer(TypeAttack.UniformAttack);
             uniformAttackButton.GetComponent<Button>().interactable = false;
         }else{
-            uniformAttackButton.GetComponent<Button>().interactable = !GameTime.IsPaused();
+            uniformAttackButton.GetComponent<Button>().interactable = !GameTime.IsPaused() && !(levelLogic.GetInteractionMode()==LevelLogic.InteractionMode.Camera);
         }
     }
 
@@ -231,17 +257,18 @@ public class LevelCanvas : MonoBehaviour
 
         skipButton.GetComponent<Button>().interactable = !GameTime.IsPaused();
         accelerateButton.GetComponent<Button>().interactable = !GameTime.IsPaused();
-        tower1Button.GetComponent<Button>().interactable = !GameTime.IsPaused();
-        tower2Button.GetComponent<Button>().interactable = !GameTime.IsPaused();
-        tower3Button.GetComponent<Button>().interactable = !GameTime.IsPaused();
-		generatorButton.GetComponent<Button>().interactable = !GameTime.IsPaused();
-        splashAttackButton.GetComponent<Button>().interactable = !GameTime.IsPaused();
-        uniformAttackButton.GetComponent<Button>().interactable = !GameTime.IsPaused();
+        tower1Button.GetComponent<Button>().interactable = !GameTime.IsPaused() && !(levelLogic.GetInteractionMode()==LevelLogic.InteractionMode.Camera);
+        tower2Button.GetComponent<Button>().interactable = !GameTime.IsPaused() && !(levelLogic.GetInteractionMode()==LevelLogic.InteractionMode.Camera);
+        tower3Button.GetComponent<Button>().interactable = !GameTime.IsPaused() && !(levelLogic.GetInteractionMode()==LevelLogic.InteractionMode.Camera);
+		generatorButton.GetComponent<Button>().interactable = !GameTime.IsPaused() && !(levelLogic.GetInteractionMode()==LevelLogic.InteractionMode.Camera);
+        splashAttackButton.GetComponent<Button>().interactable = !GameTime.IsPaused() && !(levelLogic.GetInteractionMode()==LevelLogic.InteractionMode.Camera);
+        uniformAttackButton.GetComponent<Button>().interactable = !GameTime.IsPaused() && !(levelLogic.GetInteractionMode()==LevelLogic.InteractionMode.Camera);
 		
         if (GameTime.IsPaused()) {
             levelLogic.HideBuildingTiles();
             levelLogic.DestroySpecialAttack();
-            levelLogic.SetInteractionMode(LevelLogic.InteractionMode.None);
+            if(levelLogic.GetInteractionMode()!=LevelLogic.InteractionMode.Camera)
+                levelLogic.SetInteractionMode(LevelLogic.InteractionMode.None);
         }
     }
 
@@ -262,9 +289,9 @@ public class LevelCanvas : MonoBehaviour
     //*---------------------------------------------------------------*//
 
     public void ToggleBuildingMode(TypeBuilding type) {
-        levelLogic.SetInteractionMode((levelLogic.GetInteractionMode() != LevelLogic.InteractionMode.Build)
-			? LevelLogic.InteractionMode.Build
-			: LevelLogic.InteractionMode.None
+        levelLogic.SetInteractionMode((levelLogic.GetInteractionMode() == LevelLogic.InteractionMode.Build && typeBuilding == type)
+			? LevelLogic.InteractionMode.None
+			: LevelLogic.InteractionMode.Build
 		);
         typeBuilding = type;
 
@@ -294,16 +321,16 @@ public class LevelCanvas : MonoBehaviour
     //-----------------------------------------------------------------//
 
     public void ToggleSpecialAttackMode(TypeAttack type) {
-		levelLogic.SetInteractionMode((levelLogic.GetInteractionMode() != LevelLogic.InteractionMode.SpecialAttack)
-			? LevelLogic.InteractionMode.SpecialAttack
-			: LevelLogic.InteractionMode.None
+		levelLogic.SetInteractionMode((levelLogic.GetInteractionMode() == LevelLogic.InteractionMode.SpecialAttack)
+			? LevelLogic.InteractionMode.None
+			: LevelLogic.InteractionMode.SpecialAttack
 		);
 
         Debug.Log("Interaction mode: " + levelLogic.GetInteractionMode());
         Debug.Log("Type attack: "+type);
 
 		if (levelLogic.GetInteractionMode() == LevelLogic.InteractionMode.SpecialAttack) {
-            levelLogic.InitialiseSpecialAttack(type,mainCamera.GetComponent<Camera>());
+            levelLogic.InitialiseSpecialAttack(type,mainCamera);
             levelLogic.HideBuildingTiles();
         } else {
             levelLogic.DestroySpecialAttack();
@@ -346,7 +373,6 @@ public class LevelCanvas : MonoBehaviour
 
     void ShowBuildingSubmenu() {
         Vector3 screenPos = mainCamera
-                            .GetComponent<Camera>()
                             .WorldToScreenPoint(selectedBuilding.transform.position);
 
         buildingSubmenu.transform.position = screenPos;
@@ -370,6 +396,34 @@ public class LevelCanvas : MonoBehaviour
     // public void UpgradeBuilding() {
     //     levelLogic.Upgrade(selectedBuilding);
     // }
+
+    //*---------------------------------------------------------------*//
+    //*------------------------- CAMERA MODE -------------------------*//
+    //*---------------------------------------------------------------*//
+
+    public void ToggleCameraMode(){
+        levelLogic.SetInteractionMode((levelLogic.GetInteractionMode() == LevelLogic.InteractionMode.Camera)
+			? LevelLogic.InteractionMode.None
+			: LevelLogic.InteractionMode.Camera
+		);
+        if(levelLogic.GetInteractionMode()!=LevelLogic.InteractionMode.Camera){
+            if(currentCamera != mainCamera) {
+                cameraIMG.SetActive(true);
+                mapIMG.SetActive(false);
+                currentCamera.enabled = false;
+                mainCamera.enabled = true;
+                healthBars.SetActive(true);
+            }
+            currentCamera = mainCamera;
+        }
+
+        tower1Button.GetComponent<Button>().interactable = !GameTime.IsPaused() && !(levelLogic.GetInteractionMode()==LevelLogic.InteractionMode.Camera);
+        tower2Button.GetComponent<Button>().interactable = !GameTime.IsPaused() && !(levelLogic.GetInteractionMode()==LevelLogic.InteractionMode.Camera);
+        tower3Button.GetComponent<Button>().interactable = !GameTime.IsPaused() && !(levelLogic.GetInteractionMode()==LevelLogic.InteractionMode.Camera);
+		generatorButton.GetComponent<Button>().interactable = !GameTime.IsPaused() && !(levelLogic.GetInteractionMode()==LevelLogic.InteractionMode.Camera);
+        splashAttackButton.GetComponent<Button>().interactable = !GameTime.IsPaused() && !(levelLogic.GetInteractionMode()==LevelLogic.InteractionMode.Camera);
+        uniformAttackButton.GetComponent<Button>().interactable = !GameTime.IsPaused() && !(levelLogic.GetInteractionMode()==LevelLogic.InteractionMode.Camera);
+    }
 
     //*---------------------------------------------------------------*//
     //*----------------------- SPECIAL ATTACKS -----------------------*//
@@ -409,11 +463,12 @@ public class LevelCanvas : MonoBehaviour
     //*---------------------------------------------------------------*//
 
     public void LeftClick() {
-        Ray ray = mainCamera.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
-		//Debug.DrawRay(mainCamera.GetComponent<Camera>().transform.position, ray.direction*100);
-		if (!Physics.Raycast(ray, out RaycastHit hit)) return;
-
-		if (GameTime.IsPaused() || Utils.IsPointerOverUIObject()) {
+        Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+        //Debug.DrawRay(mainCamera.GetComponent<Camera>().transform.position, ray.direction*100);
+        RaycastHit hit;
+        if(!Physics.Raycast(ray,out hit)) return;
+        
+        if (GameTime.IsPaused() || Utils.IsPointerOverUIObject()) {
             return;
         }
 
@@ -431,7 +486,7 @@ public class LevelCanvas : MonoBehaviour
             if (currentBuilding != null && currentBuilding != selectedBuilding) {
                 selectedBuilding = currentBuilding;
                 if (selectedBuilding is Generator) ShowBuildingSubmenu(false);
-				else ShowBuildingSubmenu(true, ((Tower) selectedBuilding).GetHealthPercentage() < 1.0f, !((Tower) selectedBuilding).IsMaxUpgraded());
+				else if (selectedBuilding is Tower)  ShowBuildingSubmenu(true, ((Tower) selectedBuilding).GetHealthPercentage() < 1.0f, !((Tower) selectedBuilding).IsMaxUpgraded());
             } else {
                 HideBuildingSubmenu();
                 selectedBuilding = null;
@@ -441,6 +496,20 @@ public class LevelCanvas : MonoBehaviour
         if (levelLogic.GetInteractionMode() == LevelLogic.InteractionMode.SpecialAttack) {
             levelLogic.DeploySpecialAttack();
             levelLogic.SetInteractionMode(LevelLogic.InteractionMode.None);
+        }
+
+        if(levelLogic.GetInteractionMode() == LevelLogic.InteractionMode.Camera && mainCamera == currentCamera){
+            Enemy currentEnemy = hit.collider.gameObject.GetComponent<Enemy>();
+
+            if (currentEnemy != null){
+                cameraIMG.SetActive(false);
+                mapIMG.SetActive(true);
+                healthBars.SetActive(false);
+                currentCamera = currentEnemy.GetCamera();
+                currentCamera.enabled = true;
+                mainCamera.enabled = false;
+                
+            }
         }
     }
 
@@ -477,7 +546,7 @@ public class LevelCanvas : MonoBehaviour
     //-----------------------------------------------------------------//
 
     void ShowBuildingSubmenu(bool allActions, bool canRepair = true, bool canUpgrade = true) {
-        Vector3 screenPos = mainCamera.GetComponent<Camera>().WorldToScreenPoint(selectedBuilding.transform.position);
+        Vector3 screenPos = mainCamera.WorldToScreenPoint(selectedBuilding.transform.position);
         buildingSubmenu.transform.position = screenPos;
         buildingSubmenu.SetActive(true);
 
@@ -492,6 +561,21 @@ public class LevelCanvas : MonoBehaviour
 			repairButton.SetActive(false);
 			upgradeButton.SetActive(false);
 		}
+    }
+    //*---------------------------------------------------------------*//
+    //*---------------------- LOADING AND FADES ----------------------*//
+    //*---------------------------------------------------------------*//
+
+    public void EndLevel(){
+        fadeMode = 1;
+        Debug.Log("endlevel");
+    }
+
+    //-----------------------------------------------------------------//
+
+    public void LoadMap(){
+        GameTime.Resume();
+        SceneManager.LoadScene("mainMenu");
     }
 
     //!---------------------------------------------------------------!//
