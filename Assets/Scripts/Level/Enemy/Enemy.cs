@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Splines;
 
-public class Enemy : MonoBehaviour
+public abstract class Enemy : MonoBehaviour
 {
     //!---------------------------------------------------------------!//
     //!---------------------------------------------------------------!//
@@ -10,35 +10,34 @@ public class Enemy : MonoBehaviour
     //!---------------------------------------------------------------!//
 
     static int enemyCount = 0;
-    [SerializeField] int MAX_HEALTH = 100;
-    [SerializeField] int health;
-    [SerializeField] float speed;
-    [SerializeField] int RESOURCE_DROP;
+    [SerializeField] protected int MAX_HEALTH = 100;
+    [SerializeField] protected int health;
+    [SerializeField] protected float DEFAULT_SPEED;
+    protected float speed;
+    [SerializeField] protected int RESOURCE_DROP;
     
     int splineId = -1;
     int id;
     int otherEnemyId = -1;
     LevelLogic levelLogic;
     SplineAnimationController splineAnimationController;
-    Animator animator;
+    protected Animator animator;
     Rigidbody rb;
     GameObject parent;
     Vector3 groundOffset = new Vector3(0,0.5f,0);
+    Camera myCamera;
 
     // Values
 
-    [SerializeField] TypeEnemy TYPE;
-    [SerializeField] float DEATH_TIME;
-    [SerializeField] float ATTACK_DELAY;
-    [SerializeField] int DAMAGE;
+    protected TypeEnemy TYPE;
+    [SerializeField] protected float DEATH_TIME;
+    [SerializeField] protected int DAMAGE;
 
     // States
     bool dying = false;
     float deathTimer = 0;
-    bool attacking = false;
-    float attackTimer = 0;
+    protected bool attacking = false;
     bool isMoving = true;
-
     Vector3 splineToGroundRay = Vector3.down;
 
     // Start is called before the first frame update
@@ -69,20 +68,23 @@ public class Enemy : MonoBehaviour
     //*---------------------------- START ----------------------------*//
     //*---------------------------------------------------------------*//
 
-    void Start(){
-        id = (enemyCount++)-1;
+    protected void Start(){
+        myCamera = transform.Find("Camera").GetComponent<Camera>();
+        myCamera.enabled = false;
+        speed = DEFAULT_SPEED;
+        id = enemyCount++-1;
         health = MAX_HEALTH;
         splineAnimationController = GetSplineAnimationController();
         rb = gameObject.GetComponent<Rigidbody>();
 
-        float randomVariation = UnityEngine.Random.Range(
+        float randomVariation = Random.Range(
             -MAX_GROUND_RAY_VARIATION,
             +MAX_GROUND_RAY_VARIATION
         );
         splineToGroundRay = new Vector3(randomVariation,-1,randomVariation);
 
         animator = gameObject.GetComponentInChildren<Animator>();
-        animator.SetFloat("idleBlend",UnityEngine.Random.value);
+        animator.SetFloat("idleBlend",Random.value);
     }
 
 
@@ -90,7 +92,7 @@ public class Enemy : MonoBehaviour
     //*---------------------------- UPDATE ---------------------------*//
     //*---------------------------------------------------------------*//
 
-    void Update(){
+    protected void Update(){
 
         splineAnimationController.speed = isMoving ? speed : 0;
         animator.speed = GameTime.GameSpeed;
@@ -110,7 +112,7 @@ public class Enemy : MonoBehaviour
             Building otherBuilding = hit.collider.gameObject.GetComponent<Building>();
             if(otherEnemy!=null){
                 HandleCollisionWithEnemy(otherEnemy);
-            }else if(otherBuilding!=null && hit.collider is BoxCollider){ //TODO lo ideal sería hacer un overlap sphere
+            }else if(otherBuilding!=null && hit.collider is BoxCollider){
                 HandleCollisionWithBuilding(otherBuilding);
             }
         }else if(splineAnimationController.distancePercentage < 1){
@@ -174,6 +176,17 @@ public class Enemy : MonoBehaviour
             targetRotation, 
             GameTime.DeltaTime * SPEED_ROTATION
         );
+        if(!attacking){
+            targetRotation = 
+                Quaternion.FromToRotation(transform.forward, parent.transform.forward) * transform.rotation;
+
+            transform.rotation = Quaternion.Slerp(
+                transform.rotation, 
+                targetRotation, 
+                GameTime.DeltaTime * SPEED_ROTATION
+            );
+        }
+
     }
 
     //*---------------------------------------------------------------*//
@@ -241,18 +254,33 @@ public class Enemy : MonoBehaviour
 
     //-----------------------------------------------------------------//
 
+    Building targetedBuilding;
     private void HandleCollisionWithBuilding(Building otherBuilding) {
+        targetedBuilding = otherBuilding;
         isMoving = false;
         animator.SetBool("moving",false);
-        if(attacking==false){
-            attacking=true;
-            attackTimer = 0;
+
+        if(!attacking){
+            attacking = true;
         }
-        attackTimer+=GameTime.DeltaTime;
-        if(attackTimer>ATTACK_DELAY){
-            attackTimer = 0;
-            otherBuilding.DamageBuilding(DAMAGE);
+
+        // Update rotation
+        var targetRotation = 
+            Quaternion.FromToRotation(transform.forward, otherBuilding.transform.position - transform.position) * transform.rotation;
+
+        transform.rotation = Quaternion.Slerp(
+            transform.rotation, 
+            targetRotation, 
+            0.5f
+        );
+    }
+
+    public void Attack(){
+        if(targetedBuilding!=null){
+            targetedBuilding.DamageBuilding(DAMAGE);
+            Debug.Log("Attack");
         }
+            
     }
 
     //*---------------------------------------------------------------*//
@@ -311,6 +339,10 @@ public class Enemy : MonoBehaviour
         SplineAnimationController anim = 
             parent.GetComponent<SplineAnimationController>();
         return anim;
+    }
+
+    public Camera GetCamera(){
+        return myCamera;
     }
 
     //!---------------------------------------------------------------!//

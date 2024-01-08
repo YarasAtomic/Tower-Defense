@@ -14,7 +14,8 @@ public class HealthBar : MonoBehaviour
     Enemy enemyParent = null;
     Tower towerParent = null;
 	Generator generatorParent = null;
-
+    Base baseParent = null;
+    GameObject gameObjectParent = null;
     Image healthImage;
     void Start()
     {
@@ -24,16 +25,26 @@ public class HealthBar : MonoBehaviour
 
         healthImage = health.GetComponent<Image>();
 
+        gameObjectParent = transform.parent.gameObject;
+
         enemyParent = transform.parent.GetComponent<Enemy>();
         towerParent = transform.parent.GetComponent<Tower>();
+        baseParent = transform.parent.GetComponent<Base>();
 		generatorParent = transform.parent.GetComponent<Generator>();
         bar.SetActive(false); 
+        transform.SetParent(GameObject.Find("HealthBars").transform); // Eliminamos el parent para que se fije en la escena y no cause artifacts
     }
+
+
 
     // Update is called once per frame
     void Update()
     {
-        bar.transform.position = mainCamera.WorldToScreenPoint(transform.parent.position) + new Vector3(0,30,0);
+        if(gameObjectParent==null) {
+            Destroy(gameObject);
+            return;
+        }
+        bar.transform.position = mainCamera.WorldToScreenPoint(gameObjectParent.transform.position) + new Vector3(0,30,0);
         if(enemyParent!=null) {
             healthImage.fillAmount = enemyParent.GetHealthPercentage();
         }
@@ -42,6 +53,9 @@ public class HealthBar : MonoBehaviour
 		}
         if(generatorParent!=null) {
 			healthImage.fillAmount = generatorParent.GetHealthPercentage();
+		}
+        if(baseParent!=null) {
+			healthImage.fillAmount = baseParent.GetHealthPercentage();
 		}
 
         if(healthImage.fillAmount <= 0){

@@ -28,11 +28,20 @@ public class SaveFile
     }
 
     public int StarsAtLevel(int level){
-        return levels!=null && level < levels.Count ? levels[level] : 0;
+        return levels!=null && level < levels.Count && level > -1 ? levels[level] : 0;
     }
 
     public void SetMaxStarsAtLevel(int level,int stars){
-        levels[level] = levels[level] < stars ? stars : levels[level];
+        Debug.Log("setMaxStars");
+        if(level > -1){
+            while(levels.Count <= level){
+                levels.Add(0);
+            }
+            if(levels!=null && level < levels.Count){
+                levels[level] = levels[level] < stars ? stars : levels[level];
+            }
+        }
+        
     }
 
     public int GetTotalLevels(){
@@ -71,7 +80,7 @@ public class SaveFile
         return supportPowerUpgrade;
     }
 
-    public void UpdateStatus(int expTemp, int shootingRadiusTemp, int speedOfRepairTemp, int weaponsArmoringTemp, 
+    public void UpdateResearchStatus(int expTemp, int shootingRadiusTemp, int speedOfRepairTemp, int weaponsArmoringTemp, 
                             int refundTemp, int cooldownTemp, int supportTowerTemp){
     
         xp = expTemp;

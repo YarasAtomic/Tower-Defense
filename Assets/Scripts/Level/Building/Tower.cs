@@ -6,7 +6,7 @@ public class Tower : Building
 {
 
 	// STATIC attributes
-	private static int TOWERS_DESTROYED = 0;
+	private static int destroyedTowers = 0;
 
 	// CONST attributes
 	private readonly int MAX_UPGRADE = 2;
@@ -145,8 +145,9 @@ public class Tower : Building
     //*----------------------------- GET -----------------------------*//
     //*---------------------------------------------------------------*//
 
-	public static int GetTowersDestroyed() => TOWERS_DESTROYED;
-	private static void TowerDestroyed() => TOWERS_DESTROYED += 1;
+	public static int GetTowersDestroyed() => destroyedTowers;
+	private static void TowerDestroyed() => destroyedTowers += 1;
+	public static void RestartDestroyedTowerCounter() => destroyedTowers = 0;
 
 	public override float GetHealthPercentage() {
 		return hp / maxHp;

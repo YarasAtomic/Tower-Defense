@@ -73,6 +73,7 @@ public abstract class SpecialAttack : MonoBehaviour
 
         if (deployTimer >= TIME_TO_EXPLODE && !exploded) {
             ExecuteAttack();
+            GetComponent<AudioSource>().Play();
             exploded = true;
         }
     }
