@@ -6,6 +6,8 @@ public class Tower2 : Tower
 	// CONST attributes
 	private static readonly int PURCHASE_PRICE = 150;
 
+	[SerializeField] private GameObject effectToSpawn;
+
 	//*---------------------------------------------------------------*//
     //*---------------------------- START ----------------------------*//
     //*---------------------------------------------------------------*//
@@ -27,6 +29,8 @@ public class Tower2 : Tower
 
 		// Estados
 		initialRotation = transform.rotation;
+
+		initTimer = 1.0f;
 	}
 
 	//*---------------------------------------------------------------*//
@@ -54,9 +58,16 @@ public class Tower2 : Tower
 		Fire(transform);
 	}
 
-	protected override void FireAnimation(Quaternion rotation)
+	protected override void RotateHead(Transform childTransform)
 	{
 
+	}
+
+	protected override void FireAnimation(Quaternion rotation)
+	{
+		Transform initialPosition = transform.Find("Armature/Body/NeckBottom/NeckMiddle/NeckTop/Tip/Tip_end");
+		Lighting vfx = Instantiate(effectToSpawn, initialPosition.position, Quaternion.identity).GetComponent<Lighting>();
+		vfx.Initialise(initialPosition.position, selectedEnemy.transform.position);
 	}
 
 	//*---------------------------------------------------------------*//

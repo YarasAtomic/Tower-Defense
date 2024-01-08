@@ -30,7 +30,7 @@ public abstract class Tower : Building
 	
 	// ENEMY DETECTION attributes
 	// private readonly List<Enemy> enemiesInRange = new();
-	protected Enemy selectedEnemy = null;
+	[SerializeField] protected Enemy selectedEnemy = null;
 
 	// STATE attributes
 	protected Quaternion initialRotation;
@@ -69,8 +69,6 @@ public abstract class Tower : Building
 		shootingRadius = BASE_SHOOTING_RADIUS * Research.SHOOTING_RADIUS_FACTOR[SingletonScriptableObject<Save>.Instance.GetSaveFile().GetShootingRadius()];
 		
 		animator = gameObject.GetComponent<Animator>();
-		AnimationClip animationClip = animator.runtimeAnimatorController.animationClips[1];
-		initTimer = animationClip.length * 10.0f;
 	}
 
 	//*---------------------------------------------------------------*//
@@ -240,29 +238,12 @@ public abstract class Tower : Building
 
 	//-----------------------------------------------------------------//
 
-	protected void RotateHead(Quaternion rotationObjective, Transform childTransform)
-	{
-		float rotationSpeed = BASE_ROTATION_SPEED * GameTime.DeltaTime;
-
-		if (!firing) {
-			animator.enabled = false;
-
-			float angle = Quaternion.Angle(childTransform.rotation, rotationObjective);
-			fireTimer = FIRE_RATE - (angle*Mathf.Deg2Rad / rotationSpeed) - 0.25f;
-			if (fireTimer > 0) fireTimer = 0.0f;
-
-			firing = true;
-		}
-		childTransform.rotation = Quaternion.RotateTowards(childTransform.rotation, rotationObjective, rotationSpeed);
-	}
+	protected abstract void RotateHead(Transform childTransform);
 
 	protected void Fire(Transform childTransform)
 	{
 		if (firing) {
 			fireTimer += GameTime.DeltaTime;
-
-			Debug.Log(fireTimer);
-			Debug.Log(FIRE_RATE);
 
 			if (fireTimer >= FIRE_RATE) {
 				FireAnimation(childTransform.rotation);

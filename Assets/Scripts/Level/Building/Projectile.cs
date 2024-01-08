@@ -29,9 +29,6 @@ public class Projectile : MonoBehaviour {
         if (speed != 0) {
 			transform.position += GameTime.DeltaTime * speed * transform.forward;
 		}
-		else {
-			Debug.Log("No Speed");
-		}
     }
 
 	void OnCollisionEnter (Collision collision) {

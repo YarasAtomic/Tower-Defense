@@ -124,15 +124,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 5212246497f68f5d6b1c5ed56239fb31, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -79.56
+      value: -9.185238
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5212246497f68f5d6b1c5ed56239fb31, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 7.091359
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5212246497f68f5d6b1c5ed56239fb31, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -5.15
+      value: -20.154978
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5212246497f68f5d6b1c5ed56239fb31, type: 3}
       propertyPath: m_LocalRotation.w
@@ -186,6 +186,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 9
       objectReference: {fileID: 0}
+    - target: {fileID: -2215646485775896741, guid: 5212246497f68f5d6b1c5ed56239fb31, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 40.50667
+      objectReference: {fileID: 0}
     - target: {fileID: -1561340675325879793, guid: 5212246497f68f5d6b1c5ed56239fb31, type: 3}
       propertyPath: m_Layer
       value: 9
@@ -213,6 +217,34 @@ PrefabInstance:
     - target: {fileID: 1917955837235267480, guid: 5212246497f68f5d6b1c5ed56239fb31, type: 3}
       propertyPath: m_Layer
       value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 4895211211742107652, guid: 5212246497f68f5d6b1c5ed56239fb31, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -0.000006830189
+      objectReference: {fileID: 0}
+    - target: {fileID: 4895211211742107652, guid: 5212246497f68f5d6b1c5ed56239fb31, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0.0000068301874
+      objectReference: {fileID: 0}
+    - target: {fileID: 4895211211742107652, guid: 5212246497f68f5d6b1c5ed56239fb31, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0.000006830188
+      objectReference: {fileID: 0}
+    - target: {fileID: 4993247010217307183, guid: 5212246497f68f5d6b1c5ed56239fb31, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 5138477730173632629, guid: 5212246497f68f5d6b1c5ed56239fb31, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5138477730173632629, guid: 5212246497f68f5d6b1c5ed56239fb31, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -0.000013660378
+      objectReference: {fileID: 0}
+    - target: {fileID: 5138477730173632629, guid: 5212246497f68f5d6b1c5ed56239fb31, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 7036213049465896255, guid: 5212246497f68f5d6b1c5ed56239fb31, type: 3}
       propertyPath: m_Layer
@@ -292,6 +324,8 @@ MonoBehaviour:
   BASE_DAMAGE: 0
   FIRE_RATE: 0
   BASE_SHOOTING_RADIUS: 0
+  selectedEnemy: {fileID: 0}
+  effectToSpawn: {fileID: 3954901343633081071, guid: 729f62ee9d059944e9dcfc9f9d5a0fe5, type: 3}
 --- !u!65 &-5208226030393486612
 BoxCollider:
   m_ObjectHideFlags: 0
