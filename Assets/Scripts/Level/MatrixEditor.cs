@@ -59,6 +59,7 @@ public class MatrixEditor : Editor
                         EditorGUILayout.LabelField("Enemy " + j);
                     }
                 }
+                if(i > -1) levelLogic.splitterMethods[i] = (EnemySpawner.Splitter) EditorGUILayout.EnumPopup(levelLogic.splitterMethods[i]);
                 EditorGUILayout.EndVertical();
             }
             
@@ -68,6 +69,7 @@ public class MatrixEditor : Editor
             if(GUILayout.Button("Add wave")){
                 for(int i = 0; i < enemyTypeCount;i++){
                     levelLogic.waveList.Add(0);
+                    levelLogic.splitterMethods.Add(EnemySpawner.Splitter.OneByOne);
                 }
                 serializedObject.ApplyModifiedProperties();
             }
@@ -76,6 +78,7 @@ public class MatrixEditor : Editor
             if(GUILayout.Button("Remove wave")){
                 if(levelLogic.waveList.Count > 0) {
                     levelLogic.waveList.RemoveRange(enemyTypeCount*totalWaves-enemyTypeCount,enemyTypeCount);
+                    levelLogic.splitterMethods.RemoveAt(levelLogic.splitterMethods.Count-1);
                     serializedObject.ApplyModifiedProperties();
                 }
             }

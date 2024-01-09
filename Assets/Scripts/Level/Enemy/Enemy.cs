@@ -210,6 +210,7 @@ public abstract class Enemy : MonoBehaviour
         animator.SetBool("alive",false);
         dying          = true;
         isMoving       = false;
+        attacking      = false;
         rb.isKinematic = false;
 
         // Apply force

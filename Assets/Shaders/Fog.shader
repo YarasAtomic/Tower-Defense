@@ -10,7 +10,7 @@ Shader "Custom/Fog"
         Tags {"Queue"="Transparent" "RenderType"="Transparent"}
         ZWrite Off
         Blend SrcAlpha OneMinusSrcAlpha
-        Cull back
+        Cull Off
         LOD 100
 
         Pass 
