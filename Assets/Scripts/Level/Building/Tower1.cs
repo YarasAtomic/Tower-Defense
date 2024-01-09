@@ -68,6 +68,8 @@ public class Tower1 : Tower
 		Fire(childTransform);
 	}
 
+	//-----------------------------------------------------------------//
+
 	protected override void RotateHead(Transform childTransform)
 	{
 		Quaternion newRotation = Quaternion.LookRotation((childTransform.position - selectedEnemy.transform.position).normalized);
@@ -90,10 +92,11 @@ public class Tower1 : Tower
 	protected override void FireAnimation(Quaternion rotation)
 	{
 		GameObject initialPosition = firePoint ? firePointLeft : firePointRight;
-		GameObject vfx;
 
 		if (initialPosition != null) {
-			vfx = Instantiate(effectToSpawn, initialPosition.transform.position, Quaternion.identity);
+			GameObject vfx = Instantiate(effectToSpawn, initialPosition.transform.position, Quaternion.identity);
+			vfx.GetComponent<Projectile>().Initialise((int) damage);
+			
 			vfx.transform.rotation = rotation;
 		}
 

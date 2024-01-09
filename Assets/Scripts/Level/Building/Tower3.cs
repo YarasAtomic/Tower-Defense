@@ -59,6 +59,8 @@ public class Tower3 : Tower
 		Fire(baseTransform);
 	}
 
+	//-----------------------------------------------------------------//
+
 	protected override void RotateHead(Transform childTransform)
 	{
 		Transform cannonTransform = transform.Find("Armature/Base/Support/Cannon");
@@ -91,10 +93,10 @@ public class Tower3 : Tower
 
 	protected override void FireAnimation(Quaternion rotation)
 	{
-		Vector3 origin = new(bulletParabola.origin.x, bulletParabola.origin.y + 2, bulletParabola.origin.z);
+		Vector3 origin = new(bulletParabola.origin.x, bulletParabola.origin.y + 1, bulletParabola.origin.z);
 
 		CannonProjectile vfx = Instantiate(effectToSpawn, origin, Quaternion.identity).GetComponent<CannonProjectile>();
-		vfx.Initialise(bulletParabola);
+		vfx.Initialise(bulletParabola, (int) damage);
 	}
 
 	//*---------------------------------------------------------------*//
