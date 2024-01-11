@@ -38,8 +38,12 @@ public class CannonProjectile : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.position = PosAt(time);
-        time += GameTime.DeltaTime;
+		Vector3 currentPos = PosAt(time);
+		Vector3 nextPos = PosAt(time + 0.001f);
+		Vector3 direction = (nextPos - currentPos).normalized;
+
+		transform.SetPositionAndRotation(currentPos, Quaternion.LookRotation(direction));
+		time += GameTime.DeltaTime;
     }
 
 	Vector3 PosAt(float t)
