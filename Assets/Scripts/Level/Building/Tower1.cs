@@ -22,7 +22,7 @@ public class Tower1 : Tower
 		BASE_DAMAGE = 10;
 		FIRE_RATE = 1.5f;
 		BASE_SHOOTING_RADIUS = 15.0f;
-		BASE_ROTATION_SPEED = 100.0f;
+		BASE_ROTATION_SPEED = 120.0f;
 		FAVOURITE_ENEMY = TypeEnemy.Enemy1;
 		
 		base.Start();

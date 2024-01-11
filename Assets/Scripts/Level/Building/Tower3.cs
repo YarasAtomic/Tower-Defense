@@ -22,7 +22,7 @@ public class Tower3 : Tower
 		BASE_DAMAGE = 50;
 		FIRE_RATE = 4.0f;
 		BASE_SHOOTING_RADIUS = 25.0f;
-		BASE_ROTATION_SPEED = 80.0f;
+		BASE_ROTATION_SPEED = 90.0f;
 		FAVOURITE_ENEMY = TypeEnemy.Enemy3;
 		
 		base.Start();
