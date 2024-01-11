@@ -4601,7 +4601,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ea2bd40ecbe9784c807f6ac883aba5f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  waveList: 00000000000000000100000000000000
+  waveList: 010000000100000001000000000000000100000001000000010000000000000002000000020000000200000001000000
   saveAsset: {fileID: 11400000, guid: 0950354cadf0bb447a16f5d773ac25c4, type: 2}
   currentWave: 0
   currentResources: 0

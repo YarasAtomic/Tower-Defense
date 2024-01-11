@@ -39,7 +39,7 @@ public class CannonProjectile : MonoBehaviour
     void Update()
     {
 		Vector3 currentPos = PosAt(time);
-		Vector3 nextPos = PosAt(time + 0.001f);
+		Vector3 nextPos = PosAt(time + 0.01f);
 		Vector3 direction = (nextPos - currentPos).normalized;
 
 		transform.SetPositionAndRotation(currentPos, Quaternion.LookRotation(direction));

@@ -57,7 +57,6 @@ public class LevelCanvas : MonoBehaviour
                uniformAttackTimerIMG;
     GameObject cameraIMG,
                mapIMG;
-    GameObject healthBars;
     Image fade;
     int fadeMode = -1;
     float FADE_SPEED = 1;
@@ -136,7 +135,6 @@ public class LevelCanvas : MonoBehaviour
         levelLogic = levelLogicGameObject.GetComponent<LevelLogic>();
 
         typeBuilding = TypeBuilding.Tower1;
-        healthBars = GameObject.Find("HealthBars");
     }  
 
     //*---------------------------------------------------------------*//
@@ -412,9 +410,10 @@ public class LevelCanvas : MonoBehaviour
                 mapIMG.SetActive(false);
                 currentCamera.enabled = false;
                 mainCamera.enabled = true;
-                healthBars.SetActive(true);
             }
             currentCamera = mainCamera;
+        }else{
+            levelLogic.HideBuildingTiles();
         }
 
         tower1Button.GetComponent<Button>().interactable = !GameTime.IsPaused() && !(levelLogic.GetInteractionMode()==LevelLogic.InteractionMode.Camera);
@@ -500,16 +499,22 @@ public class LevelCanvas : MonoBehaviour
 
         if(levelLogic.GetInteractionMode() == LevelLogic.InteractionMode.Camera && mainCamera == currentCamera){
             Enemy currentEnemy = hit.collider.gameObject.GetComponent<Enemy>();
+            Tower currentTower = hit.collider.gameObject.GetComponent<Tower>();
 
             if (currentEnemy != null){
                 cameraIMG.SetActive(false);
                 mapIMG.SetActive(true);
-                healthBars.SetActive(false);
                 currentCamera = currentEnemy.GetCamera();
                 currentCamera.enabled = true;
                 mainCamera.enabled = false;
-                
             }
+			if (currentTower != null) {
+				cameraIMG.SetActive(false);
+                mapIMG.SetActive(true);
+                currentCamera = currentTower.GetCamera();
+                currentCamera.enabled = true;
+                mainCamera.enabled = false;
+			}
         }
     }
 

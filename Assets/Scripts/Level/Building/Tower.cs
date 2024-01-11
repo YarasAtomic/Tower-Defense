@@ -44,6 +44,10 @@ public abstract class Tower : Building
 	private bool repairing = false;
 	private LineRenderer lineRenderer;
 
+	// CAMERA attributes
+	private Camera mainCamera;
+	private Camera myCamera;
+
 	//*---------------------------------------------------------------*//
     //*-------------------------- INITIALISE -------------------------*//
     //*---------------------------------------------------------------*//
@@ -73,13 +77,17 @@ public abstract class Tower : Building
 		SetupShootingRadius();
 		
 		animator = gameObject.GetComponent<Animator>();
+
+		mainCamera = Camera.main;
+		myCamera = GetComponentInChildren<Camera>();
+        myCamera.enabled = false;
 	}
 
 	private void SetupShootingRadius()
     {
         lineRenderer.widthMultiplier = 0.3f;
 
-		int vertexCount = 40;
+		int vertexCount = 60;
         float deltaTheta = 2f * Mathf.PI / vertexCount;
         float theta = 0f;
 
@@ -97,6 +105,7 @@ public abstract class Tower : Building
 
 	void Update()
 	{
+		HandleShowRadius();
 		if (initTimer > 0f) {
 			initTimer -= GameTime.DeltaTime;
 			return;
@@ -152,6 +161,10 @@ public abstract class Tower : Building
 		return currentUpgrade >= MAX_UPGRADE;
 	}
 
+	public Camera GetCamera(){
+        return myCamera;
+    }
+
 	//*---------------------------------------------------------------*//
     //*--------------------------- ACTIONS ---------------------------*//
     //*---------------------------------------------------------------*//
@@ -183,7 +196,9 @@ public abstract class Tower : Building
 	public void CheckEnemiesInRange()
 	{
 		if (selectedEnemy == null) {
-			Collider[] hitColliders = Physics.OverlapSphere(transform.position, shootingRadius);
+			Vector3 towerPositionDown = new(transform.position.x, transform.position.y - 10, transform.position.z);
+			Vector3 towerPositionUp = new(transform.position.x, transform.position.y + 10, transform.position.z);
+			Collider[] hitColliders = Physics.OverlapCapsule(towerPositionDown, towerPositionUp, shootingRadius);
 			float minDist = float.MaxValue;
 			
 			foreach (Collider hit in hitColliders) {
@@ -371,5 +386,17 @@ public abstract class Tower : Building
 		animator.enabled = true;
 		animator.SetBool("patrolling", true);
 		animator.Play("Patrol", -1, 0f);
+	}
+
+	private void HandleShowRadius(){
+		lineRenderer.enabled = false;
+		Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+		RaycastHit hit;
+        if(!Physics.Raycast(ray,out hit)) return;
+		if(Utils.IsPointerOverUIObject()) return;
+		Tower tower = hit.collider.gameObject.GetComponent<Tower>();
+		if(tower!=null && tower == this){
+			lineRenderer.enabled = true;
+		}
 	}
 }

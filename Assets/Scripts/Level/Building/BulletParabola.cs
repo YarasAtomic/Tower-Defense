@@ -6,7 +6,7 @@ public class BulletParabola
 	public Vector3 end;
 	
 	public static readonly float gravity = -Physics.gravity.magnitude;
-	public static readonly float maxHeight = 4f;
+	public static readonly float maxHeight = 6f;
 
 	public Vector3 hDiff;
 	public Vector3 hDir;

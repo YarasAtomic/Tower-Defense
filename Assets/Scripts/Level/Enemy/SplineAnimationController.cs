@@ -34,4 +34,13 @@ public class SplineAnimationController : MonoBehaviour
         // Se aplica la rotación dado el vector direction
         transform.rotation = Quaternion.LookRotation(direction, transform.up);
     }
+
+    public Vector3 GetFuturePos(float time){
+        float deltaPercentage = time*speed/splineLength;
+        return spline.EvaluatePosition(
+            distancePercentage + deltaPercentage > 1 ? 
+            distancePercentage : 
+            distancePercentage + deltaPercentage
+        );
+    }
 }
