@@ -106,6 +106,8 @@ public abstract class Tower : Building
 		animator.SetBool("repairTower", repairing);
 		animator.SetBool("patrolling", patrolling);
 
+		fireTimer += GameTime.DeltaTime;
+
 		if (repairing) Repair();
 		
 		CheckEnemiesInRange();
@@ -120,6 +122,8 @@ public abstract class Tower : Building
 	public static int GetTowersDestroyed() => destroyedTowers;
 	private static void TowerDestroyed() => destroyedTowers += 1;
 	public static void RestartDestroyedTowerCounter() => destroyedTowers = 0;
+
+	//-----------------------------------------------------------------//
 
 	public override float GetHealthPercentage()
 	{
@@ -252,7 +256,7 @@ public abstract class Tower : Building
 	protected void Fire(Transform childTransform)
 	{
 		if (firing) {
-			fireTimer += GameTime.DeltaTime;
+			// fireTimer += GameTime.DeltaTime;
 
 			if (fireTimer >= FIRE_RATE) {
 				FireAnimation(childTransform.rotation);				

@@ -81,8 +81,8 @@ public class Tower1 : Tower
 			animator.enabled = false;
 
 			float angle = Quaternion.Angle(childTransform.rotation, newRotation);
-			fireTimer = FIRE_RATE - (angle*Mathf.Deg2Rad / rotationSpeed) - 0.25f;
-			if (fireTimer > 0) fireTimer = 0.0f;
+			float initialFireTimer = (angle*Mathf.Deg2Rad / rotationSpeed) + 0.25f;
+			if (initialFireTimer > (FIRE_RATE - fireTimer)) fireTimer = FIRE_RATE - initialFireTimer;
 
 			firing = true;
 		}

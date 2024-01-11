@@ -76,8 +76,8 @@ public class Tower3 : Tower
 			animator.enabled = false;
 
 			float angle = Quaternion.Angle(childTransform.rotation, newRotation);
-			fireTimer = FIRE_RATE - (angle*Mathf.Deg2Rad / rotationSpeed) - 0.25f;
-			if (fireTimer > 0) fireTimer = 0.0f;
+			float initialFireTimer = (angle*Mathf.Deg2Rad / rotationSpeed) + 0.25f;
+			if (initialFireTimer > (FIRE_RATE - fireTimer)) fireTimer = FIRE_RATE - initialFireTimer;
 
 			firing = true;
 		}
@@ -124,7 +124,7 @@ public class Tower3 : Tower
 		) /
 		(bulletParabola.hDistance*bulletParabola.hDistance);
         bulletParabola.slope = bulletParabola.height / bulletParabola.hDistance - bulletParabola.curve * bulletParabola.hDistance;
-        bulletParabola.velocity = (float) Mathf.Sqrt(BulletParabola.gravity/bulletParabola.curve);
+        bulletParabola.velocity = Mathf.Sqrt(BulletParabola.gravity / bulletParabola.curve);
 
         return (bulletParabola.hDir + Vector3.up * bulletParabola.slope).normalized;
     }
