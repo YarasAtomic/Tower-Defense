@@ -19,7 +19,8 @@ public class HealthBar : MonoBehaviour
     Image healthImage;
     void Start()
     {
-        mainCamera = Camera.main;
+        // mainCamera = Camera.main;
+        mainCamera = GameObject.Find("CameraSupport/Main Camera").GetComponent<Camera>();
         bar = transform.Find("bar").gameObject;
         health = transform.Find("bar/health").gameObject;
 
@@ -44,6 +45,10 @@ public class HealthBar : MonoBehaviour
             Destroy(gameObject);
             return;
         }
+        if(mainCamera==null||mainCamera.enabled==false){
+            bar.SetActive(false);
+            return;
+        } 
         bar.transform.position = mainCamera.WorldToScreenPoint(gameObjectParent.transform.position) + new Vector3(0,30,0);
         if(enemyParent!=null) {
             healthImage.fillAmount = enemyParent.GetHealthPercentage();

@@ -1,3 +1,4 @@
+using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEditor.ShaderKeywordFilter;
 using UnityEngine;
@@ -22,7 +23,7 @@ public class Tower3 : Tower
 		BASE_DAMAGE = 50;
 		FIRE_RATE = 4.0f;
 		BASE_SHOOTING_RADIUS = 25.0f;
-		BASE_ROTATION_SPEED = 80.0f;
+		BASE_ROTATION_SPEED = 90.0f;
 		FAVOURITE_ENEMY = TypeEnemy.Enemy3;
 		
 		base.Start();
@@ -53,20 +54,26 @@ public class Tower3 : Tower
 
 	public override void AttackEnemy()
 	{
+		patrolling = false;
+		
 		Transform baseTransform = transform.Find("Armature/Base/Support");
 		
 		RotateHead(baseTransform);
 		Fire(baseTransform);
 	}
 
+	//-----------------------------------------------------------------//
+
 	protected override void RotateHead(Transform childTransform)
 	{
 		Transform cannonTransform = transform.Find("Armature/Base/Support/Cannon");
 
 		float rotationSpeed = BASE_ROTATION_SPEED * GameTime.DeltaTime;
+		Vector3 enemyPosition = selectedEnemy.GetFuturePos(2f);
+		// Vector3 enemyPosition = selectedEnemy.transform.position;
 		
 		// Rotación de la base
-		Quaternion newRotation = Quaternion.LookRotation((childTransform.position - selectedEnemy.transform.position).normalized);
+		Quaternion newRotation = Quaternion.LookRotation((childTransform.position - enemyPosition).normalized);
 		newRotation = Quaternion.Euler(0, newRotation.eulerAngles.y, 0);
 		newRotation *= Quaternion.Euler(0, 180, 0);
 
@@ -74,14 +81,14 @@ public class Tower3 : Tower
 			animator.enabled = false;
 
 			float angle = Quaternion.Angle(childTransform.rotation, newRotation);
-			fireTimer = FIRE_RATE - (angle*Mathf.Deg2Rad / rotationSpeed) - 0.25f;
-			if (fireTimer > 0) fireTimer = 0.0f;
+			float initialFireTimer = (angle*Mathf.Deg2Rad / rotationSpeed) + 0.25f;
+			if (initialFireTimer > (FIRE_RATE - fireTimer)) fireTimer = FIRE_RATE - initialFireTimer;
 
 			firing = true;
 		}
 
 		// Rotación del cañón (cálculo de la parábola)
-		Vector3 fireDirection = FromTo(cannonTransform.position, selectedEnemy.transform.position);
+		Vector3 fireDirection = FromTo(cannonTransform.position, enemyPosition);
 		float cannonAngle = Vector3.Angle(new Vector3(fireDirection.x, 0, fireDirection.z).normalized, fireDirection);
 		Quaternion rotation = Quaternion.Euler(0, cannonTransform.localRotation.eulerAngles.y, cannonAngle) * Quaternion.Euler(0, 0, -90);
 		
@@ -91,10 +98,9 @@ public class Tower3 : Tower
 
 	protected override void FireAnimation(Quaternion rotation)
 	{
-		Vector3 origin = new(bulletParabola.origin.x, bulletParabola.origin.y + 2, bulletParabola.origin.z);
-
+		Vector3 origin = new(bulletParabola.origin.x, bulletParabola.origin.y + 1, bulletParabola.origin.z);
 		CannonProjectile vfx = Instantiate(effectToSpawn, origin, Quaternion.identity).GetComponent<CannonProjectile>();
-		vfx.Initialise(bulletParabola);
+		vfx.Initialise(bulletParabola, (int) damage);
 	}
 
 	//*---------------------------------------------------------------*//
@@ -122,7 +128,7 @@ public class Tower3 : Tower
 		) /
 		(bulletParabola.hDistance*bulletParabola.hDistance);
         bulletParabola.slope = bulletParabola.height / bulletParabola.hDistance - bulletParabola.curve * bulletParabola.hDistance;
-        bulletParabola.velocity = (float) Mathf.Sqrt(BulletParabola.gravity/bulletParabola.curve);
+        bulletParabola.velocity = Mathf.Sqrt(BulletParabola.gravity / bulletParabola.curve);
 
         return (bulletParabola.hDir + Vector3.up * bulletParabola.slope).normalized;
     }

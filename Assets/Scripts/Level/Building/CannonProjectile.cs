@@ -6,14 +6,16 @@ using UnityEngine;
 public class CannonProjectile : MonoBehaviour
 {
 	private BulletParabola bulletParabola;
+	private int damage;
 	private float time = 0f;
 
 	[SerializeField] private GameObject explosionPrefab;
 	[SerializeField] private GameObject collisionPrefab;
 
-	public void Initialise(BulletParabola bulletParabola)
+	public void Initialise(BulletParabola bulletParabola, int damage)
 	{
 		this.bulletParabola = bulletParabola;
+		this.damage = damage;
 	}
 
     // Start is called before the first frame update
@@ -36,8 +38,12 @@ public class CannonProjectile : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.position = PosAt(time);
-        time += GameTime.DeltaTime;
+		Vector3 currentPos = PosAt(time);
+		Vector3 nextPos = PosAt(time + 0.01f);
+		Vector3 direction = (nextPos - currentPos).normalized;
+
+		transform.SetPositionAndRotation(currentPos, Quaternion.LookRotation(direction));
+		time += GameTime.DeltaTime;
     }
 
 	Vector3 PosAt(float t)
@@ -48,8 +54,8 @@ public class CannonProjectile : MonoBehaviour
 
 	void OnCollisionEnter (Collision collision)
 	{
-		Building building = collision.collider.GetComponent<Building>();
-		if (building != null) return;
+		if (collision.collider.TryGetComponent<Building>(out _)) return;
+		if (collision.collider.TryGetComponent<Enemy>(out var enemy)) enemy.Damage(damage);
 		
 		bulletParabola.velocity = 0.0f;
 

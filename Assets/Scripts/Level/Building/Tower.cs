@@ -10,7 +10,7 @@ public abstract class Tower : Building
 	private const int MAX_UPGRADE = 2;
 	private readonly List<float> FACTOR_UPGRADE = new() { 1.0f, 1.2f, 1.4f };
 	private const int UPGRADE_PRICE = 50;
-	private const float BASE_HP_COST = 5.0f;
+	private const float BASE_HP_COST = 5f;
 	private const float BASE_REPAIR_RATE = 0.25f;	// seconds
 	protected int BASE_DAMAGE;
 	protected float FIRE_RATE;			// seconds
@@ -23,9 +23,9 @@ public abstract class Tower : Building
 	private float maxHp;
 	private int repairCost;
 	private float repairRate;
-	private float repairHp = 0.0f;
-	private float maxRepairHp = 0.0f;
-	private float damage;
+	private float repairHp = 0f;
+	private float maxRepairHp = 0f;
+	protected float damage;
 	private float shootingRadius;
 	
 	// ENEMY ATTACKING attributes
@@ -36,12 +36,17 @@ public abstract class Tower : Building
 	// STATE attributes
 	protected Quaternion initialRotation;
 	protected float initTimer;
-	private float repairTimer = 0.0f;
-	private bool repairing = false;
-	protected float fireTimer = 0.0f;
-	private bool patrolling = true;
+	private float repairTimer = 0f;
+	protected float fireTimer = 0f;
+	protected bool patrolling = true;
 	private bool attacking = false;
 	protected bool firing = false;
+	private bool repairing = false;
+	private LineRenderer lineRenderer;
+
+	// CAMERA attributes
+	private Camera mainCamera;
+	private Camera myCamera;
 
 	//*---------------------------------------------------------------*//
     //*-------------------------- INITIALISE -------------------------*//
@@ -66,11 +71,33 @@ public abstract class Tower : Building
 		repairRate = BASE_REPAIR_RATE * Research.SPEED_OF_REPAIR_FACTOR[SingletonScriptableObject<Save>.Instance.GetSaveFile().GetShootingRadius()];
 		MAX_SELLING_PRICE = 0.55f;
 		
-		// Ataques
+		// Radio de ataque
 		shootingRadius = BASE_SHOOTING_RADIUS * Research.SHOOTING_RADIUS_FACTOR[SingletonScriptableObject<Save>.Instance.GetSaveFile().GetShootingRadius()];
+		lineRenderer = gameObject.GetComponent<LineRenderer>();
+		SetupShootingRadius();
 		
 		animator = gameObject.GetComponent<Animator>();
+
+		mainCamera = Camera.main;
+		myCamera = GetComponentInChildren<Camera>();
+        myCamera.enabled = false;
 	}
+
+	private void SetupShootingRadius()
+    {
+        lineRenderer.widthMultiplier = 0.3f;
+
+		int vertexCount = 60;
+        float deltaTheta = 2f * Mathf.PI / vertexCount;
+        float theta = 0f;
+
+        lineRenderer.positionCount = vertexCount;
+        for (int i = 0; i < lineRenderer.positionCount; ++i) {
+            Vector3 pos = new(shootingRadius * Mathf.Cos(theta), 0f, shootingRadius * Mathf.Sin(theta));
+            lineRenderer.SetPosition(i, pos);
+            theta += deltaTheta;
+        }
+    }
 
 	//*---------------------------------------------------------------*//
     //*---------------------------- UPDATE ---------------------------*//
@@ -78,8 +105,13 @@ public abstract class Tower : Building
 
 	void Update()
 	{
-		if (initTimer > 0.0f) {
+		HandleShowRadius();
+		if (initTimer > 0f) {
 			initTimer -= GameTime.DeltaTime;
+			if (initTimer <= 0f) {
+				Transform lightning = transform.Find("Lightning");
+				if (lightning != null) lightning.gameObject.SetActive(true);
+			}
 			return;
 		}
 
@@ -87,10 +119,12 @@ public abstract class Tower : Building
 		animator.SetBool("repairTower", repairing);
 		animator.SetBool("patrolling", patrolling);
 
+		fireTimer += GameTime.DeltaTime;
+
 		if (repairing) Repair();
-		if (patrolling && !animator.enabled) ActivateAnimation();
 		
 		CheckEnemiesInRange();
+		if (patrolling && !animator.enabled) ActivateAnimation();
 		if (attacking) AttackEnemy();
 	}
 
@@ -101,6 +135,8 @@ public abstract class Tower : Building
 	public static int GetTowersDestroyed() => destroyedTowers;
 	private static void TowerDestroyed() => destroyedTowers += 1;
 	public static void RestartDestroyedTowerCounter() => destroyedTowers = 0;
+
+	//-----------------------------------------------------------------//
 
 	public override float GetHealthPercentage()
 	{
@@ -114,13 +150,13 @@ public abstract class Tower : Building
 
 	public int GetRepairPrice()
 	{
-		CalculateRepairPrice();
+		repairCost = (int) (BASE_HP_COST * (1f - GetHealthPercentage()));
 		return repairCost;
 	}
 
 	public override int GetSellingPrice()
 	{
-		CalculateSellingPrice();
+		sellingPrice = (int) (MAX_SELLING_PRICE * GetHealthPercentage() * FACTOR_UPGRADE[currentUpgrade] * Research.REFUND_FACTOR[SingletonScriptableObject<Save>.Instance.GetSaveFile().GetRefundForSelling()]) ;
 		return sellingPrice;
 	}
 
@@ -129,15 +165,9 @@ public abstract class Tower : Building
 		return currentUpgrade >= MAX_UPGRADE;
 	}
 
-	private void CalculateRepairPrice()
-	{
-		repairCost = (int) (BASE_HP_COST * (1.0f - GetHealthPercentage()));
-	}
-
-	private void CalculateSellingPrice()
-	{
-		sellingPrice = (int) (MAX_SELLING_PRICE * GetHealthPercentage() * FACTOR_UPGRADE[currentUpgrade] * Research.REFUND_FACTOR[SingletonScriptableObject<Save>.Instance.GetSaveFile().GetRefundForSelling()]) ;
-	}
+	public Camera GetCamera(){
+        return myCamera;
+    }
 
 	//*---------------------------------------------------------------*//
     //*--------------------------- ACTIONS ---------------------------*//
@@ -170,12 +200,14 @@ public abstract class Tower : Building
 	public void CheckEnemiesInRange()
 	{
 		if (selectedEnemy == null) {
-			Collider[] hitColliders = Physics.OverlapSphere(transform.position, shootingRadius);
+			Vector3 towerPositionDown = new(transform.position.x, transform.position.y - 10, transform.position.z);
+			Vector3 towerPositionUp = new(transform.position.x, transform.position.y + 10, transform.position.z);
+			Collider[] hitColliders = Physics.OverlapCapsule(towerPositionDown, towerPositionUp, shootingRadius);
 			float minDist = float.MaxValue;
 			
 			foreach (Collider hit in hitColliders) {
 				Enemy enemy = hit.GetComponent<Enemy>();
-				if (enemy != null && enemy.GetHealthPercentage() > 0 && !CheckForObstacles(enemy.transform.position)) {
+				if (enemy != null && enemy.GetHealthPercentage() > 0f && !CheckForObstacles(enemy.transform.position)) {
 					if (enemy.GetTypeEnemy() == FAVOURITE_ENEMY) {
 						selectedEnemy = enemy;
 						break;
@@ -190,16 +222,11 @@ public abstract class Tower : Building
 				}
 			}
 
-			if (selectedEnemy != null) {
-				patrolling = false;
-				attacking = true;
-			}
+			if (selectedEnemy != null) attacking = true;
 		}
 		else {
-			float dist = Vector3.Distance(transform.position, selectedEnemy.transform.position);
-			if (dist > shootingRadius) {
-				EnemyOutOfRange(selectedEnemy);
-				CheckEnemiesInRange();
+			if (selectedEnemy.GetHealthPercentage() <= 0f || Vector3.Distance(transform.position, selectedEnemy.transform.position) > shootingRadius) {
+				DeselectEnemy();
 			}
 		}
 	}
@@ -221,7 +248,7 @@ public abstract class Tower : Building
 
 	public void RepairTower()
 	{
-		repairHp = 0.0f;
+		repairHp = 0f;
 		maxRepairHp = maxHp - hp;
 
 		repairing = true;
@@ -245,16 +272,11 @@ public abstract class Tower : Building
 	protected void Fire(Transform childTransform)
 	{
 		if (firing) {
-			fireTimer += GameTime.DeltaTime;
+			// fireTimer += GameTime.DeltaTime;
 
 			if (fireTimer >= FIRE_RATE) {
-				FireAnimation(childTransform.rotation);
-				selectedEnemy.Damage((int) damage);
-				if (selectedEnemy.GetHealthPercentage() <= 0) {
-					EnemyOutOfRange(selectedEnemy);
-				}
-				
-				fireTimer = 0.0f;
+				FireAnimation(childTransform.rotation);				
+				fireTimer = 0f;
 			}
 		}
 	}
@@ -279,7 +301,7 @@ public abstract class Tower : Building
 		if (repairTimer >= repairRate) {
 			hp += 1;
 			repairHp += 1;
-			repairTimer = 0.0f;
+			repairTimer = 0f;
 
 			if (repairHp >= maxRepairHp) {
 				if (hp > maxHp) hp = maxHp;
@@ -317,7 +339,7 @@ public abstract class Tower : Building
 		bool hit = false;
 		RaycastHit[] hits = Physics.RaycastAll(ray);
 
-		float obstacleDist = 0.0f;
+		float obstacleDist = 0f;
 		float enemyDist = Vector3.Distance(transform.position, enemyPosition);
 		foreach (RaycastHit raycastHit in hits) {
 			Enemy enemy = raycastHit.transform.GetComponent<Enemy>();
@@ -349,23 +371,33 @@ public abstract class Tower : Building
 		return hit;
 	}
 
-	private void EnemyOutOfRange(Enemy enemy)
+	private void DeselectEnemy()
 	{
-		// enemiesInRange.Remove(enemy);
+		selectedEnemy = null;
 
-		if (enemy == selectedEnemy) {
-			selectedEnemy = null;
+		patrolling = true;
+		attacking = false;
+		firing = false;
 
-			patrolling = true;
-			attacking = false;
-			firing = false;
-		}
+		CheckEnemiesInRange();
 	}
 
 	protected virtual void ActivateAnimation()
 	{
 		animator.enabled = true;
 		animator.SetBool("patrolling", true);
-		animator.Play("Patrol", -1, 0.0f);
+		animator.Play("Patrol", -1, 0f);
+	}
+
+	private void HandleShowRadius(){
+		lineRenderer.enabled = false;
+		Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+		RaycastHit hit;
+        if(!Physics.Raycast(ray,out hit)) return;
+		if(Utils.IsPointerOverUIObject()) return;
+		Tower tower = hit.collider.gameObject.GetComponent<Tower>();
+		if(tower!=null && tower == this){
+			lineRenderer.enabled = true;
+		}
 	}
 }

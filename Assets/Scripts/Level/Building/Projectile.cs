@@ -4,9 +4,15 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour {
 	private float speed = 20.0f;
+	private int damage;
 
 	[SerializeField] private GameObject explosionPrefab;
 	[SerializeField] private GameObject collisionPrefab;
+
+	public void Initialise(int damage)
+	{
+		this.damage = damage;
+	}
 
     // Start is called before the first frame update
     void Start()
@@ -35,6 +41,9 @@ public class Projectile : MonoBehaviour {
 
 	void OnCollisionEnter (Collision collision)
 	{
+		if (collision.collider.TryGetComponent<Building>(out _)) return;
+		if (collision.collider.TryGetComponent<Enemy>(out var enemy)) enemy.Damage(damage);
+
 		speed = 0.0f;
 
 		Quaternion contactRotation = Quaternion.FromToRotation(Vector3.up, collision.contacts[0].normal);

@@ -335,6 +335,17 @@ public abstract class Enemy : MonoBehaviour
 
     //-----------------------------------------------------------------//
 
+    public Vector3 GetFuturePos(float time){
+        bool raycast = Utils.Raycast(
+			splineAnimationController.GetFuturePos(time), splineToGroundRay,
+			RAY_LENGTH, LayerMask.GetMask("Terrain"),
+			out RaycastHit hit
+        );
+        return hit.point;
+    }
+
+    //-----------------------------------------------------------------//
+
     public SplineAnimationController GetSplineAnimationController(){
         SplineAnimationController anim = 
             parent.GetComponent<SplineAnimationController>();

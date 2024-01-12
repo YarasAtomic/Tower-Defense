@@ -22,7 +22,7 @@ public class Tower1 : Tower
 		BASE_DAMAGE = 10;
 		FIRE_RATE = 1.5f;
 		BASE_SHOOTING_RADIUS = 15.0f;
-		BASE_ROTATION_SPEED = 100.0f;
+		BASE_ROTATION_SPEED = 120.0f;
 		FAVOURITE_ENEMY = TypeEnemy.Enemy1;
 		
 		base.Start();
@@ -62,11 +62,15 @@ public class Tower1 : Tower
 
 	public override void AttackEnemy()
 	{
+		patrolling = false;
+		
 		Transform childTransform = transform.Find("Armature/MainBody/NeckLow/NeckUp/Head");
 		
 		RotateHead(childTransform);
 		Fire(childTransform);
 	}
+
+	//-----------------------------------------------------------------//
 
 	protected override void RotateHead(Transform childTransform)
 	{
@@ -79,8 +83,8 @@ public class Tower1 : Tower
 			animator.enabled = false;
 
 			float angle = Quaternion.Angle(childTransform.rotation, newRotation);
-			fireTimer = FIRE_RATE - (angle*Mathf.Deg2Rad / rotationSpeed) - 0.25f;
-			if (fireTimer > 0) fireTimer = 0.0f;
+			float initialFireTimer = (angle*Mathf.Deg2Rad / rotationSpeed) + 0.25f;
+			if (initialFireTimer > (FIRE_RATE - fireTimer)) fireTimer = FIRE_RATE - initialFireTimer;
 
 			firing = true;
 		}
@@ -90,10 +94,11 @@ public class Tower1 : Tower
 	protected override void FireAnimation(Quaternion rotation)
 	{
 		GameObject initialPosition = firePoint ? firePointLeft : firePointRight;
-		GameObject vfx;
 
 		if (initialPosition != null) {
-			vfx = Instantiate(effectToSpawn, initialPosition.transform.position, Quaternion.identity);
+			GameObject vfx = Instantiate(effectToSpawn, initialPosition.transform.position, Quaternion.identity);
+			vfx.GetComponent<Projectile>().Initialise((int) damage);
+			
 			vfx.transform.rotation = rotation;
 		}
 

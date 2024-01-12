@@ -27,8 +27,10 @@ public class Tower2 : Tower
 
 		// Estados
 		initialRotation = transform.rotation;
+		transform.Find("Lightning").gameObject.SetActive(false);
 
 		initTimer = 1.0f;
+
 	}
 
 	//*---------------------------------------------------------------*//
@@ -46,26 +48,21 @@ public class Tower2 : Tower
 
 	public override void AttackEnemy()
 	{
-		if (!firing) {
-			animator.enabled = false;
-			
-			fireTimer = 0.0f;
-			firing = true;
-		}
-
+		firing = true;
 		Fire(transform);
 	}
 
-	protected override void RotateHead(Transform childTransform)
-	{
+	//-----------------------------------------------------------------//
 
-	}
+	protected override void RotateHead(Transform childTransform) {}
 
 	protected override void FireAnimation(Quaternion rotation)
 	{
 		Transform initialPosition = transform.Find("Armature/Body/NeckBottom/NeckMiddle/NeckTop/Tip/Tip_end");
 		Lighting vfx = Instantiate(effectToSpawn, initialPosition.position, Quaternion.identity).GetComponent<Lighting>();
 		vfx.Initialise(initialPosition.position, selectedEnemy.transform.position);
+
+		selectedEnemy.Damage((int) damage);
 	}
 
 	//*---------------------------------------------------------------*//
