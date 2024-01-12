@@ -38,7 +38,7 @@ public abstract class Tower : Building
 	protected float initTimer;
 	private float repairTimer = 0f;
 	protected float fireTimer = 0f;
-	private bool patrolling = true;
+	protected bool patrolling = true;
 	private bool attacking = false;
 	protected bool firing = false;
 	private bool repairing = false;
@@ -108,6 +108,10 @@ public abstract class Tower : Building
 		HandleShowRadius();
 		if (initTimer > 0f) {
 			initTimer -= GameTime.DeltaTime;
+			if (initTimer <= 0f) {
+				Transform lightning = transform.Find("Lightning");
+				if (lightning != null) lightning.gameObject.SetActive(true);
+			}
 			return;
 		}
 
@@ -218,10 +222,7 @@ public abstract class Tower : Building
 				}
 			}
 
-			if (selectedEnemy != null) {
-				patrolling = false;
-				attacking = true;
-			}
+			if (selectedEnemy != null) attacking = true;
 		}
 		else {
 			if (selectedEnemy.GetHealthPercentage() <= 0f || Vector3.Distance(transform.position, selectedEnemy.transform.position) > shootingRadius) {

@@ -54,6 +54,8 @@ public class Tower3 : Tower
 
 	public override void AttackEnemy()
 	{
+		patrolling = false;
+		
 		Transform baseTransform = transform.Find("Armature/Base/Support");
 		
 		RotateHead(baseTransform);

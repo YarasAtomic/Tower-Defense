@@ -27,8 +27,10 @@ public class Tower2 : Tower
 
 		// Estados
 		initialRotation = transform.rotation;
+		transform.Find("Lightning").gameObject.SetActive(false);
 
 		initTimer = 1.0f;
+
 	}
 
 	//*---------------------------------------------------------------*//
@@ -46,13 +48,7 @@ public class Tower2 : Tower
 
 	public override void AttackEnemy()
 	{
-		if (!firing) {
-			animator.enabled = false;
-			
-			fireTimer = 0.0f;
-			firing = true;
-		}
-
+		firing = true;
 		Fire(transform);
 	}
 

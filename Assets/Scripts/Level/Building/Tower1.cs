@@ -62,6 +62,8 @@ public class Tower1 : Tower
 
 	public override void AttackEnemy()
 	{
+		patrolling = false;
+		
 		Transform childTransform = transform.Find("Armature/MainBody/NeckLow/NeckUp/Head");
 		
 		RotateHead(childTransform);
