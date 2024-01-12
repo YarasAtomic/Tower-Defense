@@ -137,7 +137,6 @@ public class LevelCanvas : MonoBehaviour
 
         typeBuilding = TypeBuilding.Tower1;
 
-        healthBars = GameObject.Find("HealthBars");
         musicSource = GetComponent<AudioSource>();
     }  
 
