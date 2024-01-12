@@ -1,8 +1,5 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Data;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class LevelLogic : MonoBehaviour
@@ -18,10 +15,8 @@ public class LevelLogic : MonoBehaviour
     };
 
     InteractionMode interactionMode;
-
-    // public int[,] waves = {{1,0,0,0},{1,0,0,0},{1,0,0,0},{1,0,0,0}};
-    [HideInInspector] public List<int> waveList;
-
+    [HideInInspector] public List<int> waveList; // representa una matriz con los enemigos a spawnear de cada tipo en cada oleada
+    [HideInInspector] public List<EnemySpawner.Splitter> splitterMethods; // representa el metodo de repartir enemigos en cada oleada
     [SerializeField] Save saveAsset;
 
     SaveFile saveFile;
@@ -170,7 +165,7 @@ public class LevelLogic : MonoBehaviour
                 GetEnemyAtWaveOfType(currentWave,i))
             );
         }
-        enemySpawn = new EnemySpawner(enemyPrefabTuples, splines, this);
+        enemySpawn = new EnemySpawner(enemyPrefabTuples, splines, this,splitterMethods[currentWave]);
     }
 
 

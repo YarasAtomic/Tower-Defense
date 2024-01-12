@@ -60,7 +60,8 @@ public class LevelCanvas : MonoBehaviour
     Image fade;
     int fadeMode = -1;
     float FADE_SPEED = 1;
-
+    float MUSIC_MAX_VOLUME = 0.15f;
+    AudioSource musicSource;
     [SerializeField] GameObject levelLogicGameObject;
 
     LevelLogic levelLogic;
@@ -135,6 +136,9 @@ public class LevelCanvas : MonoBehaviour
         levelLogic = levelLogicGameObject.GetComponent<LevelLogic>();
 
         typeBuilding = TypeBuilding.Tower1;
+
+        healthBars = GameObject.Find("HealthBars");
+        musicSource = GetComponent<AudioSource>();
     }  
 
     //*---------------------------------------------------------------*//
@@ -159,6 +163,7 @@ public class LevelCanvas : MonoBehaviour
     void HandleFadeInOut(){
         if((fadeMode == -1 && fade.color.a > 0)||(fadeMode == 1 && fade.color.a < 1)){
             fade.color = new Color(fade.color.r,fade.color.g,fade.color.b,fade.color.a + GameTime.DeltaTime*FADE_SPEED * fadeMode);
+            musicSource.volume = (1 - fade.color.a)*MUSIC_MAX_VOLUME;
         }
         if(fadeMode == 1 && fade.color.a >= 1){
             LoadMap();
