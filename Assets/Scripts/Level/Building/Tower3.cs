@@ -32,6 +32,7 @@ public class Tower3 : Tower
 		MAX_SELLING_PRICE *= PURCHASE_PRICE;
 
 		// Estados
+		firePosition = transform.Find("Armature/Base/Support").position;
 		initialRotation = transform.Find("Armature/Base/Support").rotation;
 		initialCannonRotation = transform.Find("Armature/Base/Support/Cannon").localRotation;
 		initialCannonRotation *= Quaternion.Euler(0, 0, 35);

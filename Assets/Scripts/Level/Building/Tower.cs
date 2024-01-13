@@ -34,6 +34,7 @@ public abstract class Tower : Building
 	[SerializeField] protected GameObject effectToSpawn;
 
 	// STATE attributes
+	protected Vector3 firePosition;
 	protected Quaternion initialRotation;
 	protected float initTimer;
 	private float repairTimer = 0f;
@@ -332,27 +333,29 @@ public abstract class Tower : Building
 
 	private bool CheckForObstacles(Vector3 enemyPosition)
 	{
-		Vector3 dir = (transform.position - enemyPosition).normalized;
-		Ray ray = new(transform.position, dir);
+		Vector3 distance = enemyPosition - firePosition;
+		// Ray ray = new(firePosition, dir);
 		// Debug.DrawRay(transform.position, dir);
 
-		bool hit = false;
-		RaycastHit[] hits = Physics.RaycastAll(ray);
+		// Debug.Log(LayerMask.NameToLayer("Terrain"));
+		return Utils.Raycast(firePosition,distance.normalized,distance.magnitude,LayerMask.GetMask("Terrain"),out RaycastHit hitInfo);
+	
+		// RaycastHit[] hits = Physics.RaycastAll(ray);
 
-		float obstacleDist = 0f;
-		float enemyDist = Vector3.Distance(transform.position, enemyPosition);
-		foreach (RaycastHit raycastHit in hits) {
-			Enemy enemy = raycastHit.transform.GetComponent<Enemy>();
-			if (enemy == null) {
-				obstacleDist = Vector3.Distance(transform.position, raycastHit.transform.position);
-				if (obstacleDist > 0) break;
-			}
-		}
+		// float obstacleDist = 0f;
+		// float enemyDist = Vector3.Distance(transform.position, enemyPosition);
+		// foreach (RaycastHit raycastHit in hits) {
+		// 	Enemy enemy = raycastHit.transform.GetComponent<Enemy>();
+		// 	if (enemy == null) {
+		// 		obstacleDist = Vector3.Distance(transform.position, raycastHit.transform.position);
+		// 		if (obstacleDist > 0) break;
+		// 	}
+		// }
 
 		// Debug.Log(obstacleDist);
 		// Debug.Log(enemyDist);
 
-		if (enemyDist >= obstacleDist) hit = true;
+		// if (enemyDist >= obstacleDist) hit = true;
 
 		// Enemy enemy = hitInfo.collider.gameObject.GetComponent<Enemy>();
 		// if (enemy == null) {
@@ -368,7 +371,6 @@ public abstract class Tower : Building
 		// 	LayerMask.GetMask("Terrain")
 		// );
 
-		return hit;
 	}
 
 	private void DeselectEnemy()

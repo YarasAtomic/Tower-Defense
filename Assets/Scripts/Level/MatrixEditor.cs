@@ -1,10 +1,16 @@
-using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
 [CustomEditor(typeof(LevelLogic))]
 public class MatrixEditor : Editor
 {
+    SerializedProperty waveList;
+    SerializedProperty splitterMethods;
+    void OnEnable()
+    {
+        waveList = serializedObject.FindProperty("waveList");
+        splitterMethods = serializedObject.FindProperty("splitterMethods");
+    }
     public override void OnInspectorGUI()
     {
         serializedObject.Update();
@@ -28,11 +34,9 @@ public class MatrixEditor : Editor
         // Add a custom section for the matrix
         EditorGUILayout.Space();
         EditorGUILayout.LabelField("Waves Editor", EditorStyles.boldLabel);
-
             
-
         // Ensure the matrix has been initialized
-        if (levelLogic.waveList == null)
+        if (waveList == null)
         {
             EditorGUILayout.HelpBox("Matrix not initialized. Please set the dimensions and click 'Apply'.", MessageType.Warning);
         }
@@ -53,13 +57,18 @@ public class MatrixEditor : Editor
                     if(i >=0){
                         if(j == 0) EditorGUILayout.LabelField("Wave " + i);
 
-                        levelLogic.waveList[index] = EditorGUILayout.IntField($"", levelLogic.waveList[index]);
+                        waveList.GetArrayElementAtIndex(index).intValue
+                            = EditorGUILayout.IntField($"", waveList.GetArrayElementAtIndex(index).intValue);
                     }else{
                         if(j == 0) EditorGUILayout.LabelField("");
                         EditorGUILayout.LabelField("Enemy " + j);
                     }
                 }
-                if(i > -1) levelLogic.splitterMethods[i] = (EnemySpawner.Splitter) EditorGUILayout.EnumPopup(levelLogic.splitterMethods[i]);
+                if(i > -1) {
+                    string[] enumNamesList = System.Enum.GetNames (typeof(EnemySpawner.Splitter));
+                    splitterMethods.GetArrayElementAtIndex(i).intValue 
+                        = EditorGUILayout.Popup(splitterMethods.GetArrayElementAtIndex(i).intValue,enumNamesList);
+                }
                 EditorGUILayout.EndVertical();
             }
             
@@ -68,8 +77,9 @@ public class MatrixEditor : Editor
             // Add a new column
             if(GUILayout.Button("Add wave")){
                 for(int i = 0; i < enemyTypeCount;i++){
-                    levelLogic.waveList.Add(0);
-                    levelLogic.splitterMethods.Add(EnemySpawner.Splitter.OneByOne);
+                    waveList.InsertArrayElementAtIndex(waveList.arraySize);
+                    // levelLogic.waveList.Add(0);
+                    splitterMethods.InsertArrayElementAtIndex(splitterMethods.arraySize);
                 }
                 serializedObject.ApplyModifiedProperties();
             }
@@ -77,8 +87,13 @@ public class MatrixEditor : Editor
             // Remove column
             if(GUILayout.Button("Remove wave")){
                 if(levelLogic.waveList.Count > 0) {
-                    levelLogic.waveList.RemoveRange(enemyTypeCount*totalWaves-enemyTypeCount,enemyTypeCount);
-                    levelLogic.splitterMethods.RemoveAt(levelLogic.splitterMethods.Count-1);
+                    for(int i = 0; i < enemyTypeCount;i++){
+                        waveList.DeleteArrayElementAtIndex(waveList.arraySize-1);
+                    }
+                    // levelLogic.waveList.RemoveRange(enemyTypeCount*totalWaves-enemyTypeCount,enemyTypeCount);
+                    waveList.DeleteArrayElementAtIndex(waveList.arraySize-1);
+                    // levelLogic.splitterMethods.RemoveAt(levelLogic.splitterMethods.Count-1);
+                    splitterMethods.DeleteArrayElementAtIndex(splitterMethods.arraySize-1);
                     serializedObject.ApplyModifiedProperties();
                 }
             }

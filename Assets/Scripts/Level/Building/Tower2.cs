@@ -26,6 +26,7 @@ public class Tower2 : Tower
 		MAX_SELLING_PRICE *= PURCHASE_PRICE;
 
 		// Estados
+		firePosition = new(transform.position.x, transform.position.y + 8.7f, transform.position.z);
 		initialRotation = transform.rotation;
 		transform.Find("Lightning").gameObject.SetActive(false);
 

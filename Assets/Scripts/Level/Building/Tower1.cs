@@ -37,6 +37,7 @@ public class Tower1 : Tower
 		firePointLeft.transform.position = position;
 
 		// Estados
+		firePosition = transform.Find("Armature/MainBody/NeckLow/NeckUp/Head").position;
 		initialRotation = transform.Find("Armature/MainBody/NeckLow/NeckUp/Head").rotation;
 
 		AnimationClip animationClip = animator.runtimeAnimatorController.animationClips[1];
