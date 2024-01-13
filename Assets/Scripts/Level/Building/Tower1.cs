@@ -36,17 +36,18 @@ public class Tower1 : Tower
 		position.x += 0.8f;
 		firePointLeft.transform.position = position;
 
-		// Estados
-		firePosition = transform.Find("Armature/MainBody/NeckLow/NeckUp/Head").position;
-		initialRotation = transform.Find("Armature/MainBody/NeckLow/NeckUp/Head").rotation;
-
-		AnimationClip animationClip = animator.runtimeAnimatorController.animationClips[1];
-		initTimer = animationClip.length * 10.0f;
-
 		firePointRight = transform.Find("Armature/MainBody/NeckLow/NeckUp/Head/Head_R/Cannon_R/Cannon_R_end").gameObject;
 		position = firePointRight.transform.position;
 		position.x += 0.8f;
 		firePointRight.transform.position = position;
+
+		// Estados
+		Transform initialTransform = transform.Find("Armature/MainBody/NeckLow/NeckUp/Head");
+		firePosition = initialTransform.position;
+		initialRotation = initialTransform.rotation;
+
+		AnimationClip animationClip = animator.runtimeAnimatorController.animationClips[1];
+		initTimer = animationClip.length * 10.0f;
 	}
 
 	//*---------------------------------------------------------------*//

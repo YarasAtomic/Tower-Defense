@@ -29,7 +29,6 @@ public abstract class Tower : Building
 	private float shootingRadius;
 	
 	// ENEMY ATTACKING attributes
-	// private readonly List<Enemy> enemiesInRange = new();
 	protected Enemy selectedEnemy = null;
 	[SerializeField] protected GameObject effectToSpawn;
 
@@ -174,30 +173,6 @@ public abstract class Tower : Building
     //*--------------------------- ACTIONS ---------------------------*//
     //*---------------------------------------------------------------*//
 
-	// public void CheckEnemiesInRange()
-	// {
-	// 	if (selectedEnemy == null && enemiesInRange.Count != 0) {
-	// 		float minDist = float.MaxValue;
-			
-	// 		foreach (Enemy enemy in enemiesInRange) {
-	// 			if (enemy.GetTypeEnemy() == FAVOURITE_ENEMY) {
-	// 				selectedEnemy = enemy;
-	// 				break;
-	// 			}
-	// 			else {
-	// 				float dist = Vector3.Distance(transform.position, enemy.transform.position);
-	// 				if (dist < minDist) {
-	// 					minDist = dist;
-	// 					selectedEnemy = enemy;
-	// 				}
-	// 			}
-	// 		}
-
-	// 		patrolling = false;
-	// 		attacking = true;
-	// 	}
-	// }
-
 	public void CheckEnemiesInRange()
 	{
 		if (selectedEnemy == null) {
@@ -208,7 +183,7 @@ public abstract class Tower : Building
 			
 			foreach (Collider hit in hitColliders) {
 				Enemy enemy = hit.GetComponent<Enemy>();
-				if (enemy != null && enemy.GetHealthPercentage() > 0f && !CheckForObstacles(enemy.transform.position)) {
+				if (enemy != null && enemy.GetHealthPercentage() > 0f && (this is Tower3 || !CheckForObstacles(enemy.transform.position))) {
 					if (enemy.GetTypeEnemy() == FAVOURITE_ENEMY) {
 						selectedEnemy = enemy;
 						break;
@@ -312,65 +287,13 @@ public abstract class Tower : Building
 	}
 
 	//*---------------------------------------------------------------*//
-    //*------------------------- COLLISSIONS -------------------------*//
-    //*---------------------------------------------------------------*//
-
-	// void OnTriggerEnter(Collider collision)
-	// {
-	// 	// Debug.Log("Nuevo Enemy");
-	// 	Enemy enemy = collision.gameObject.GetComponent<Enemy>();
-	// 	if (enemy != null && CheckForObstacles(enemy.transform.position) && enemy.GetHealthPercentage() > 0) enemiesInRange.Add(enemy);
-	// }
-
-	// void OnTriggerExit(Collider collision) {
-	// 	// Debug.Log("Se va Enemy");
-	// 	EnemyOutOfRange(collision.gameObject.GetComponent<Enemy>());
-	// }
-
-	//*---------------------------------------------------------------*//
     //*--------------------------- AUXILIAR --------------------------*//
     //*---------------------------------------------------------------*//
 
 	private bool CheckForObstacles(Vector3 enemyPosition)
 	{
 		Vector3 distance = enemyPosition - firePosition;
-		// Ray ray = new(firePosition, dir);
-		// Debug.DrawRay(transform.position, dir);
-
-		// Debug.Log(LayerMask.NameToLayer("Terrain"));
-		return Utils.Raycast(firePosition,distance.normalized,distance.magnitude,LayerMask.GetMask("Terrain"),out RaycastHit hitInfo);
-	
-		// RaycastHit[] hits = Physics.RaycastAll(ray);
-
-		// float obstacleDist = 0f;
-		// float enemyDist = Vector3.Distance(transform.position, enemyPosition);
-		// foreach (RaycastHit raycastHit in hits) {
-		// 	Enemy enemy = raycastHit.transform.GetComponent<Enemy>();
-		// 	if (enemy == null) {
-		// 		obstacleDist = Vector3.Distance(transform.position, raycastHit.transform.position);
-		// 		if (obstacleDist > 0) break;
-		// 	}
-		// }
-
-		// Debug.Log(obstacleDist);
-		// Debug.Log(enemyDist);
-
-		// if (enemyDist >= obstacleDist) hit = true;
-
-		// Enemy enemy = hitInfo.collider.gameObject.GetComponent<Enemy>();
-		// if (enemy == null) {
-		// 	Debug.Log("Obstaculo");
-		// 	hit = true;
-		// }
-
-		// bool hit = Physics.Raycast(
-		// 	transform.position,
-		// 	dir,
-		// 	out RaycastHit raycastHit,
-		// 	shootingRadius,
-		// 	LayerMask.GetMask("Terrain")
-		// );
-
+		return Utils.Raycast(firePosition, distance.normalized, distance.magnitude, LayerMask.GetMask("Terrain"), out _);
 	}
 
 	private void DeselectEnemy()
