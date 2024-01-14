@@ -292,6 +292,11 @@ public abstract class Enemy : MonoBehaviour
     }
 
     //-----------------------------------------------------------------//
+    public static void RestartCount(){
+        enemyCount = 0;
+    }
+
+    //-----------------------------------------------------------------//
 
     public float GetHealthPercentage(){
         return (float)health/MAX_HEALTH;

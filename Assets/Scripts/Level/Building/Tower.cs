@@ -138,6 +138,7 @@ public abstract class Tower : Building
 
 	//-----------------------------------------------------------------//
 
+	public int GetTowerUpgrade() => currentUpgrade;
 	public override float GetHealthPercentage()
 	{
 		return hp / maxHp;

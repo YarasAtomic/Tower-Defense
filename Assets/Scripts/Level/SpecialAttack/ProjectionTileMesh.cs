@@ -79,18 +79,6 @@ public class ProjectionTileMesh : MonoBehaviour {
     }
 
     void UpdatePosition() {
-        // RaycastHit hitInfo;
-        // Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        
-        // Physics.Raycast(ray, out hitInfo, Mathf.Infinity, LayerMask.GetMask("Terrain"));
-        
-        // Vector3 position = hitInfo.point;
-
-        // position.x -= hitInfo.point.x % cellSize + gridWidth * cellSize / 2;
-        // position.z -= hitInfo.point.z % cellSize + gridHeight * cellSize / 2;
-        // position.y = 0;
-
-        // transform.position = position;
         transform.position = new Vector3(transform.position.x,0,transform.position.z);
     }
 

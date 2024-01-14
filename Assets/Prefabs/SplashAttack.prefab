@@ -174,7 +174,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   RADIUS: 6
-  DAMAGE: 15
+  DAMAGE: 30
   NUKE_SPEED: 100
 --- !u!82 &4499296777701569282
 AudioSource:

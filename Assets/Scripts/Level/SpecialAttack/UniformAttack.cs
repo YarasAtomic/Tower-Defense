@@ -11,8 +11,8 @@ public class UniformAttack : SpecialAttack
     //!---------------------------------------------------------------!//
 
     [SerializeField] float RADIUS = 4;
-    [SerializeField] int DAMAGE = 10;
-    static float COOLDOWN = 20;
+    [SerializeField] int DAMAGE = 20;
+    static float COOLDOWN = 40;
 
     GameObject beam;
     GameObject projector;

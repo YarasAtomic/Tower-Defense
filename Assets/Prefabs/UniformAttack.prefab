@@ -184,7 +184,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   RADIUS: 4
-  DAMAGE: 10
+  DAMAGE: 20
   BEAM_SPEED: 70
 --- !u!82 &8730241000497752754
 AudioSource:

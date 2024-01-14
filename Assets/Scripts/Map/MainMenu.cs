@@ -92,7 +92,7 @@ public class MainMenu : MonoBehaviour
         }
 
         if((fadeMode == -1 && fade.color.a > 0)||(fadeMode == 1 && fade.color.a < 1)){
-            fade.color = new Color(fade.color.r,fade.color.g,fade.color.b,fade.color.a + GameTime.DeltaTime*FADE_SPEED * fadeMode);
+            fade.color = new Color(fade.color.r,fade.color.g,fade.color.b,fade.color.a + Time.deltaTime*FADE_SPEED * fadeMode);
             musicSource.volume = (1 - fade.color.a)*MUSIC_MAX_VOLUME;
         }
         if(fadeMode == 1 && fade.color.a >= 1){

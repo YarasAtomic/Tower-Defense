@@ -27,7 +27,7 @@ public class LevelLogic : MonoBehaviour
     public int currentWave;
     public int currentResources;
     int accWaveResources;
-    float accWaveTimer;
+    [SerializeField] float accWaveTimer;
     float splashAttackTimer;
     float uniformAttackTimer;
     bool levelFinished = false;
@@ -65,6 +65,9 @@ public class LevelLogic : MonoBehaviour
     //*---------------------------------------------------------------*//
     void Start()
     {
+        Debug.Log("Level Start");
+        GameTime.Resume();
+        Enemy.RestartCount();
         saveFile = saveAsset.GetSaveFile();
 
 		interactionMode     = InteractionMode.None;

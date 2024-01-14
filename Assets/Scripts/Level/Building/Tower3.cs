@@ -1,6 +1,5 @@
 using Unity.Mathematics;
 using Unity.VisualScripting;
-using UnityEditor.ShaderKeywordFilter;
 using UnityEngine;
 
 public class Tower3 : Tower
@@ -20,7 +19,7 @@ public class Tower3 : Tower
 	{
 		// Constantes
 		BASE_HP = 200.0f;
-		BASE_DAMAGE = 50;
+		BASE_DAMAGE = 20;
 		FIRE_RATE = 4.0f;
 		BASE_SHOOTING_RADIUS = 25.0f;
 		BASE_ROTATION_SPEED = 90.0f;

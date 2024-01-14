@@ -7960,11 +7960,11 @@ MonoBehaviour:
   - levelName: 
     sceneName: Scenes/sceneLevel1
   - levelName: 
-    sceneName: Scenes/sceneLevel1
+    sceneName: Scenes/sceneLevelBeach
   - levelName: 
     sceneName: Scenes/sceneLevel1
   - levelName: 
-    sceneName: Scenes/sceneLevel1
+    sceneName: Scenes/sceneLevelMoon
   saveAsset: {fileID: 11400000, guid: 0950354cadf0bb447a16f5d773ac25c4, type: 2}
   menuMode: 0
   cameraSupport: {fileID: 891356312}

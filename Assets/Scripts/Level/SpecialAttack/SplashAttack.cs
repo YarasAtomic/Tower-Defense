@@ -11,8 +11,8 @@ public class SplashAttack : SpecialAttack
     //!---------------------------------------------------------------!//
 
     [SerializeField] float RADIUS = 5;
-    [SerializeField] int DAMAGE = 15;
-    [SerializeField] static float COOLDOWN = 10;
+    [SerializeField] int DAMAGE = 30;
+    [SerializeField] static float COOLDOWN = 20;
     [SerializeField] float NUKE_SPEED = 100;
     GameObject particle;
     GameObject projector;
