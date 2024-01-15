@@ -44,6 +44,10 @@ public class SaveFile
         
     }
 
+    public bool IsFirstTimeFinish(int level){
+        return !(levels[level] > 0);
+    }
+
     public int GetTotalLevels(){
         return levels.Count;
     }

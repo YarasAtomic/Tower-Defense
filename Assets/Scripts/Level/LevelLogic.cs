@@ -131,7 +131,9 @@ public class LevelLogic : MonoBehaviour
         if  (currentWave == GetTotalWaves() && !InWave()) {
             if(!levelFinished){
                 saveFile.SetMaxStarsAtLevel(saveAsset.GetCurrentLevel(),ObtainedStars());
-                saveFile.AddXp(ObtainedExp());
+                if(saveFile.IsFirstTimeFinish(saveAsset.GetCurrentLevel())) saveFile.AddXp(ObtainedExp());
+                else saveFile.AddXp(10);
+                
                 levelFinished = true;
             }
 

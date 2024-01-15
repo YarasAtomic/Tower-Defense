@@ -17,4 +17,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/sceneLevelMoon.unity
     guid: ea52eaec0ceec2944bb56a11aa293ead
+  - enabled: 1
+    path: Assets/Scenes/sceneLevelLava.unity
+    guid: 086cc83bbce112041a624d3cc1ef7923
+  - enabled: 1
+    path: Assets/Scenes/sceneLevelDesert.unity
+    guid: 7c1794605c7f6894f84abde149c80d2c
   m_configObjects: {}

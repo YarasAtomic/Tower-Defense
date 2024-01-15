@@ -41,15 +41,15 @@ public class LevelCanvas : MonoBehaviour
                thirdStarIMG;
 
 
-    GameObject tower1Button,
-               tower2Button,
-               tower3Button,
-               generatorButton;
+    GameObject tower1Button, tower1Text,
+               tower2Button, tower2Text,
+               tower3Button, tower3Text,
+               generatorButton, generatorText;
 
     GameObject buildingSubmenu,
-               sellButton, 
-               repairButton, 
-               upgradeButton;
+               sellButton, sellButtonText,
+               repairButton, repairButtonText,
+               upgradeButton, upgradeButtonText;
 
     GameObject splashAttackButton,
                uniformAttackButton,
@@ -115,12 +115,19 @@ public class LevelCanvas : MonoBehaviour
         tower1Button = transform.Find("tower1Button").gameObject;
 		tower2Button = transform.Find("tower2Button").gameObject;
 		tower3Button = transform.Find("tower3Button").gameObject;
+        tower1Text = transform.Find("tower1Button/tower1ButtonTMP").gameObject;
+		tower2Text = transform.Find("tower2Button/tower2ButtonTMP").gameObject;
+		tower3Text = transform.Find("tower3Button/tower3ButtonTMP").gameObject;
+        generatorText = transform.Find("generatorButton/generatorButtonTMP").gameObject;
 		generatorButton = transform.Find("generatorButton").gameObject;
 
-        buildingSubmenu = transform.Find("buildingSubmenu").gameObject;
-        sellButton      = transform.Find("buildingSubmenu/sellButton").gameObject;
-        repairButton    = transform.Find("buildingSubmenu/repairButton").gameObject;
-        upgradeButton   = transform.Find("buildingSubmenu/upgradeButton").gameObject;
+        buildingSubmenu   = transform.Find("buildingSubmenu").gameObject;
+        sellButton        = transform.Find("buildingSubmenu/sellButton").gameObject;
+        repairButton      = transform.Find("buildingSubmenu/repairButton").gameObject;
+        upgradeButton     = transform.Find("buildingSubmenu/upgradeButton").gameObject;
+        sellButtonText    = transform.Find("buildingSubmenu/sellButton/sellButtonTMP").gameObject;
+        repairButtonText  = transform.Find("buildingSubmenu/repairButton/repairButtonTMP").gameObject;
+        upgradeButtonText = transform.Find("buildingSubmenu/upgradeButton/upgradeButtonTMP").gameObject;
 
         splashAttackButton = transform.Find("splashAttackButton").gameObject;
         uniformAttackButton = transform.Find("uniformAttackButton").gameObject;
@@ -138,7 +145,12 @@ public class LevelCanvas : MonoBehaviour
         typeBuilding = TypeBuilding.Tower1;
 
         musicSource = GetComponent<AudioSource>();
-    }  
+
+        tower1Text.GetComponent<TMP_Text>().text = Tower1.GetPurchasePrice()+"";
+        tower2Text.GetComponent<TMP_Text>().text = Tower2.GetPurchasePrice()+"";
+        tower3Text.GetComponent<TMP_Text>().text = Tower3.GetPurchasePrice()+"";
+        generatorText.GetComponent<TMP_Text>().text = Generator.GetPurchasePrice()+"";
+    }
 
     //*---------------------------------------------------------------*//
     //*---------------------------- UPDATE ---------------------------*//
@@ -371,16 +383,6 @@ public class LevelCanvas : MonoBehaviour
     void HideBuildingSubmenu() {
         buildingSubmenu.SetActive(false);
     }
-
-    //-----------------------------------------------------------------//
-
-    void ShowBuildingSubmenu() {
-        Vector3 screenPos = mainCamera
-                            .WorldToScreenPoint(selectedBuilding.transform.position);
-
-        buildingSubmenu.transform.position = screenPos;
-        buildingSubmenu.SetActive(true);
-    }
     
     //-----------------------------------------------------------------//
 
@@ -560,7 +562,12 @@ public class LevelCanvas : MonoBehaviour
         buildingSubmenu.transform.position = screenPos;
         buildingSubmenu.SetActive(true);
 
+        sellButtonText.GetComponent<TMP_Text>().text = "+ "+selectedBuilding.GetSellingPrice();
 		if (allActions) {
+            
+            repairButtonText.GetComponent<TMP_Text>().text = ((Tower)selectedBuilding).GetRepairPrice() + "";
+            upgradeButtonText.GetComponent<TMP_Text>().text = ((Tower)selectedBuilding).GetUpgradePrice() + "";
+            
 			repairButton.GetComponent<Button>().interactable = canRepair;
 			upgradeButton.GetComponent<Button>().interactable = canUpgrade;
 			

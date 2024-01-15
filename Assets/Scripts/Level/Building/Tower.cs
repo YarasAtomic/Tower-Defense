@@ -10,7 +10,7 @@ public abstract class Tower : Building
 	private const int MAX_UPGRADE = 2;
 	private readonly List<float> FACTOR_UPGRADE = new() { 1.0f, 1.2f, 1.4f };
 	private const int UPGRADE_PRICE = 50;
-	private const float BASE_HP_COST = 5f;
+	private const float BASE_HP_COST = 80f;
 	private const float BASE_REPAIR_RATE = 0.25f;	// seconds
 	protected int BASE_DAMAGE;
 	protected float FIRE_RATE;			// seconds
