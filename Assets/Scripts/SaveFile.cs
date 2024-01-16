@@ -7,6 +7,7 @@ public class SaveFile
 {
     [SerializeField] List<int> levels;
     [SerializeField] int xp = 0;
+    [SerializeField] bool started = false;
 
     public int shootingRadiusUpgrade = 0;
     public int speedOfRepairUpgrade = 0;
@@ -42,6 +43,14 @@ public class SaveFile
             }
         }
         
+    }
+
+    public int GetTotalStars(){
+        int stars = 0;
+        for(int i = 0; i < levels.Count; i++){
+            stars += levels[i];
+        }
+        return stars;
     }
 
     public bool IsFirstTimeFinish(int level){
@@ -94,6 +103,21 @@ public class SaveFile
         refundUpgrade          = refundTemp;
         cooldownUpgrade        = cooldownTemp;
         supportPowerUpgrade    = supportTowerTemp;
-        
+    }
+
+    public void InitSave(){
+        started = true;
+        levels.Clear();
+        xp = 0;
+        shootingRadiusUpgrade = 0;
+        speedOfRepairUpgrade = 0;
+        weaponsArmoringUpgrade = 0;
+        refundUpgrade = 0;
+        cooldownUpgrade = 0;
+        supportPowerUpgrade = 0;
+    }
+
+    public bool IsEmpty(){
+        return !started;
     }
 }

@@ -23,7 +23,6 @@ public class LevelPoint : MonoBehaviour
     GameObject[] stars;
     GameObject playButton;
     Material playButtonMaterial;
-    bool starsHidden = true;
     float viewMinDistance = 4;
     float viewMaxDistance = 4.1f;
 
@@ -104,7 +103,6 @@ public class LevelPoint : MonoBehaviour
             stars[i].SetActive(false);
         }
         playButton.SetActive(false);
-        starsHidden = true;
     }
 
     void ShowInfo(int n){
@@ -112,7 +110,6 @@ public class LevelPoint : MonoBehaviour
             stars[i].SetActive(true);
         }
         playButton.SetActive(true);
-        starsHidden = false;
     }
 
     public int GetId(){

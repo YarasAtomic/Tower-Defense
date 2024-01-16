@@ -9,8 +9,16 @@ public class Save : ScriptableObject
     [SerializeField] int current;
     [SerializeField] int currentLevel = -1;
     public void SetCurrentFile(int i){
-        if(i < saveFiles.Count) current = i;
+        if(i < saveFiles.Count && i >= 0){
+            if(saveFiles[i].IsEmpty()) saveFiles[i].InitSave();
+            current = i;
+        } 
         Debug.Log("Select saveFile "+current);
+    }
+
+    public SaveFile GetSaveFileFromIndex(int i){
+        if(i < saveFiles.Count && i >= 0) return saveFiles[i];
+        return null;
     }
 
     public SaveFile GetSaveFile(){
@@ -25,7 +33,6 @@ public class Save : ScriptableObject
         return saveFiles.Count;
     }
 
-    
     public void SetCurrentLevel(int level){
         currentLevel = level;
     }

@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using TMPro;
 public class MainMenu : MonoBehaviour
 {
     [Serializable]
@@ -26,10 +27,11 @@ public class MainMenu : MonoBehaviour
     [SerializeField] GameObject cameraSupport;
     [SerializeField] GameObject planet;
 
+    TMP_Text xpText, starsText;
     GameObject saveFilesMenu;
+    TMP_Text save1ButtonText, save2ButtonText, save3ButtonText;
     GameObject mapMenu;
     GameObject researchMenu;
-    // Image 
     LevelPoint selectedLevel;
     Image fade;
     AudioSource musicSource;
@@ -56,6 +58,13 @@ public class MainMenu : MonoBehaviour
             //! esto no es buena idea, si se cierra el juego mientras se está en un nivel, 
             //! automaticamente se cargará el archivo de guardado al abrir el juego de nuevo
         }
+        
+        save1ButtonText = transform.Find("SavesMenu/SaveButton1/Text").gameObject.GetComponent<TMP_Text>();
+        save2ButtonText = transform.Find("SavesMenu/SaveButton2/Text").gameObject.GetComponent<TMP_Text>();
+        save3ButtonText = transform.Find("SavesMenu/SaveButton3/Text").gameObject.GetComponent<TMP_Text>();
+
+        starsText = transform.Find("MapMenu/StarsText").gameObject.GetComponent<TMP_Text>();
+        xpText = transform.Find("MapMenu/XpText").gameObject.GetComponent<TMP_Text>();
     }
 
     public bool IsShowingLevels(){
@@ -85,10 +94,21 @@ public class MainMenu : MonoBehaviour
             camPos = Vector3.Lerp(camPos,planetPos,Time.deltaTime*CAMERA_LINEAR_SPEED);
             var targetRotation = Quaternion.FromToRotation(cameraSupport.transform.forward, planetPos-selectedLevel.gameObject.transform.position) * camRot;
             camRot = Quaternion.Slerp(camRot, targetRotation, Time.deltaTime * CAMERA_ROTATION_SPEED);
+
+            // Update de la xp
+            starsText.text = saveAsset.GetSaveFile().GetTotalStars()+"";
+            xpText.text = saveAsset.GetSaveFile().GetXp()+"";
+
         }else if(menuMode == MenuMode.saveFiles){
             camPos = Vector3.Lerp(camPos,Vector3.zero,Time.deltaTime*CAMERA_LINEAR_SPEED);
             var targetRotation = Quaternion.FromToRotation(cameraSupport.transform.forward, Vector3.forward) * camRot;
             camRot = Quaternion.Slerp(camRot, targetRotation, Time.deltaTime * CAMERA_ROTATION_SPEED);
+
+            // Update de los botones de guardado
+
+            save1ButtonText.text = saveAsset.GetSaveFileFromIndex(0).IsEmpty() ? "New Save" : "Save 1";
+            save2ButtonText.text = saveAsset.GetSaveFileFromIndex(1).IsEmpty() ? "New Save" : "Save 2";
+            save3ButtonText.text = saveAsset.GetSaveFileFromIndex(2).IsEmpty() ? "New Save" : "Save 3";
         }
 
         if((fadeMode == -1 && fade.color.a > 0)||(fadeMode == 1 && fade.color.a < 1)){

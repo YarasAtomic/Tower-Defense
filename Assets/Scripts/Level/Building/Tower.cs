@@ -234,7 +234,7 @@ public abstract class Tower : Building
 	public override void DestroyBuilding()
 	{
 		animator.SetTrigger("destroyTower");
-
+		if(myCamera.enabled) mainCamera.enabled = true; // Cambiar la camara del jugador si myCamera está activo
 		TowerDestroyed();
 		tile.EmptyTile();
 
