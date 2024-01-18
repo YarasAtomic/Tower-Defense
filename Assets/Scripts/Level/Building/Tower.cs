@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -43,7 +44,7 @@ public abstract class Tower : Building
 	protected bool firing = false;
 	private bool repairing = false;
 	private LineRenderer lineRenderer;
-	[SerializeField] private GameObject explosionObject;
+	[SerializeField] private GameObject explosionEffect;
 
 	// CAMERA attributes
 	private Camera mainCamera;
@@ -239,7 +240,12 @@ public abstract class Tower : Building
 		TowerDestroyed();
 		tile.EmptyTile();
 
-		Instantiate(explosionObject, transform.position, transform.rotation);
+		if (explosionEffect != null) {
+			GameObject vfx = Instantiate(explosionEffect, transform.position, transform.rotation);
+			GameObject particle = vfx.transform.Find("particle").gameObject;
+			particle.SetActive(true);
+			// Destroy(vfx, 5f);
+		}
 
 		Destroy(gameObject);
 		Destroy(this);
@@ -289,6 +295,19 @@ public abstract class Tower : Building
 			}
 		}
 	}
+
+	private void FadeAlphaToZero(float duration) {
+        Renderer rend = gameObject.transform.GetComponentInChildren<Renderer>();
+		Color matColor = rend.material.color;
+		float alphaValue = rend.material.color.a;
+
+		while (rend.material.color.a > 0f) {
+			Debug.Log("más transparente");
+			alphaValue -= GameTime.DeltaTime / duration;
+			rend.material.color = new(matColor.r, matColor.g, matColor.b, alphaValue);
+		}
+		rend.material.color = new(matColor.r, matColor.g, matColor.b, 0f);
+    }
 
 	//*---------------------------------------------------------------*//
     //*--------------------------- AUXILIAR --------------------------*//

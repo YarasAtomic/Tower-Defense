@@ -383,6 +383,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BASE_HP: 0
   effectToSpawn: {fileID: 3570033859995711600, guid: faebe5a3923a686c9946ce8a4a8a0d7b, type: 3}
+  explosionEffect: {fileID: 2472395016935662785, guid: bee5f7fb2a9f8f49f9cd6aa0f08b3070, type: 3}
 --- !u!65 &-5174695126571970828
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -12,7 +12,7 @@ public class BuildingExplosion : MonoBehaviour
 		foreach (Transform t in transform) {
 			if (t.TryGetComponent<Rigidbody>(out var rigidbody)) {
 				Debug.Log("explosion");
-				rigidbody.AddExplosionForce(Random.Range(125, 750), transform.position, 5);
+				rigidbody.AddExplosionForce(Random.Range(200, 1000), transform.position, 10);
 			}
 		}
 	}

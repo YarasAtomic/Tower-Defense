@@ -13,8 +13,8 @@ public class Tower2 : Tower
 	{
 		// Constantes
 		BASE_HP = 150.0f;
-		BASE_DAMAGE = 3;
-		FIRE_RATE = 0.3f;
+		BASE_DAMAGE = 1;
+		FIRE_RATE = 0.5f;
 		BASE_SHOOTING_RADIUS = 8.0f;
 		BASE_ROTATION_SPEED = 0.0f; // Para esta tener en cuenta que no hay rotación y se dispara directamente
 		FAVOURITE_ENEMY = TypeEnemy.Enemy2;
