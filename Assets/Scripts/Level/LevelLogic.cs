@@ -32,10 +32,12 @@ public class LevelLogic : MonoBehaviour
     float uniformAttackTimer;
     bool levelFinished = false;
     bool levelGameOver = false;
+    bool firstTimeClear = false;
     EnemySpawner enemySpawn;
     SpecialAttack specialAttack;
     
     // Experiencia máxima obtenida por estrella
+    [SerializeField] int SECOND_TIME_XP;
     [SerializeField] int STAR_XP;
     [SerializeField] int ACC_WAVE_MAX_RESOURCES;
     [SerializeField] int ACC_WAVE_MAX_TIME;
@@ -68,7 +70,9 @@ public class LevelLogic : MonoBehaviour
         Debug.Log("Level Start");
         GameTime.Resume();
         Enemy.RestartCount();
+        
         saveFile = saveAsset.GetSaveFile();
+        firstTimeClear = saveFile.IsFirstTimeFinish(saveAsset.GetCurrentLevel());
 
 		interactionMode     = InteractionMode.None;
 
@@ -130,10 +134,11 @@ public class LevelLogic : MonoBehaviour
         // Si estamos en la ultima oleada y no hay enemigos
         if  (currentWave == GetTotalWaves() && !InWave()) {
             if(!levelFinished){
-                saveFile.SetMaxStarsAtLevel(saveAsset.GetCurrentLevel(),ObtainedStars());
-                if(saveFile.IsFirstTimeFinish(saveAsset.GetCurrentLevel())) saveFile.AddXp(ObtainedExp());
-                else saveFile.AddXp(10);
                 
+
+                saveFile.AddXp(ObtainedExp());
+                saveFile.SetMaxStarsAtLevel(saveAsset.GetCurrentLevel(),ObtainedStars());
+
                 levelFinished = true;
             }
 
@@ -194,10 +199,12 @@ public class LevelLogic : MonoBehaviour
     //-----------------------------------------------------------------//
 
     public int ObtainedExp(){
+        if(!firstTimeClear) return SECOND_TIME_XP;
         float factorExp = Tower.GetTowersDestroyed() == 1 ? 0.5f : 0f;
         factorExp += baseBuilding.GetHealthPercentage() != 1 ?  baseBuilding.GetHealthPercentage() : 0f;
+        int xp = (int)((ObtainedStars() + factorExp) * STAR_XP);
 
-        return (int)((ObtainedStars() + factorExp) * STAR_XP);
+        return xp;
     }
 
     //*---------------------------------------------------------------*//

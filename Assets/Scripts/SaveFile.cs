@@ -54,7 +54,8 @@ public class SaveFile
     }
 
     public bool IsFirstTimeFinish(int level){
-        return !(levels[level] > 0);
+        if(levels.Count < level + 1) return true;
+        return levels[level] <= 0;
     }
 
     public int GetTotalLevels(){
@@ -107,7 +108,12 @@ public class SaveFile
 
     public void InitSave(){
         started = true;
-        levels.Clear();
+        if(levels==null){
+            levels = new List<int>();
+        }else{
+            levels.Clear();
+        }
+        
         xp = 0;
         shootingRadiusUpgrade = 0;
         speedOfRepairUpgrade = 0;

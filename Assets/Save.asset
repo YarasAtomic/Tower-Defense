@@ -12,33 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0784ac1bc582d94e8c68758478dca4a, type: 3}
   m_Name: Save
   m_EditorClassIdentifier: 
-  saveFiles:
-  - levels: 
-    xp: 0
-    started: 0
-    shootingRadiusUpgrade: 0
-    speedOfRepairUpgrade: 0
-    weaponsArmoringUpgrade: 0
-    refundUpgrade: 0
-    cooldownUpgrade: 0
-    supportPowerUpgrade: 0
-  - levels: 
-    xp: 0
-    started: 0
-    shootingRadiusUpgrade: 0
-    speedOfRepairUpgrade: 0
-    weaponsArmoringUpgrade: 0
-    refundUpgrade: 0
-    cooldownUpgrade: 0
-    supportPowerUpgrade: 0
-  - levels: 
-    xp: 0
-    started: 0
-    shootingRadiusUpgrade: 0
-    speedOfRepairUpgrade: 0
-    weaponsArmoringUpgrade: 0
-    refundUpgrade: 0
-    cooldownUpgrade: 0
-    supportPowerUpgrade: 0
+  saveFiles: []
   current: 0
   currentLevel: -1

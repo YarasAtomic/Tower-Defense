@@ -183,6 +183,7 @@ public class ResearchCanvas : MonoBehaviour
                              refundTemp, cooldownTemp, supportPowerTemp);
       
       SetAllButtonsColors();
+      saveAsset.SaveData();
 
       mainMenu.CloseResearchMenu();
     }

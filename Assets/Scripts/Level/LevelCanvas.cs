@@ -222,6 +222,9 @@ public class LevelCanvas : MonoBehaviour
 
         if (!levelLogic.LevelFinished()) return;
 
+        if(!levelFinishedPanel.activeInHierarchy)
+            SingletonScriptableObject<Save>.Instance.SaveData();
+
         levelFinishedPanel.SetActive(true);
 
         experienceTMP.GetComponent<TMP_Text>().text = 

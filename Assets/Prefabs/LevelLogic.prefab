@@ -3904,6 +3904,7 @@ MonoBehaviour:
   currentWave: 0
   currentResources: 0
   accWaveTimer: 0
+  SECOND_TIME_XP: 10
   STAR_XP: 10
   ACC_WAVE_MAX_RESOURCES: 200
   ACC_WAVE_MAX_TIME: 30

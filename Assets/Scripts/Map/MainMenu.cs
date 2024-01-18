@@ -55,7 +55,7 @@ public class MainMenu : MonoBehaviour
             saveFilesMenu.SetActive(false);
             mapMenu.SetActive(true);
             selectedLevel = GetLastLevel();
-            //! esto no es buena idea, si se cierra el juego mientras se está en un nivel, 
+            //! esto no es buena idea, si se cierra el juego mientras se está en un nivel (en el editor), 
             //! automaticamente se cargará el archivo de guardado al abrir el juego de nuevo
         }
         
@@ -106,9 +106,9 @@ public class MainMenu : MonoBehaviour
 
             // Update de los botones de guardado
 
-            save1ButtonText.text = saveAsset.GetSaveFileFromIndex(0).IsEmpty() ? "New Save" : "Save 1";
-            save2ButtonText.text = saveAsset.GetSaveFileFromIndex(1).IsEmpty() ? "New Save" : "Save 2";
-            save3ButtonText.text = saveAsset.GetSaveFileFromIndex(2).IsEmpty() ? "New Save" : "Save 3";
+            save1ButtonText.text = (saveAsset.GetSaveFileFromIndex(0)== null || saveAsset.GetSaveFileFromIndex(0).IsEmpty()) ? "New Save" : "Save 1";
+            save2ButtonText.text = (saveAsset.GetSaveFileFromIndex(1)== null || saveAsset.GetSaveFileFromIndex(1).IsEmpty()) ? "New Save" : "Save 2";
+            save3ButtonText.text = (saveAsset.GetSaveFileFromIndex(2)== null || saveAsset.GetSaveFileFromIndex(2).IsEmpty()) ? "New Save" : "Save 3";
         }
 
         if((fadeMode == -1 && fade.color.a > 0)||(fadeMode == 1 && fade.color.a < 1)){
@@ -174,10 +174,10 @@ public class MainMenu : MonoBehaviour
         LevelPoint levelPoint = null;
 
         int lastLevelIndex = saveAsset.GetSaveFile().GetLastFinishedLevel();
+        
         lastLevelIndex = lastLevelIndex < levelList.Count - 1 ? lastLevelIndex+1 : lastLevelIndex; // Seleccionamos el siguiente nivel si está disponible
-
         for(int i = 0; i < allLevelPoints.Length;i++){
-            levelPoint = allLevelPoints[i].GetId() == lastLevelIndex ? allLevelPoints[i] : selectedLevel;
+            levelPoint = allLevelPoints[i].GetId() == lastLevelIndex ? allLevelPoints[i] : levelPoint;
         }
         return levelPoint;
     }
