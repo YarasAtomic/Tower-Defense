@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6488326417026077885}
   - component: {fileID: 829876420902966699}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Trail
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -157,7 +157,7 @@ GameObject:
   - component: {fileID: -6374902592829727991}
   - component: {fileID: 5504342419207889994}
   - component: {fileID: 1918794345988941196}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: CannonBullet
   m_TagString: Bullet
   m_Icon: {fileID: 0}
@@ -236,7 +236,7 @@ Rigidbody:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 1536
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 0
@@ -255,7 +255,7 @@ GameObject:
   - component: {fileID: 899056922843286788}
   - component: {fileID: 7219742720455404772}
   - component: {fileID: 4786832376164425163}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Beam
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5085,7 +5085,7 @@ GameObject:
   - component: {fileID: 6316981072632136490}
   - component: {fileID: 713083032650347220}
   - component: {fileID: 8949591366245145297}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Projectile
   m_TagString: Untagged
   m_Icon: {fileID: 0}

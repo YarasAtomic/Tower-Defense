@@ -30,7 +30,8 @@ public abstract class Tower : Building
 	private float shootingRadius;
 	
 	// ENEMY ATTACKING attributes
-	protected Enemy selectedEnemy = null;
+	private bool buildingAhead = false;
+	[SerializeField] protected Enemy selectedEnemy = null;
 	[SerializeField] protected GameObject effectToSpawn;
 
 	// STATE attributes
@@ -244,7 +245,6 @@ public abstract class Tower : Building
 			GameObject vfx = Instantiate(explosionEffect, transform.position, transform.rotation);
 			GameObject particle = vfx.transform.Find("particle").gameObject;
 			particle.SetActive(true);
-			// Destroy(vfx, 5f);
 		}
 
 		Destroy(gameObject);
@@ -257,13 +257,9 @@ public abstract class Tower : Building
 
 	protected void Fire(Transform childTransform)
 	{
-		if (firing) {
-			// fireTimer += GameTime.DeltaTime;
-
-			if (fireTimer >= FIRE_RATE) {
-				FireAnimation(childTransform.rotation);				
-				fireTimer = 0f;
-			}
+		if (firing && !buildingAhead && fireTimer >= FIRE_RATE) {
+			FireAnimation(childTransform.rotation);				
+			fireTimer = 0f;
 		}
 	}
 
@@ -296,19 +292,6 @@ public abstract class Tower : Building
 		}
 	}
 
-	private void FadeAlphaToZero(float duration) {
-        Renderer rend = gameObject.transform.GetComponentInChildren<Renderer>();
-		Color matColor = rend.material.color;
-		float alphaValue = rend.material.color.a;
-
-		while (rend.material.color.a > 0f) {
-			Debug.Log("más transparente");
-			alphaValue -= GameTime.DeltaTime / duration;
-			rend.material.color = new(matColor.r, matColor.g, matColor.b, alphaValue);
-		}
-		rend.material.color = new(matColor.r, matColor.g, matColor.b, 0f);
-    }
-
 	//*---------------------------------------------------------------*//
     //*--------------------------- AUXILIAR --------------------------*//
     //*---------------------------------------------------------------*//
@@ -316,6 +299,11 @@ public abstract class Tower : Building
 	private bool CheckForObstacles(Vector3 enemyPosition)
 	{
 		Vector3 distance = enemyPosition - firePosition;
+		
+		if (Utils.Raycast(firePosition, distance.normalized, distance.magnitude, LayerMask.GetMask("Building"), out RaycastHit hit)) {
+			buildingAhead = hit.collider.GetComponent<Building>() is Tower;
+		}
+
 		return Utils.Raycast(firePosition, distance.normalized, distance.magnitude, LayerMask.GetMask("Terrain"), out _);
 	}
 

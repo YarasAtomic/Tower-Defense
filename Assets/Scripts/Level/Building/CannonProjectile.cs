@@ -54,7 +54,11 @@ public class CannonProjectile : MonoBehaviour
 
 	void OnCollisionEnter (Collision collision)
 	{
-		if (collision.collider.TryGetComponent<Building>(out _)) return;
+		bool ignore = collision.collider.TryGetComponent<Building>(out _) ||
+					  collision.collider.TryGetComponent<Projectile>(out _) ||
+					  collision.collider.TryGetComponent<CannonProjectile>(out _);
+
+		if (ignore) return;
 		if (collision.collider.TryGetComponent<Enemy>(out var enemy)) {
 			if (enemy.GetHealthPercentage() <= 0f) return;
 			else enemy.Damage(damage);

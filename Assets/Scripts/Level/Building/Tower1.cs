@@ -42,7 +42,7 @@ public class Tower1 : Tower
 
 		// Estados
 		Transform initialTransform = transform.Find("Armature/MainBody/NeckLow/NeckUp/Head");
-		firePosition = initialTransform.position;
+		firePosition = new(initialTransform.position.x, initialTransform.position.y + 2f, initialTransform.position.z);
 		initialRotation = initialTransform.rotation;
 
 		AnimationClip animationClip = animator.runtimeAnimatorController.animationClips[1];
