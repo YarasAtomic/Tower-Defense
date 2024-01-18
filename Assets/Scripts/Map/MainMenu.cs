@@ -165,6 +165,10 @@ public class MainMenu : MonoBehaviour
         saveFilesMenu.SetActive(true);
     }
 
+	public void QuitGame(){
+		Application.Quit();
+	}
+
     LevelPoint GetLastLevel(){
         LevelPoint[] allLevelPoints = FindObjectsOfType<LevelPoint>();
         LevelPoint levelPoint = null;
@@ -177,5 +181,4 @@ public class MainMenu : MonoBehaviour
         }
         return levelPoint;
     }
-
 }

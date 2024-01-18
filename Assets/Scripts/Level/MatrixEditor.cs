@@ -1,6 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
+#if UNITY_EDITOR
 [CustomEditor(typeof(LevelLogic))]
 public class MatrixEditor : Editor
 {
@@ -116,3 +117,4 @@ public class MatrixEditor : Editor
         
     }
 }
+#endif
