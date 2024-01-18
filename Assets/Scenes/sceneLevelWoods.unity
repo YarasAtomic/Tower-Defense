@@ -4996,7 +4996,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3765472774239163305, guid: 2ee43b82951012eb4bf61345efe61c1c, type: 3}
       propertyPath: waveList.Array.size
-      value: 20
+      value: 19
       objectReference: {fileID: 0}
     - target: {fileID: 3765472774239163305, guid: 2ee43b82951012eb4bf61345efe61c1c, type: 3}
       propertyPath: splines.Array.data[0]
@@ -5048,31 +5048,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3765472774239163305, guid: 2ee43b82951012eb4bf61345efe61c1c, type: 3}
       propertyPath: waveList.Array.data[9]
-      value: 5
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 3765472774239163305, guid: 2ee43b82951012eb4bf61345efe61c1c, type: 3}
       propertyPath: waveList.Array.data[10]
-      value: 4
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3765472774239163305, guid: 2ee43b82951012eb4bf61345efe61c1c, type: 3}
       propertyPath: waveList.Array.data[11]
-      value: 4
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3765472774239163305, guid: 2ee43b82951012eb4bf61345efe61c1c, type: 3}
       propertyPath: waveList.Array.data[12]
-      value: 4
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3765472774239163305, guid: 2ee43b82951012eb4bf61345efe61c1c, type: 3}
       propertyPath: waveList.Array.data[13]
-      value: 5
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 3765472774239163305, guid: 2ee43b82951012eb4bf61345efe61c1c, type: 3}
       propertyPath: waveList.Array.data[14]
-      value: 6
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 3765472774239163305, guid: 2ee43b82951012eb4bf61345efe61c1c, type: 3}
       propertyPath: waveList.Array.data[15]
-      value: 4
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3765472774239163305, guid: 2ee43b82951012eb4bf61345efe61c1c, type: 3}
       propertyPath: waveList.Array.data[16]
@@ -5092,7 +5092,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3765472774239163305, guid: 2ee43b82951012eb4bf61345efe61c1c, type: 3}
       propertyPath: splitterMethods.Array.size
-      value: 20
+      value: 23
       objectReference: {fileID: 0}
     - target: {fileID: 3765472774239163305, guid: 2ee43b82951012eb4bf61345efe61c1c, type: 3}
       propertyPath: enemyPrefabList.Array.data[0]
