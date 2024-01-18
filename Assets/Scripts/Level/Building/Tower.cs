@@ -43,6 +43,7 @@ public abstract class Tower : Building
 	protected bool firing = false;
 	private bool repairing = false;
 	private LineRenderer lineRenderer;
+	[SerializeField] private GameObject explosionObject;
 
 	// CAMERA attributes
 	private Camera mainCamera;
@@ -237,6 +238,8 @@ public abstract class Tower : Building
 		if(myCamera.enabled) mainCamera.enabled = true; // Cambiar la camara del jugador si myCamera está activo
 		TowerDestroyed();
 		tile.EmptyTile();
+
+		Instantiate(explosionObject, transform.position, transform.rotation);
 
 		Destroy(gameObject);
 		Destroy(this);

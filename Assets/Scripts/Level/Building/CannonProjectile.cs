@@ -55,7 +55,10 @@ public class CannonProjectile : MonoBehaviour
 	void OnCollisionEnter (Collision collision)
 	{
 		if (collision.collider.TryGetComponent<Building>(out _)) return;
-		if (collision.collider.TryGetComponent<Enemy>(out var enemy)) enemy.Damage(damage);
+		if (collision.collider.TryGetComponent<Enemy>(out var enemy)) {
+			if (enemy.GetHealthPercentage() <= 0f) return;
+			else enemy.Damage(damage);
+		}
 		
 		bulletParabola.velocity = 0.0f;
 
