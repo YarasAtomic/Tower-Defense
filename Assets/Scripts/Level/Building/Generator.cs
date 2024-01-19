@@ -18,6 +18,7 @@ public class Generator : Building
 	
     void Start() {
         // General
+		BASE_HP = 100f;
 		hp = BASE_HP;
 
 		// Costes
