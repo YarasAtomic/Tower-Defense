@@ -8,15 +8,15 @@ using UnityEngine;
 public class Save : ScriptableObject
 {
     [SerializeField] List<SaveFile> saveFiles;
-    [SerializeField] int current;
-    [SerializeField] int currentLevel = -1;
+    [SerializeField] int currentSaveFile;
+    int currentLevel = -1;
     bool loaded = false;
     public void SetCurrentFile(int i){
         if(i < saveFiles.Count && i >= 0){
             if(saveFiles[i].IsEmpty()) saveFiles[i].InitSave();
-            current = i;
+            currentSaveFile = i;
         } 
-        Debug.Log("Select saveFile "+current);
+        Debug.Log("Select saveFile "+currentSaveFile);
     }
 
     public SaveFile GetSaveFileFromIndex(int i){
@@ -25,7 +25,7 @@ public class Save : ScriptableObject
     }
 
     public SaveFile GetSaveFile(){
-        return (current < saveFiles.Count) ? saveFiles[current] : null;
+        return (currentSaveFile < saveFiles.Count) ? saveFiles[currentSaveFile] : null;
     }
 
     public void AddSaveFile(){
