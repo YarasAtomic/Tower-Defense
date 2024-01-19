@@ -302,9 +302,9 @@ public abstract class Tower : Building
 		
 		buildingAhead = false;
 		if (Utils.Raycast(firePosition, distance.normalized, distance.magnitude, LayerMask.GetMask("Building"), out RaycastHit hit)) {
-			buildingAhead = hit.collider.GetComponent<Building>();
-			if (!buildingAhead) buildingAhead = hit.collider.GetComponentInParent<Building>();
-			if (!buildingAhead) buildingAhead = hit.collider.GetComponentInChildren<Building>();
+			buildingAhead = hit.collider.TryGetComponent<Building>(out _);
+			if (!buildingAhead) buildingAhead = hit.collider.TryGetComponent<Building>(out _);
+			if (!buildingAhead) buildingAhead = hit.collider.TryGetComponent<Building>(out _);
 		}
 
 		return Utils.Raycast(firePosition, distance.normalized, distance.magnitude, LayerMask.GetMask("Terrain"), out _);
@@ -336,8 +336,8 @@ public abstract class Tower : Building
 		if (Utils.IsPointerOverUIObject()) return;
 		
 		Tower tower = hit.collider.gameObject.GetComponent<Tower>();
-		if (tower == null) hit.collider.gameObject.GetComponentInParent<Tower>();
-		if (tower == null) hit.collider.gameObject.GetComponentInChildren<Tower>();
+		if (tower == null) tower = hit.collider.gameObject.GetComponentInParent<Tower>();
+		if (tower == null) tower = hit.collider.gameObject.GetComponentInChildren<Tower>();
 
 		if(tower != null && tower == this){
 			lineRenderer.enabled = true;
