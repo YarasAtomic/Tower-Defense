@@ -300,6 +300,7 @@ public abstract class Tower : Building
 	{
 		Vector3 distance = enemyPosition - firePosition;
 		
+		buildingAhead = false;
 		if (Utils.Raycast(firePosition, distance.normalized, distance.magnitude, LayerMask.GetMask("Building"), out RaycastHit hit)) {
 			buildingAhead = hit.collider.GetComponent<Building>() is Tower;
 		}

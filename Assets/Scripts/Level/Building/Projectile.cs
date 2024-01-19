@@ -34,27 +34,55 @@ public class Projectile : MonoBehaviour {
     // Update is called once per frame
     void Update()
 	{
-        if (speed != 0) {
-			transform.position += GameTime.DeltaTime * speed * transform.forward;
+		float vel = speed * GameTime.DeltaTime;
+        if (vel != 0) {
+			transform.position += vel * transform.forward;
+			CheckCollisions();
 		}
     }
 
-	void OnCollisionEnter (Collision collision)
+	private void CheckCollisions()
 	{
-		bool ignore = collision.collider.TryGetComponent<Building>(out _) ||
-					  collision.collider.TryGetComponent<Projectile>(out _) ||
-					  collision.collider.TryGetComponent<CannonProjectile>(out _);
+		bool collision = false;
 
-		if (ignore) return;
-		if (collision.collider.TryGetComponent<Enemy>(out var enemy)) {
-			if (enemy.GetHealthPercentage() <= 0f) return;
-			else enemy.Damage(damage);
+		Quaternion contactRotation = Quaternion.identity;
+		Vector3 contactPosition = Vector3.one;
+
+		Collider[] hitColliders = Physics.OverlapSphere(transform.position, 0.6f);
+		foreach (Collider collider in hitColliders) {
+			// bool ignore = /*collider.TryGetComponent<Building>(out _) ||*/
+			// 			  collider.TryGetComponent<Projectile>(out _) ||
+			// 			  collider.TryGetComponent<CannonProjectile>(out _);
+
+			if (collider.TryGetComponent<Enemy>(out var enemy) && enemy.GetHealthPercentage() > 0f) {
+				enemy.Damage(damage);
+
+				Vector3 closestPoint = collider.ClosestPoint(transform.position);
+				contactRotation = Quaternion.FromToRotation(Vector3.up, transform.position - closestPoint);
+				contactPosition = closestPoint;
+
+				collision = true;
+				break;
+			}
+
+			collision = !collider.TryGetComponent<Building>(out _) &&
+						!collider.TryGetComponent<Projectile>(out _) &&
+						!collider.TryGetComponent<CannonProjectile>(out _);
 		}
 
-		speed = 0.0f;
+		if (!collision) return;
 
-		Quaternion contactRotation = Quaternion.FromToRotation(Vector3.up, collision.contacts[0].normal);
-		Vector3 contactPosition = collision.contacts[0].point;
+		// bool ignore = collision.collider.TryGetComponent<Building>(out _) ||
+		// 			  collision.collider.TryGetComponent<Projectile>(out _) ||
+		// 			  collision.collider.TryGetComponent<CannonProjectile>(out _);
+
+		// if (ignore) return;
+		// if (collision.collider.TryGetComponent<Enemy>(out var enemy)) {
+		// 	if (enemy.GetHealthPercentage() <= 0f) return;
+		// 	else enemy.Damage(damage);
+		// }
+
+		speed = 0.0f;
 
 		if (collisionPrefab != null) {
 			GameObject collisionVFX = Instantiate(collisionPrefab, contactPosition, contactRotation);
