@@ -41,12 +41,9 @@ public class Projectile : MonoBehaviour {
 
 	void OnCollisionEnter (Collision collision)
 	{
-		bool tower = collision.collider.TryGetComponent<Building>(out Building building) && building is Tower;
 		bool ignore = collision.collider.TryGetComponent<Building>(out _) ||
 					  collision.collider.TryGetComponent<Projectile>(out _) ||
 					  collision.collider.TryGetComponent<CannonProjectile>(out _);
-
-		if (tower) Debug.Log("COL TORRE");
 
 		if (ignore) return;
 		if (collision.collider.TryGetComponent<Enemy>(out var enemy)) {
