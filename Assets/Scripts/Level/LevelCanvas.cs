@@ -257,6 +257,14 @@ public class LevelCanvas : MonoBehaviour
         tower2Button.GetComponent<Button>().interactable = !GameTime.IsPaused() && !(levelLogic.GetInteractionMode()==LevelLogic.InteractionMode.Camera) && (levelLogic.GetCurrentResources() >= Tower2.GetPurchasePrice());
         tower3Button.GetComponent<Button>().interactable = !GameTime.IsPaused() && !(levelLogic.GetInteractionMode()==LevelLogic.InteractionMode.Camera) && (levelLogic.GetCurrentResources() >= Tower3.GetPurchasePrice());
 		generatorButton.GetComponent<Button>().interactable = !GameTime.IsPaused() && !(levelLogic.GetInteractionMode()==LevelLogic.InteractionMode.Camera) && (levelLogic.GetCurrentResources() >= Generator.GetPurchasePrice());
+
+		if (selectedBuilding != null) {
+			repairButtonText.GetComponent<TMP_Text>().text = ((Tower)selectedBuilding).GetRepairPrice() + "";
+            upgradeButtonText.GetComponent<TMP_Text>().text = ((Tower)selectedBuilding).GetUpgradePrice() + "";
+            
+			repairButton.GetComponent<Button>().interactable = ((Tower)selectedBuilding).GetHealthPercentage() < 1.0f && (levelLogic.GetCurrentResources() >= ((Tower)selectedBuilding).GetRepairPrice());
+			upgradeButton.GetComponent<Button>().interactable = !((Tower)selectedBuilding).IsMaxUpgraded() && (levelLogic.GetCurrentResources() >= ((Tower)selectedBuilding).GetUpgradePrice());
+		}
 	}
 
 	//-----------------------------------------------------------------//
@@ -581,8 +589,8 @@ public class LevelCanvas : MonoBehaviour
             repairButtonText.GetComponent<TMP_Text>().text = ((Tower)selectedBuilding).GetRepairPrice() + "";
             upgradeButtonText.GetComponent<TMP_Text>().text = ((Tower)selectedBuilding).GetUpgradePrice() + "";
             
-			repairButton.GetComponent<Button>().interactable = canRepair;
-			upgradeButton.GetComponent<Button>().interactable = canUpgrade;
+			repairButton.GetComponent<Button>().interactable = canRepair && (levelLogic.GetCurrentResources() >= ((Tower)selectedBuilding).GetRepairPrice());
+			upgradeButton.GetComponent<Button>().interactable = canUpgrade && (levelLogic.GetCurrentResources() >= ((Tower)selectedBuilding).GetUpgradePrice());
 			
 			repairButton.SetActive(true);
 			upgradeButton.SetActive(true);
