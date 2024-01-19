@@ -332,7 +332,6 @@ GameObject:
   - component: {fileID: 53798221}
   - component: {fileID: 53798220}
   - component: {fileID: 53798219}
-  - component: {fileID: 53798218}
   m_Layer: 0
   m_Name: Fog
   m_TagString: Untagged
@@ -340,27 +339,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!65 &53798218
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 53798217}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &53798219
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -2699,7 +2677,6 @@ GameObject:
   - component: {fileID: 1133585241}
   - component: {fileID: 1133585240}
   - component: {fileID: 1133585239}
-  - component: {fileID: 1133585238}
   m_Layer: 0
   m_Name: Fog (2)
   m_TagString: Untagged
@@ -2707,27 +2684,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!65 &1133585238
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1133585237}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &1133585239
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -3980,7 +3936,6 @@ GameObject:
   - component: {fileID: 1700117847}
   - component: {fileID: 1700117846}
   - component: {fileID: 1700117845}
-  - component: {fileID: 1700117844}
   m_Layer: 0
   m_Name: Fog (1)
   m_TagString: Untagged
@@ -3988,27 +3943,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!65 &1700117844
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1700117843}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &1700117845
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -4243,7 +4177,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eda7cf9d82a7b4145b449fa06ba87f85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BASE_HP: 200
   levelLogic: {fileID: 1873703485}
 --- !u!136 &1810036160
 CapsuleCollider:
@@ -4511,7 +4444,6 @@ GameObject:
   - component: {fileID: 2133658239}
   - component: {fileID: 2133658238}
   - component: {fileID: 2133658237}
-  - component: {fileID: 2133658236}
   m_Layer: 0
   m_Name: Fog (3)
   m_TagString: Untagged
@@ -4519,27 +4451,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!65 &2133658236
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2133658235}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &2133658237
 MeshRenderer:
   m_ObjectHideFlags: 0

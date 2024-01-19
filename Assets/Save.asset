@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   saveFiles: []
   current: 0
-  currentLevel: -1
+  currentLevel: 5
