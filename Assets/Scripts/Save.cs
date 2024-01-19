@@ -46,14 +46,14 @@ public class Save : ScriptableObject
 
     public void SaveData(){
         string json = JsonUtility.ToJson(this);
-        string dataPath = Application.persistentDataPath + "/save.json";
+        string dataPath = System.IO.Path.Combine(Application.persistentDataPath , "save.json");
         System.IO.File.WriteAllText(dataPath, json);
         Debug.Log("Data saved at: \""+dataPath+"\"");
     }
 
     private void OnEnable(){
         if(!loaded){
-            string dataPath = Application.persistentDataPath + "/save.json";
+            string dataPath = System.IO.Path.Combine(Application.persistentDataPath , "save.json");
             try{
                 string json = System.IO.File.ReadAllText(dataPath);
                 Debug.Log("json data: " + json);

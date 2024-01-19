@@ -65,6 +65,16 @@ public class MainMenu : MonoBehaviour
 
         starsText = transform.Find("MapMenu/StarsText").gameObject.GetComponent<TMP_Text>();
         xpText = transform.Find("MapMenu/XpText").gameObject.GetComponent<TMP_Text>();
+
+        try{
+            Debug.Log("testing saves");
+            saveAsset.SaveData();
+            transform.Find("Error").gameObject.SetActive(false);
+            Debug.Log("saves tested");
+        }catch(Exception e){
+            Debug.Log("cant save");
+        }
+        
     }
 
     public bool IsShowingLevels(){
