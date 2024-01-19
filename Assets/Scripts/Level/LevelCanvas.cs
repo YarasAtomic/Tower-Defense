@@ -163,6 +163,7 @@ public class LevelCanvas : MonoBehaviour
         HandleSkipButton();
         HandleFinishedLevel();
         HandleMouseInputs();
+		HandleBuildingButtons();
         HandleSpecialAttack();
         HandleFadeInOut();
     }
@@ -250,6 +251,16 @@ public class LevelCanvas : MonoBehaviour
     }
 
     //-----------------------------------------------------------------//
+
+	void HandleBuildingButtons() {
+		tower1Button.GetComponent<Button>().interactable = !GameTime.IsPaused() && !(levelLogic.GetInteractionMode()==LevelLogic.InteractionMode.Camera) && (levelLogic.GetCurrentResources() >= Tower1.GetPurchasePrice());
+        tower2Button.GetComponent<Button>().interactable = !GameTime.IsPaused() && !(levelLogic.GetInteractionMode()==LevelLogic.InteractionMode.Camera) && (levelLogic.GetCurrentResources() >= Tower2.GetPurchasePrice());
+        tower3Button.GetComponent<Button>().interactable = !GameTime.IsPaused() && !(levelLogic.GetInteractionMode()==LevelLogic.InteractionMode.Camera) && (levelLogic.GetCurrentResources() >= Tower3.GetPurchasePrice());
+		generatorButton.GetComponent<Button>().interactable = !GameTime.IsPaused() && !(levelLogic.GetInteractionMode()==LevelLogic.InteractionMode.Camera) && (levelLogic.GetCurrentResources() >= Generator.GetPurchasePrice());
+	}
+
+	//-----------------------------------------------------------------//
+
     void HandleSpecialAttack(){
         if(!levelLogic.IsSpecialAttackAvailable(TypeAttack.SplashAttack)){
             splashAttackTimerIMG.GetComponent<Image>().fillAmount = 1-levelLogic.GetSpecialAttackTimer(TypeAttack.SplashAttack);
@@ -275,10 +286,6 @@ public class LevelCanvas : MonoBehaviour
 
         skipButton.GetComponent<Button>().interactable = !GameTime.IsPaused();
         accelerateButton.GetComponent<Button>().interactable = !GameTime.IsPaused();
-        tower1Button.GetComponent<Button>().interactable = !GameTime.IsPaused() && !(levelLogic.GetInteractionMode()==LevelLogic.InteractionMode.Camera);
-        tower2Button.GetComponent<Button>().interactable = !GameTime.IsPaused() && !(levelLogic.GetInteractionMode()==LevelLogic.InteractionMode.Camera);
-        tower3Button.GetComponent<Button>().interactable = !GameTime.IsPaused() && !(levelLogic.GetInteractionMode()==LevelLogic.InteractionMode.Camera);
-		generatorButton.GetComponent<Button>().interactable = !GameTime.IsPaused() && !(levelLogic.GetInteractionMode()==LevelLogic.InteractionMode.Camera);
         splashAttackButton.GetComponent<Button>().interactable = !GameTime.IsPaused() && !(levelLogic.GetInteractionMode()==LevelLogic.InteractionMode.Camera);
         uniformAttackButton.GetComponent<Button>().interactable = !GameTime.IsPaused() && !(levelLogic.GetInteractionMode()==LevelLogic.InteractionMode.Camera);
 		
@@ -345,7 +352,7 @@ public class LevelCanvas : MonoBehaviour
 		);
 
         Debug.Log("Interaction mode: " + levelLogic.GetInteractionMode());
-        Debug.Log("Type attack: "+type);
+        Debug.Log("Type attack: " + type);
 
 		if (levelLogic.GetInteractionMode() == LevelLogic.InteractionMode.SpecialAttack) {
             levelLogic.InitialiseSpecialAttack(type,mainCamera);
@@ -492,10 +499,13 @@ public class LevelCanvas : MonoBehaviour
         if (levelLogic.GetInteractionMode() == LevelLogic.InteractionMode.None
 		||  levelLogic.GetInteractionMode() == LevelLogic.InteractionMode.Build) {
             Building currentBuilding = hit.collider.gameObject.GetComponent<Building>();
+			if (currentBuilding == null) currentBuilding = hit.collider.gameObject.GetComponentInParent<Building>();
+			if (currentBuilding == null) currentBuilding = hit.collider.gameObject.GetComponentInChildren<Building>();
+
             if (currentBuilding != null && currentBuilding != selectedBuilding) {
                 selectedBuilding = currentBuilding;
                 if (selectedBuilding is Generator) ShowBuildingSubmenu(false);
-				else if (selectedBuilding is Tower)  ShowBuildingSubmenu(true, ((Tower) selectedBuilding).GetHealthPercentage() < 1.0f, !((Tower) selectedBuilding).IsMaxUpgraded());
+				else if (selectedBuilding is Tower tower)  ShowBuildingSubmenu(true, tower.GetHealthPercentage() < 1.0f, !tower.IsMaxUpgraded());
             } else {
                 HideBuildingSubmenu();
                 selectedBuilding = null;

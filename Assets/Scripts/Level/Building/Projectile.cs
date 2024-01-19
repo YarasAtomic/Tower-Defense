@@ -50,10 +50,6 @@ public class Projectile : MonoBehaviour {
 
 		Collider[] hitColliders = Physics.OverlapSphere(transform.position, 0.6f);
 		foreach (Collider collider in hitColliders) {
-			// bool ignore = /*collider.TryGetComponent<Building>(out _) ||*/
-			// 			  collider.TryGetComponent<Projectile>(out _) ||
-			// 			  collider.TryGetComponent<CannonProjectile>(out _);
-
 			if (collider.TryGetComponent<Enemy>(out var enemy) && enemy.GetHealthPercentage() > 0f) {
 				enemy.Damage(damage);
 
@@ -65,11 +61,13 @@ public class Projectile : MonoBehaviour {
 				break;
 			}
 
-			collision = !collider.TryGetComponent<Building>(out _) &&
+			collision = !collider.TryGetComponent<Enemy>(out _) &&
+						!collider.TryGetComponent<Building>(out _) &&
 						!collider.TryGetComponent<Projectile>(out _) &&
 						!collider.TryGetComponent<CannonProjectile>(out _);
 		}
 
+		Debug.Log(collision);
 		if (!collision) return;
 
 		// bool ignore = collision.collider.TryGetComponent<Building>(out _) ||

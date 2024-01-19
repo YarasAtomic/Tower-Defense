@@ -381,7 +381,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92d1f494a54036bcaaa9ca574159786e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BASE_HP: 0
+  selectedEnemy: {fileID: 0}
   effectToSpawn: {fileID: 3570033859995711600, guid: faebe5a3923a686c9946ce8a4a8a0d7b, type: 3}
   explosionEffect: {fileID: 2472395016935662785, guid: bee5f7fb2a9f8f49f9cd6aa0f08b3070, type: 3}
 --- !u!65 &-5174695126571970828
@@ -403,8 +403,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2, y: 2, z: 2}
-  m_Center: {x: 0, y: 1, z: 0}
+  m_Size: {x: 2, y: 1, z: 2}
+  m_Center: {x: 0, y: 0.5, z: 0}
 --- !u!4 &6441507997818081341 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: e6d96765bf7b6962199add561254d34a, type: 3}
