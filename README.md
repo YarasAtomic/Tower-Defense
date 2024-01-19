@@ -1,5 +1,9 @@
 # Esiten
 
+## Prueba del código fuente
+
+Abrir el source como proyecto de Unity, abrir la escena MainMenu en la carpeta Scenes. Darle a Play
+
 ## Descripción
 
 Un juego tower defense desarrollado en Unity para la asignatura PGV.
