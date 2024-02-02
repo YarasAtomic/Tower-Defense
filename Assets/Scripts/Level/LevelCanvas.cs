@@ -528,6 +528,10 @@ public class LevelCanvas : MonoBehaviour
         if(levelLogic.GetInteractionMode() == LevelLogic.InteractionMode.Camera && mainCamera == currentCamera){
             Enemy currentEnemy = hit.collider.gameObject.GetComponent<Enemy>();
             Tower currentTower = hit.collider.gameObject.GetComponent<Tower>();
+			if (currentTower == null && currentTower == null) {
+				currentTower = hit.collider.gameObject.GetComponentInParent<Tower>();
+				if (currentTower == null) currentTower = hit.collider.gameObject.GetComponentInChildren<Tower>();
+			}
 
             if (currentEnemy != null){
                 cameraIMG.SetActive(false);
